@@ -18,7 +18,34 @@ end
   gem_package a_gem
 end
 
-# Setup vhost_alias
-apache_module "vhost_alias" do
-  conf true
+sites = [
+  {
+    :host => "test.com", 
+    :aliases => [
+      "www.test.com", 
+      "test-a.com"
+    ]
+  },
+  {
+    :host => "test2.com", 
+    :aliases => [
+      "www.test2.com", 
+      "test2-a.com"
+    ]
+  }
+]
+
+sites.each do |site|
+  # Add site to apache config
+  web_app site[:host] do
+    template "sites.conf.erb"
+    server_name site[:host]
+    server_aliases site[:aliases]
+    docroot "/vagrant/public/#{site[:host]}"
+  end  
+
+   # Add site info in /etc/hosts
+   bash "hosts" do
+     code "echo 127.0.0.1 #{site[:host]} #{site[:aliases].join(' ')} >> /etc/hosts"
+   end
 end
