@@ -18,34 +18,22 @@ end
   gem_package a_gem
 end
 
-sites = [
-  {
-    :host => "test.com", 
-    :aliases => [
-      "www.test.com", 
-      "test-a.com"
-    ]
-  },
-  {
-    :host => "test2.com", 
-    :aliases => [
-      "www.test2.com", 
-      "test2-a.com"
-    ]
-  }
-]
+# Configure sites
+sites = data_bag("sites")
 
-sites.each do |site|
+sites.each do |name|
+  site = data_bag_item("sites", name)
+
   # Add site to apache config
-  web_app site[:host] do
+  web_app site["host"] do
     template "sites.conf.erb"
-    server_name site[:host]
-    server_aliases site[:aliases]
-    docroot "/vagrant/public/#{site[:host]}"
+    server_name site["host"]
+    server_aliases site["aliases"]
+    docroot "/vagrant/public/#{site["host"]}"
   end  
 
    # Add site info in /etc/hosts
    bash "hosts" do
-     code "echo 127.0.0.1 #{site[:host]} #{site[:aliases].join(' ')} >> /etc/hosts"
+     code "echo 127.0.0.1 #{site["host"]} #{site["aliases"].join(' ')} >> /etc/hosts"
    end
 end
