@@ -37,6 +37,11 @@ sites.each do |name|
    end
 end
 
+# Disable default site
+apache_site "default" do
+  enable false  
+end
+
 # Install phpmyadmin
 cookbook_file "/tmp/phpmyadmin.deb.conf" do
   source "phpmyadmin.deb.conf"
