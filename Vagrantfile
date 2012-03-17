@@ -1,7 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-class ChefSoloLatestProvisioner < Vagrant::Provisioners::ChefSolo
+# Upgrade chef before provisioning
+class ChefSolo0104Provisioner < Vagrant::Provisioners::ChefSolo
   def provision!
     env[:ui].info "Installing chef 0.10.4"
     env[:vm].channel.sudo("gem install chef -v '= 0.10.4' --no-ri --no-rdoc")
@@ -19,9 +20,24 @@ Vagrant::Config.run do |config|
 
   # Enable provisioning with chef solo, specifying a cookbooks path (relative
   # to this Vagrantfile), and adding some recipes and/or roles.
-  config.vm.provision ChefSoloLatestProvisioner do |chef|
+  config.vm.provision ChefSolo0104Provisioner do |chef|
     chef.cookbooks_path = "cookbooks"
     chef.data_bags_path = "data_bags"
     chef.add_recipe "vagrant_main"
+
+    chef.json.merge!({
+      "mysql" => {
+        "server_root_password" => "vagrant"
+      },
+      "oh_my_zsh" => {
+        :users => [
+          {
+            :login => 'vagrant',
+            :theme => 'blinks',
+            :plugins => ['git', 'gem']
+          }
+        ]
+      }
+    })
   end
 end

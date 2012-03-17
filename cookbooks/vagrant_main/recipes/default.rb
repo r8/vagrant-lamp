@@ -1,15 +1,14 @@
 require_recipe "apt"
 require_recipe "git"
-require_recipe "zsh"
 require_recipe "oh-my-zsh"
 require_recipe "apache2"
 require_recipe "apache2::mod_rewrite"
-require_recipe "mysql"
+require_recipe "mysql::server"
 require_recipe "php"
 require_recipe "apache2::mod_php5"
 
 # Install packages
-%w{ vim screen mc subversion }.each do |a_package|
+%w{ debconf vim screen mc subversion }.each do |a_package|
   package a_package
 end
 
@@ -37,3 +36,12 @@ sites.each do |name|
      code "echo 127.0.0.1 #{site["host"]} #{site["aliases"].join(' ')} >> /etc/hosts"
    end
 end
+
+# Install phpmyadmin
+cookbook_file "/tmp/phpmyadmin.deb.conf" do
+  source "phpmyadmin.deb.conf"
+end
+bash "debconf_for_phpmyadmin" do
+  code "debconf-set-selections /tmp/phpmyadmin.deb.conf"
+end
+package "phpmyadmin"

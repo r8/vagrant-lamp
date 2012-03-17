@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: zsh
+# Cookbook Name:: openssl
 # Recipe:: default
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2009, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,13 +17,3 @@
 # limitations under the License.
 #
 
-package "zsh" do
-  action :install
-end
-
-case node[:platform]
-when "ubuntu"
-  package "zsh-doc" do
-    action :install
-  end
-end
