@@ -6,19 +6,19 @@ My default LAMP development stack configuration for Vagrant.
 Installation:
 -------------
 
-1. Install [vagrant](http://vagrantup.com/)
+Install [vagrant](http://vagrantup.com/)
 
     $ gem install vagrant
 
-2. Download and Install [VirtualBox](http://www.virtualbox.org/)
+Download and Install [VirtualBox](http://www.virtualbox.org/)
 
-3. Download a vagrant box (name of the box is supposed to be lucid32)
+Download a vagrant box (name of the box is supposed to be lucid32)
 
     $ vagrant box add lucid32 http://files.vagrantup.com/lucid32.box
 
-4. Clone this repository
+Clone this repository
 
-5. Go to the repository folder and launch the box
+Go to the repository folder and launch the box
 
     $ cd [repo]
     $ vagrant up
