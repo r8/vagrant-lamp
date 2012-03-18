@@ -63,3 +63,18 @@ template "#{node['php']['ext_conf_dir']}/xdebug.ini" do
   action :create
   notifies :restart, resources("service[apache2]"), :delayed
 end
+
+# Install Webgrind
+git "/var/www/webgrind" do
+  repository 'git://github.com/jokkedk/webgrind.git'
+  reference "master"
+  action :sync
+end
+template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
+  source "webgrind.conf.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  action :create
+  notifies :restart, resources("service[apache2]"), :delayed
+end
