@@ -8,7 +8,7 @@ require_recipe "php"
 require_recipe "apache2::mod_php5"
 
 # Install packages
-%w{ debconf vim screen mc subversion }.each do |a_package|
+%w{ debconf vim screen mc subversion curl tmux }.each do |a_package|
   package a_package
 end
 
