@@ -3,6 +3,7 @@ require_recipe "git"
 require_recipe "oh-my-zsh"
 require_recipe "apache2"
 require_recipe "apache2::mod_rewrite"
+require_recipe "apache2::mod_ssl"
 require_recipe "mysql::server"
 require_recipe "php"
 require_recipe "apache2::mod_php5"
@@ -15,6 +16,13 @@ end
 # Install ruby gems
 %w{ rake }.each do |a_gem|
   gem_package a_gem
+end
+
+# Generate selfsigned ssl
+execute "make-ssl-cert" do
+  command "make-ssl-cert generate-default-snakeoil --force-overwrite"
+  ignore_failure true
+  action :nothing
 end
 
 # Configure sites
