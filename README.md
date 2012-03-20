@@ -35,7 +35,7 @@ Installed packages:
 * Xdebug with Webgrind
 * zsh with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 * git, subversion
-* vim, screen, mc
+* mc, vim, screen, tmux, curl
 
 Apache virtual hosts are created in `public` folder and configured with data bag `sites`.
 
