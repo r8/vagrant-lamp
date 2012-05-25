@@ -86,3 +86,8 @@ template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
   action :create
   notifies :restart, resources("service[apache2]"), :delayed
 end
+
+# Install curl
+php_pear "curl" do
+  action :install
+end
