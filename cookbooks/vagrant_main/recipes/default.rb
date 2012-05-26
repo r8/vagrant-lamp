@@ -9,12 +9,12 @@ require_recipe "php"
 require_recipe "apache2::mod_php5"
 
 # Install packages
-%w{ make debconf vim screen mc subversion curl tmux }.each do |a_package|
+%w{ debconf vim screen mc subversion curl tmux make g++ libsqlite3-dev }.each do |a_package|
   package a_package
 end
 
 # Install ruby gems
-%w{ rake }.each do |a_gem|
+%w{ rake mailcatcher }.each do |a_gem|
   gem_package a_gem
 end
 
@@ -87,7 +87,23 @@ template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
   notifies :restart, resources("service[apache2]"), :delayed
 end
 
-# Install curl
+# Install php-curl
 php_pear "curl" do
   action :install
+end
+
+# Get eth1 ip
+eth1_ip = node[:network][:interfaces][:eth1][:addresses].select{|key,val| val[:family] == 'inet'}.flatten[0]
+
+# Setup MailCatcher
+bash "mailcatcher" do
+  code "mailcatcher --http-ip #{eth1_ip} --smtp-port 25"
+end
+template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
+  source "mailcatcher.ini.erb"
+  owner "root"
+  group "root"
+  mode "0644"
+  action :create
+  notifies :restart, resources("service[apache2]"), :delayed
 end

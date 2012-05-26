@@ -26,7 +26,7 @@ Go to the repository folder and launch the box
 What's inside:
 --------------
 
-Installed packages:
+Installed software:
 
 * Apache
 * MySQL
@@ -36,6 +36,7 @@ Installed packages:
 * zsh with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 * git, subversion
 * mc, vim, screen, tmux, curl
+* [MailCatcher](http://mailcatcher.me/)
 
 Apache virtual hosts are created in `public` folder and configured with data bag `sites`.
 
@@ -43,3 +44,7 @@ Webgrind and phpMyAdmin are available on every domain. For example:
 
 * http://test.com/phpmyadmin 
 * http://test.com/webgrind
+
+PHP is configured to send mail via MailCatcher. Web frontend of MailCatcher is running on port 1080 and also available on every domain:
+
+* http://test.com:1080
