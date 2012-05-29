@@ -42,9 +42,9 @@ Apache virtual hosts are created in `public` folder and configured with data bag
 
 Webgrind and phpMyAdmin are available on every domain. For example:
 
-* http://test.com/phpmyadmin 
-* http://test.com/webgrind
+* http://local.dev/phpmyadmin
+* http://local.dev/webgrind
 
 PHP is configured to send mail via MailCatcher. Web frontend of MailCatcher is running on port 1080 and also available on every domain:
 
-* http://test.com:1080
+* http://local.dev:1080

@@ -1,9 +1,0 @@
-{
-    "id": "test",
-    "host": "test.com",
-    "aliases": [
-        "www.test.com", 
-        "test-a.com",
-        "www.test-a.com"
-    ]
-}
