@@ -3,17 +3,18 @@ maintainer_email  "cookbooks@opscode.com"
 license           "Apache 2.0"
 description       "Installs and configures mysql for client or server"
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version           "1.2.4"
+version           "1.2.6"
 recipe            "mysql", "Includes the client recipe to configure a client"
 recipe            "mysql::client", "Installs packages required for mysql clients using run_action magic"
 recipe            "mysql::server", "Installs packages required for mysql servers w/o manual intervention"
 recipe            "mysql::server_ec2", "Performs EC2-specific mountpoint manipulation"
 
-%w{ debian ubuntu centos suse fedora redhat scientific amazon freebsd}.each do |os|
+%w{ debian ubuntu centos suse fedora redhat scientific amazon freebsd windows }.each do |os|
   supports os
 end
 
 depends "openssl"
+depends "windows"
 
 attribute "mysql/server_root_password",
   :display_name => "MySQL Server Root Password",
@@ -88,3 +89,44 @@ attribute "mysql/tunable/expire_logs_days",
 attribute "mysql/tunable/max_binlog_size",
   :display_name => "MySQL Max Binlog Size",
   :default => "100M"
+
+attribute "mysql/client",
+  :display_name => "MySQL Connector/C Client",
+  :description => "Hash of MySQL client attributes",
+  :type => "hash"
+
+attribute "mysql/client/version",
+  :display_name => "MySQL Connector/C Version",
+  :default => "6.0.2"
+
+attribute "mysql/client/arch",
+  :display_name => "MySQL Connector/C Architecture",
+  :default => "win32"
+
+attribute "mysql/client/package_file",
+  :display_name => "MySQL Connector/C Package File Name",
+  :default => "mysql-connector-c-6.0.2-win32.msi"
+
+attribute "mysql/client/url",
+  :display_name => "MySQL Connector/C Download URL",
+  :default => "http://www.mysql.com/get/Downloads/Connector-C/mysql-connector-c-6.0.2-win32.msi/from/http://mysql.mirrors.pair.com/"
+
+attribute "mysql/client/package_name",
+  :display_name => "MySQL Connector/C Registry DisplayName",
+  :default => "MySQL Connector C 6.0.2"
+
+attribute "mysql/client/basedir",
+  :display_name => "MySQL Connector/C Base Install Directory",
+  :default => "C:\\Program Files (x86)\\MySQL\\Connector C 6.0.2"
+
+attribute "mysql/client/lib_dir",
+  :display_name => "MySQL Connector/C Library Directory (containing libmysql.dll)",
+  :default => "C:\\Program Files (x86)\\MySQL\\Connector C 6.0.2\\lib\\opt"
+
+attribute "mysql/client/bin_dir",
+  :display_name => "MySQL Connector/C Executable Directory",
+  :default => "C:\\Program Files (x86)\\MySQL\\Connector C 6.0.2\\bin"
+
+attribute "mysql/client/ruby_dir",
+  :display_name => "Ruby Executable Directory which should gain MySQL support",
+  :default => "system ruby"

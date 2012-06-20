@@ -21,7 +21,7 @@ Tested on:
 Cookbooks
 ---------
 
-Requires Opscode's openssl cookbook for secure password generation.
+Requires Opscode's openssl cookbook for secure password generation. See _Attributes_ and _Usage_ for more information.
 
 Requires a C compiler and Ruby development package in order to build mysql gem with native extensions. On Debian and Ubuntu systems this is satisfied by installing the "build-essential" and "ruby-dev" packages before running Chef. See USAGE below for information on how to handle this during a Chef run.
 
@@ -57,7 +57,7 @@ Performance tuning attributes, each corresponds to the same-named parameter in m
 Usage
 =====
 
-On client nodes,
+On client nodes, use the client (or default) recipe:
 
     include_recipe "mysql::client"
 
@@ -65,13 +65,26 @@ This will install the MySQL client libraries and development headers on the syst
 
 This creates a resource object for the package and does the installation before other recipes are parsed. You'll need to have the C compiler and such (ie, build-essential on Ubuntu) before running the recipes, but we already do that when installing Chef :-).
 
-On server nodes,
+On server nodes, use the server recipe:
 
     include_recipe "mysql::server"
 
-On Debian and Ubuntu, this will preseed the mysql-server package with the randomly generated root password from the attributes file. On other platforms, it simply installs the required packages. It will also create an SQL file, /etc/mysql/grants.sql, that will be used to set up grants for the root, repl and debian-sys-maint users.
+On Debian and Ubuntu, this will preseed the mysql-server package with the randomly generated root password in the recipe file. On other platforms, it simply installs the required packages. It will also create an SQL file, /etc/mysql/grants.sql, that will be used to set up grants for the root, repl and debian-sys-maint users.
 
-On EC2 nodes,
+The recipe will perform a `node.save` unless it is run under `chef-solo` after the password attributes are used to ensure that in the event of a failed run, the saved attributes would be used.
+
+**Chef Solo Note**: These node attributes are stored on the Chef server when using `chef-client`. Because `chef-solo` does not connect to a server or save the node object at all, to have the same passwords persist across `chef-solo` runs, you must specify them in the `json_attribs` file used. For example:
+
+    {
+      "mysql": {
+        "server_root_password": "iloverandompasswordsbutthiswilldo",
+        "server_repl_password": "iloverandompasswordsbutthiswilldo",
+        "server_debian_password": "iloverandompasswordsbutthiswilldo"
+      },
+      "run_list":["recipe[mysql::server]"]
+    }
+
+On EC2 nodes, use the `server_ec2` recipe and the mysql data dir will be set up in the ephmeral storage.
 
     include_recipe "mysql::server_ec2"
 
@@ -83,61 +96,13 @@ For more infromation on the compile vs execution phase of a Chef run:
 
 * http://wiki.opscode.com/display/chef/Anatomy+of+a+Chef+Run
 
-Changes/Roadmap
-===============
-
-### v1.2.4
-
-* [COOK-992] - fix FATAL nameerror
-* [COOK-827] - `mysql:server_ec2` recipe can't mount `data_dir`
-* [COOK-945] - FreeBSD support
-
-### v1.2.2
-
-* [COOK-826] mysql::server recipe doesn't quote password string
-* [COOK-834] Add 'scientific' and 'amazon' platforms to mysql cookbook
-
-### v1.2.1
-
-* [COOK-644] Mysql client cookbook 'package missing' error message is confusing
-* [COOK-645] RHEL6/CentOS6 - mysql cookbook contains 'skip-federated' directive which is unsupported on MySQL 5.1
-
-### v1.2.0
-
-* [COOK-684] remove mysql_database LWRP
-
-### v1.0.8:
-
-* [COOK-633] ensure "cloud" attribute is available
-
-### v1.0.7:
-
-* [COOK-614] expose all mysql tunable settings in config
-* [COOK-617] bind to private IP if available
-
-### v1.0.6:
-
-* [COOK-605] install mysql-client package on ubuntu/debian
-
-### v1.0.5:
-
-* [COOK-465] allow optional remote root connections to mysql
-* [COOK-455] improve platform version handling
-* externalize conf_dir attribute for easier cross platform support
-* change datadir attribute to data_dir for consistency
-
-### v1.0.4:
-
-* fix regressions on debian platform
-* [COOK-578] wrap root password in quotes
-* [COOK-562] expose all tunables in my.cnf
-
 License and Author
 ==================
 
 Author:: Joshua Timberman (<joshua@opscode.com>)
 Author:: AJ Christensen (<aj@opscode.com>)
 Author:: Seth Chisamore (<schisamo@opscode.com>)
+Author:: Brian Bianco (<brian.bianco@gmail.com>)
 
 Copyright:: 2009-2011 Opscode, Inc
 
