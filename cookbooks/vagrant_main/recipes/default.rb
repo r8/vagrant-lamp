@@ -88,7 +88,7 @@ template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
 end
 
 # Install php-curl
-php_pear "curl" do
+package "php5-curl" do
   action :install
 end
 
