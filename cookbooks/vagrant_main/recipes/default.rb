@@ -107,3 +107,9 @@ template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
   action :create
   notifies :restart, resources("service[apache2]"), :delayed
 end
+
+# Fix deprecated php comments style in ini files
+bash "deploy" do
+  code "sudo perl -pi -e 's/(\s*)#/$1;/' /etc/php5/cli/conf.d/*ini"
+  notifies :restart, resources("service[apache2]"), :delayed
+end
