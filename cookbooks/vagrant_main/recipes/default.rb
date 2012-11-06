@@ -25,9 +25,15 @@ execute "make-ssl-cert" do
   action :nothing
 end
 
-# Configure sites
-sites = data_bag("sites")
+# Initialize sites data bag
+sites = []
+begin
+  sites = data_bag("sites")
+rescue
+  puts "Sites data bag is empty"
+end
 
+# Configure sites
 sites.each do |name|
   site = data_bag_item("sites", name)
 
