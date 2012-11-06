@@ -34,3 +34,6 @@ attribute :deb_src, :default => false
 attribute :keyserver, :kind_of => String, :default => nil
 attribute :key, :kind_of => String, :default => nil
 attribute :cookbook, :kind_of => String, :default => nil
+#trigger cache rebuild
+#If not you can trigger in the recipe itself after checking the status of resource.updated{_by_last_action}?
+attribute :cache_rebuild, :kind_of => [TrueClass, FalseClass], :default => true

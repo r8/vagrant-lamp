@@ -29,6 +29,14 @@ action :add do
                           new_resource.pin,
                           new_resource.pin_priority)
 
+  preference_dir = directory "/etc/apt/preferences.d" do
+    owner "root"
+    group "root"
+    mode "0644"
+    recursive true
+    action :nothing
+  end
+
   preference_file = file "/etc/apt/preferences.d/#{new_resource.package_name}" do
     owner "root"
     group "root"
@@ -37,6 +45,7 @@ action :add do
     action :nothing
   end
 
+  preference_dir.run_action(:create)
   # write out the preference file, replace it if it already exists
   preference_file.run_action(:create)
 end
