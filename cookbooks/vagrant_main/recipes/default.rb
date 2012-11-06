@@ -119,3 +119,13 @@ bash "deploy" do
   code "sudo perl -pi -e 's/(\s*)#/$1;/' /etc/php5/cli/conf.d/*ini"
   notifies :restart, resources("service[apache2]"), :delayed
 end
+
+# Install Percona Toolkit
+apt_repository "percona" do
+  uri "http://repo.percona.com/apt"
+  components ["main"]
+  distribution "lucid"
+end
+%w{ libmysqlclient16 percona-toolkit }.each do |a_package|
+  package a_package
+end
