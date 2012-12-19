@@ -38,7 +38,7 @@ Installed software:
 * mc, vim, screen, tmux, curl
 * [MailCatcher](http://mailcatcher.me/)
 
-Apache virtual hosts are created in `public` folder and configured with data bag `sites`.
+Apache virtual hosts are created in `public` folder or optionally in a per site configurable docroot and configured with data bag `sites`.
 
 Webgrind and phpMyAdmin are available on every domain. For example:
 
