@@ -42,7 +42,7 @@ sites.each do |name|
     template "sites.conf.erb"
     server_name site["host"]
     server_aliases site["aliases"]
-    docroot "/vagrant/public/#{site["host"]}"
+    docroot site["docroot"]?site["docroot"]:"/vagrant/public/#{site["host"]}"
   end  
 
    # Add site info in /etc/hosts
