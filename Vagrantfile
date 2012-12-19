@@ -30,7 +30,8 @@ Vagrant::Config.run do |config|
       "mysql" => {
         "server_root_password" => "vagrant",
         "server_repl_password" => "vagrant",
-        "server_debian_password" => "vagrant"
+        "server_debian_password" => "vagrant",
+        "bind_address" => "0.0.0.0"
       },
       "oh_my_zsh" => {
         :users => [
