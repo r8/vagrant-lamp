@@ -1,12 +1,12 @@
-require_recipe "apt"
-require_recipe "git"
-require_recipe "oh-my-zsh"
-require_recipe "apache2"
-require_recipe "apache2::mod_rewrite"
-require_recipe "apache2::mod_ssl"
-require_recipe "mysql::server"
-require_recipe "php"
-require_recipe "apache2::mod_php5"
+include_recipe "apt"
+include_recipe "git"
+include_recipe "oh-my-zsh"
+include_recipe "apache2"
+include_recipe "apache2::mod_rewrite"
+include_recipe "apache2::mod_ssl"
+include_recipe "mysql::server"
+include_recipe "php"
+include_recipe "apache2::mod_php5"
 
 # Install packages
 %w{ debconf vim screen mc subversion curl tmux make g++ libsqlite3-dev }.each do |a_package|
