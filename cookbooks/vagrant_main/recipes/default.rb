@@ -95,6 +95,13 @@ template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
   action :create
   notifies :restart, resources("service[apache2]"), :delayed
 end
+template "/var/www/webgrind/config.php" do
+  source "webgrind.config.php.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  action :create
+end
 
 # Install php-curl
 package "php5-curl" do
