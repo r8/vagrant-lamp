@@ -47,4 +47,6 @@ Webgrind and phpMyAdmin are available on every domain. For example:
 
 PHP is configured to send mail via MailCatcher. Web frontend of MailCatcher is running on port 1080 and also available on every domain:
 
-* http://local.dev:1080
+* http://local.dev:1080 
+
+MySQL password is configured in Vagrantfile and is currently 'Vagrant'.
