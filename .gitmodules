@@ -1,3 +1,0 @@
-[submodule "cookbooks/zsh"]
-	path = cookbooks/zsh
-	url = git://github.com/opscode-cookbooks/zsh.git
