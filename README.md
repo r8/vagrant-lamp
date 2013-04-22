@@ -49,4 +49,4 @@ PHP is configured to send mail via MailCatcher. Web frontend of MailCatcher is r
 
 * http://local.dev:1080 
 
-MySQL password is configured in Vagrantfile and is currently 'Vagrant'.
+MySQL password is configured in Vagrantfile and is currently 'vagrant'.
