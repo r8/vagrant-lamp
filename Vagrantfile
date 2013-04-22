@@ -19,15 +19,6 @@ Vagrant::Config.run do |config|
     chef.json.merge!({
       "mysql" => {
         "server_root_password" => "vagrant"
-      },
-      "oh_my_zsh" => {
-        :users => [
-          {
-            :login => 'vagrant',
-            :theme => 'blinks',
-            :plugins => ['git', 'gem']
-          }
-        ]
       }
     })
   end
