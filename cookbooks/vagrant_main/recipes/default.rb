@@ -8,6 +8,11 @@ include_recipe "mysql::server"
 include_recipe "php"
 include_recipe "apache2::mod_php5"
 
+user 'vagrant' do
+  action :modify
+  shell '/bin/zsh'
+end
+
 # Install packages
 %w{ debconf vim screen mc subversion curl tmux make g++ libsqlite3-dev }.each do |a_package|
   package a_package
