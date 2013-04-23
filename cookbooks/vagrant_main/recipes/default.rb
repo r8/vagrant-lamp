@@ -9,7 +9,7 @@ include_recipe "php"
 include_recipe "apache2::mod_php5"
 
 # Install packages
-%w{ debconf vim screen mc subversion curl tmux make g++ libsqlite3-dev }.each do |a_package|
+%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev libxml2-utils lynx links}.each do |a_package|
   package a_package
 end
 
