@@ -2,11 +2,11 @@ God.watch do |w|
   w.name = "apache2"
   w.interval = 30.seconds # default
   w.start = "<%= @params[:start] %>"
-  w.stop = "/etc/init.d/httpd stop"
+  w.stop = "<%= @params[:stop] %>"
   w.restart = "<%= @params[:restart] %>"
   w.start_grace = 10.seconds
   w.restart_grace = 10.seconds
-  w.pid_file = "/var/run/httpd.pid"
+  w.pid_file = "/var/run/apache2.pid"
   w.behavior(:clean_pid_file)
 
   w.start_if do |start|

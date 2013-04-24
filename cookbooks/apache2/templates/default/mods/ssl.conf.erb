@@ -36,36 +36,37 @@ AddType application/x-pkcs7-crl    .crl
 SSLPassPhraseDialog  builtin
 
 #   Inter-Process Session Cache:
-#   Configure the SSL Session Cache: First the mechanism 
+#   Configure the SSL Session Cache: First the mechanism
 #   to use and second the expiring timeout (in seconds).
 #SSLSessionCache         dbm:/var/run/apache2/ssl_scache
-<% if %w{ redhat centos scientific fedora }.include?(node[:platform]) -%>
+<% if %w{ rhel fedora suse }.include?(node['platform_family']) -%>
 SSLSessionCache        shmcb:/var/cache/mod_ssl/scache(512000)
-<% elsif node[:platform] == "freebsd" -%>
+<% elsif %w{ freebsd }.include?(node['platform_family']) -%>
 SSLSessionCache        shmcb:/var/run/ssl_scache(512000)
 <% else -%>
 SSLSessionCache        shmcb:/var/run/apache2/ssl_scache
-<% end -%> 
+<% end -%>
 SSLSessionCacheTimeout  300
 
 #   Semaphore:
 #   Configure the path to the mutual exclusion semaphore the
-#   SSL engine uses internally for inter-process synchronization. 
-<% if %w{ redhat centos scientific fedora }.include?(node[:platform]) -%>
+#   SSL engine uses internally for inter-process synchronization.
+<% if %w{ rhel fedora suse }.include?(node['platform_family']) -%>
 SSLMutex  default
-<% elsif node[:platform] == "freebsd" -%>
+<% elsif %w{ freebsd }.include?(node['platform_family']) -%>
 SSLMutex  file:/var/run/ssl_mutex
 <% else -%>
 SSLMutex  file:/var/run/apache2/ssl_mutex
 <% end -%>
 
+SSLHonorCipherOrder On
 #   SSL Cipher Suite:
 #   List the ciphers that the client is permitted to negotiate.
 #   See the mod_ssl documentation for a complete list.
 #   enable only secure ciphers:
-SSLCipherSuite HIGH:MEDIUM:!ADH
+SSLCipherSuite <%= node['apache']['mod_ssl']['cipher_suite'] %>
 #   Use this instead if you want to allow cipher upgrades via SGC facility.
-#   In this case you also have to use something like 
+#   In this case you also have to use something like
 #        SSLRequire %{SSL_CIPHER_USEKEYSIZE} >= 128
 #   see http://httpd.apache.org/docs/2.2/ssl/ssl_howto.html.en#upgradeenc
 #SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL

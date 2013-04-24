@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: apache2
-# Recipe:: php5 
+# Recipe:: php5
 #
 # Copyright 2008-2009, Opscode, Inc.
 #
@@ -17,64 +17,62 @@
 # limitations under the License.
 #
 
-case node[:platform]
-when "debian", "ubuntu"
-  package "libapache2-mod-php5" do
-    action :install
-  end  
+case node['platform_family']
+when "debian"
+
+  package "libapache2-mod-php5"
 
 when "arch"
+
   package "php-apache" do
-    action :install
-    notifies :run, resources(:execute => "generate-module-list"), :immediately
+    notifies :run, "execute[generate-module-list]", :immediately
   end
 
-when "redhat", "centos", "scientific"
+when "rhel"
+
+  package "which"
   package "php package" do
-    if node.platform_version.to_f < 6.0
+    if node['platform_version'].to_f < 6.0
       package_name "php53"
     else
       package_name "php"
     end
-    action :install
-    notifies :run, resources(:execute => "generate-module-list"), :immediately
+    notifies :run, "execute[generate-module-list]", :immediately
     not_if "which php"
-  end
-
-  # delete stock config
-  file "#{node[:apache][:dir]}/conf.d/php.conf" do
-    action :delete
-  end
-
-  # replace with debian style config
-  template "#{node[:apache][:dir]}/mods-available/php5.conf" do
-    source "mods/php5.conf.erb" 
-    notifies :restart, "service[apache2]"
   end
 
 when "fedora"
+
   package "php package" do
     package_name "php"
-    action :install
-    notifies :run, resources(:execute => "generate-module-list"), :immediately
+    notifies :run, "execute[generate-module-list]", :immediately
     not_if "which php"
   end
 
-  # delete stock config
-  file "#{node[:apache][:dir]}/conf.d/php.conf" do
-    action :delete
+when "freebsd"
+
+  freebsd_port_options "php5" do
+    options "APACHE" => true
+    action :create
   end
 
-  # replace with debian style config
-  template "#{node[:apache][:dir]}/mods-available/php5.conf" do
-    source "mods/php5.conf.erb" 
-    notifies :restart, "service[apache2]"
+  package "php package" do
+    package_name "php5"
+    source "ports"
+    notifies :run, "execute[generate-module-list]", :immediately
   end
+
+end
+
+file "#{node['apache']['dir']}/conf.d/php.conf" do
+  action :delete
+  backup false
 end
 
 apache_module "php5" do
-  case node['platform']
-  when "redhat","centos","scientific","fedora"
+  case node['platform_family']
+  when "rhel", "fedora", "freebsd"
+    conf true
     filename "libphp5.so"
   end
 end

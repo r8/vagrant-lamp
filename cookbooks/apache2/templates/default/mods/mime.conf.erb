@@ -4,7 +4,7 @@
 # TypesConfig points to the file containing the list of mappings from
 # filename extension to MIME-type.
 #
-<% case node[:platform] -%>
+<% case node['platform_family'] -%>
 <% when "arch" -%>
 TypesConfig <%= node['apache']['dir'] %>/conf/mime.types
 <% when "freebsd" -%>
@@ -36,16 +36,16 @@ AddType application/x-gzip .gz .tgz
 AddType application/x-bzip2 .bz2
 
 #
-# DefaultLanguage and AddLanguage allows you to specify the language of 
-# a document. You can then use content negotiation to give a browser a 
+# DefaultLanguage and AddLanguage allows you to specify the language of
+# a document. You can then use content negotiation to give a browser a
 # file in a language the user can understand.
 #
 # Specify a default language. This means that all data
-# going out without a specific language tag (see below) will 
+# going out without a specific language tag (see below) will
 # be marked with this one. You probably do NOT want to set
 # this unless you are sure it is correct for all cases.
 #
-# * It is generally better to not mark a page as 
+# * It is generally better to not mark a page as
 # * being a certain language than marking it with the wrong
 # * language!
 #
@@ -56,8 +56,8 @@ AddType application/x-bzip2 .bz2
 # language code is pl) may wish to use "AddLanguage pl .po" to
 # avoid the ambiguity with the common suffix for perl scripts.
 #
-# Note 2: The example entries below illustrate that in some cases 
-# the two character 'Language' abbreviation is not identical to 
+# Note 2: The example entries below illustrate that in some cases
+# the two character 'Language' abbreviation is not identical to
 # the two character 'Country' code for its country,
 # E.g. 'Danmark/dk' versus 'Danish/da'.
 #

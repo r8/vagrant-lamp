@@ -1,5 +1,113 @@
+## v1.6.2
+
+* [COOK-2535] - `mod_auth_openid` requires libtool to run autogen.sh
+* [COOK-2667] - Typo in usage documentation
+* [COOK-2461] - `apache2::mod_auth_openid` fails on some ubuntu systems
+* [COOK-2720] - Apache2 minitest helper function `ran_recipe` is not
+  portable
+
+## v1.6.0:
+
+* [COOK-2372] - apache2 mpm_worker: add ServerLimit attribute (default
+  to 16)
+
+## v1.5.0:
+
+**NOTE** The `mod_auth_openid` attributes are changed. The upstream
+  maintainer deprecated the older release versions, and the source
+  repository has releases available at specific SHA1SUM references.
+  The new attribute, `node['apache']['mod_auth_openid']['ref']` is
+  used to set this.
+
+* [COOK-2198] - `apache::mod_auth_openid` compiles from source, but
+  does not install make on debian/ubuntu
+* [COOK-2224] - version conflict between cucumber and other gems
+* [COOK-2248] - `apache2::mod_php5` uses `not_if` "which php" without
+  ensuring package 'which' is installed
+* [COOK-2269] - Set allow list for mod_status incase external monitor scripts need
+* [COOK-2276] - cookbook apache2 documentation regarding listening
+  ports doesn't match default attributes
+* [COOK-2296] - `mod_auth_openid` doesn't have tags/releases for the
+  version I need for features and fixes
+* [COOK-2323] - Add Oracle linux support
+
+## v1.4.2:
+
+* [COOK-1721] - fix logrotate recipe
+
+## v1.4.0:
+
+* [COOK-1456] - iptables enhancements
+* [COOK-1473] - apache2 does not disable default site when setting
+  "`default_site_enabled`" back to false
+* [COOK-1824] - the apache2 cookbook needs to specify which binary is
+  used on rhel platform
+* [COOK-1916] - Download location wrong for apache2 `mod_auth_openid`
+  >= 0.7
+* [COOK-1917] - Improve `mod_auth_openid` recipe to handle module
+  upgrade more gracefully
+* [COOK-2029] - apache2 restarts on every run on RHEL and friends,
+  generate-module-list on every run.
+* [COOK-2036] - apache2: Cookbook style
+
+## v1.3.2:
+
+* [COOK-1804] - fix `web_app` definition parameter so site can be
+  disabled.
+
+## v1.3.0:
+
+* [COOK-1738] - Better configuration for `mod_include` and some
+  overrides in `web_app` definition
+* [COOK-1470] - Change SSL Ciphers to Mitigate BEAST attack
+
+## v1.2.0:
+
+* [COOK-692] - delete package conf.d files in module recipes, for EL
+* [COOK-1693] - Foodcritic finding for unnecessary string interpolation
+* [COOK-1757] - platform_family and better style / usage practices
+
+## v1.1.16:
+
+re-releasing as .16 due to error on tag 1.1.14
+
+* [COOK-1466] - add `mod_auth_cas` recipe
+* [COOK-1609] - apache2 changes ports.conf twice per run when using
+  apache2::mod_ssl
+
+## v1.1.12:
+
+* [COOK-1436] - restore apache2 web_app definition
+* [COOK-1356] - allow ExtendedStatus via attribute
+* [COOK-1403] - add mod_fastcgi recipe
+
+## v1.1.10:
+
+* [COOK-1315] - allow the default site to not be enabled
+* [COOK-1328] - cookbook tests (minitest, cucumber)
+
+## v1.1.8:
+
+* Some platforms with minimal installations that don't have perl won't
+  have a `node['languages']['perl']` attribute, so remove the
+  conditional and rely on the power of idempotence in the package
+  resource.
+* [COOK-1214] - address foodcritic warnings
+* [COOK-1180] - add `mod_logio` and fix `mod_proxy`
+
+## v1.1.6:
+
+FreeBSD users: This release requires the `freebsd` cookbook. See README.md.
+
+* [COOK-1025] - freebsd support in mod_php5 recipe
+
+## v1.1.4:
+
+* [COOK-1100] - support amazon linux
+
 ## v1.1.2:
 
+* [COOK-996] - apache2::mod_php5 can cause PHP and module API mismatches
 * [COOK-1083] - return string for v_f_p and use correct value for
   default
 

@@ -17,34 +17,35 @@
 # limitations under the License.
 #
 
-if platform?("debian", "ubuntu")
+if platform_family?("debian")
   package "libapache2-mod-fcgid"
-elsif platform?("redhat", "centos", "scientific", "fedora", "arch")
+elsif platform_family?("rhel", "fedora")
+
   package "mod_fcgid" do
     notifies :run, resources(:execute => "generate-module-list"), :immediately
   end
 
-  file "#{node[:apache][:dir]}/conf.d/fcgid.conf" do
+  file "#{node['apache']['dir']}/conf.d/fcgid.conf" do
     action :delete
     backup false
   end
 
-  if node['platform_version'].to_i >= 6
-    directory "/var/run/httpd/mod_fcgid" do
-      recursive true
-    end
+  directory "/var/run/httpd/mod_fcgid" do
+    recursive true
+    only_if { node['platform_version'].to_i >= 6 }
   end
-elsif platform?("suse")
-  apache_lib_path = node[:apache][:lib_dir]
+
+elsif platform_family?("suse")
+  apache_lib_path = node['apache']['lib_dir']
 
   package "httpd-devel"
 
   bash "install-fcgid" do
     code <<-EOH
-(cd #{Chef::Config[:file_cache_path]}; wget http://superb-east.dl.sourceforge.net/sourceforge/mod-fcgid/mod_fcgid.2.2.tgz)
-(cd #{Chef::Config[:file_cache_path]}; tar zxvf mod_fcgid.2.2.tgz)
-(cd #{Chef::Config[:file_cache_path]}; perl -pi -e 's!/usr/local/apache2!#{apache_lib_path}!g' ./mod_fcgid.2.2/Makefile)
-(cd #{Chef::Config[:file_cache_path]}/mod_fcgid.2.2; make install)
+(cd #{Chef::Config['file_cache_path']}; wget http://superb-east.dl.sourceforge.net/sourceforge/mod-fcgid/mod_fcgid.2.2.tgz)
+(cd #{Chef::Config['file_cache_path']}; tar zxvf mod_fcgid.2.2.tgz)
+(cd #{Chef::Config['file_cache_path']}; perl -pi -e 's!/usr/local/apache2!#{apache_lib_path}!g' ./mod_fcgid.2.2/Makefile)
+(cd #{Chef::Config['file_cache_path']}/mod_fcgid.2.2; make install)
 EOH
   end
 end

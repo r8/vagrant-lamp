@@ -18,18 +18,18 @@
 #
 
 define :web_app, :template => "web_app.conf.erb", :enable => true do
-  
+
   application_name = params[:name]
 
   include_recipe "apache2"
   include_recipe "apache2::mod_rewrite"
   include_recipe "apache2::mod_deflate"
   include_recipe "apache2::mod_headers"
-  
-  template "#{node[:apache][:dir]}/sites-available/#{application_name}.conf" do
+
+  template "#{node['apache']['dir']}/sites-available/#{application_name}.conf" do
     source params[:template]
     owner "root"
-    group node[:apache][:root_group]
+    group node['apache']['root_group']
     mode 0644
     if params[:cookbook]
       cookbook params[:cookbook]
@@ -38,12 +38,13 @@ define :web_app, :template => "web_app.conf.erb", :enable => true do
       :application_name => application_name,
       :params => params
     )
-    if ::File.exists?("#{node[:apache][:dir]}/sites-enabled/#{application_name}.conf")
+    if ::File.exists?("#{node['apache']['dir']}/sites-enabled/#{application_name}.conf")
       notifies :reload, resources(:service => "apache2"), :delayed
     end
   end
-  
+
+  site_enabled = params[:enable]
   apache_site "#{params[:name]}.conf" do
-    enable params[:enable]
+    enable site_enabled
   end
 end

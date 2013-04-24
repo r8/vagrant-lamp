@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: apache2
-# Recipe:: perl 
+# Recipe:: perl
 #
 # adapted from the mod_python recipe by Jeremy Bingham
 #
@@ -19,25 +19,26 @@
 # limitations under the License.
 #
 
-case node[:platform]
-  when "debian", "ubuntu"
-    package "libapache2-mod-perl2" do
-      action :install
-    end
-   package "libapache2-request-perl" do
-      action :install
-   end
-   package "apache2-mpm-prefork" do
-      action :install
-   end
-  when "centos", "redhat", "fedora"
-    package "mod_perl" do
-      action :install
-      notifies :run, resources(:execute => "generate-module-list"), :immediately
-    end
-    package "perl-libapreq2" do
-      action :install
-    end
+case node['platform_family']
+when "debian"
+  %w{libapache2-mod-perl2 libapache2-request-perl apache2-mpm-prefork}.each do |pkg|
+
+    package pkg
+
+  end
+when "rhel", "fedora"
+
+  package "mod_perl" do
+    notifies :run, "execute[generate-module-list]", :immediately
+  end
+
+  package "perl-libapreq2"
+
+end
+
+file "#{node['apache']['dir']}/conf.d/perl.conf" do
+  action :delete
+  backup false
 end
 
 apache_module "perl"
