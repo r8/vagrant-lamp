@@ -1,7 +1,11 @@
 #
-# Author:: Seth Chisamore (<schisamo@opscode.com>)
-# Copyright:: Copyright (c) 2011 Opscode, Inc.
-# License:: Apache License, Version 2.0
+# Cookbook Name:: mysql
+# Recipe:: ruby
+#
+# Author:: Jesse Howarth (<him@jessehowarth.com>)
+# Author:: Jamie Winsor (<jamie@vialstudios.com>)
+#
+# Copyright 2008-2012, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,18 +20,17 @@
 # limitations under the License.
 #
 
-module Opscode
-  module Mysql
-    module Helpers
+execute "apt-get update" do
+  ignore_failure true
+  action :nothing
+end.run_action(:run) if node['platform_family'] == "debian"
 
-      def debian_before_squeeze?
-        (node['platform'] == "debian") && (node['platform_version'].to_f < 6.0)
-      end
+node.set['build_essential']['compiletime'] = true
+include_recipe "build-essential"
+include_recipe "mysql::client"
 
-      def ubuntu_before_lucid?
-        (node['platform'] == "ubuntu") && (node['platform_version'].to_f < 10.0)
-      end
-
-    end
-  end
+node['mysql']['client']['packages'].each do |mysql_pack|
+  resources("package[#{mysql_pack}]").run_action(:install)
 end
+
+chef_gem "mysql"
