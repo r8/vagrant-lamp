@@ -25,7 +25,7 @@ include_recipe "xml"
 include_recipe "mysql::client" if configure_options =~ /mysql/
 
 pkgs = value_for_platform(
-    ["centos","redhat","fedora"] =>
+    ["centos","redhat","fedora", "scientific"] =>
         {"default" => %w{ bzip2-devel libc-client-devel curl-devel freetype-devel gmp-devel libjpeg-devel krb5-devel libmcrypt-devel libpng-devel openssl-devel t1lib-devel mhash-devel }},
     [ "debian", "ubuntu" ] =>
         {"default" => %w{ libbz2-dev libc-client2007e-dev libcurl4-gnutls-dev libfreetype6-dev libgmp3-dev libjpeg62-dev libkrb5-dev libmcrypt-dev libpng12-dev libssl-dev libt1-dev }},

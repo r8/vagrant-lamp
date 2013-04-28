@@ -1851,3 +1851,7 @@ ldap.max_links = -1
 ; Local Variables:
 ; tab-width: 4
 ; End:
+
+<% node['php']['directives'].each do |directive, value| -%>
+<%= "#{directive}=\"#{value}\"" %>
+<% end -%>

@@ -19,10 +19,10 @@
 # limitations under the License.
 #
 
-case node['platform']
-when "centos", "redhat", "fedora"
+case node['platform_family']
+when "rhel", "fedora"
   #already there in centos, --with-pdo-sqlite=shared
-when "debian", "ubuntu"
+when "debian"
   package "php5-sqlite" do
     action :install
   end

@@ -1,5 +1,7 @@
 ; configuration for php <%= @name %> module
-extension=<%= @name %>.so
+<% @extensions.each do |filepath, zend| -%>
+<%= 'zend_' if zend %>extension=<%= filepath %>
+<% end -%>
 <% @directives.each do |k,v| -%>
 <%= "#{@name}.#{k}=\"#{v}\"" %>
 <% end -%>

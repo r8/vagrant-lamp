@@ -10,7 +10,9 @@
     "ubuntu": ">= 0.0.0",
     "centos": ">= 0.0.0",
     "redhat": ">= 0.0.0",
-    "fedora": ">= 0.0.0"
+    "fedora": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "amazon": ">= 0.0.0"
   },
   "dependencies": {
     "build-essential": ">= 0.0.0",
@@ -46,5 +48,5 @@
     "php::module_pgsql": "Install the php5-pgsql packag",
     "php::module_sqlite3": "Install the php5-sqlite3 package"
   },
-  "version": "1.0.2"
+  "version": "1.1.8"
 }
