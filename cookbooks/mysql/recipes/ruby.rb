@@ -1,10 +1,11 @@
 #
-# Author::  Joshua Timberman (<joshua@opscode.com>)
-# Author::  Seth Chisamore (<schisamo@opscode.com>)
-# Cookbook Name:: php
-# Recipe:: module_pgsql
+# Cookbook Name:: mysql
+# Recipe:: ruby
 #
-# Copyright 2009-2011, Opscode, Inc.
+# Author:: Jesse Howarth (<him@jessehowarth.com>)
+# Author:: Jamie Winsor (<jamie@vialstudios.com>)
+#
+# Copyright 2008-2012, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,14 +20,17 @@
 # limitations under the License.
 #
 
-pkg = value_for_platform(
-  %w(centos redhat scientific fedora amazon) => {
-    %w(5.0 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8) => "php53-pgsql",
-    "default" => "php-pgsql"
-  },
-  "default" => "php5-pgsql"
-)
+execute "apt-get update" do
+  ignore_failure true
+  action :nothing
+end.run_action(:run) if node['platform_family'] == "debian"
 
-package pkg do
-  action :install
+node.set['build_essential']['compiletime'] = true
+include_recipe "build-essential"
+include_recipe "mysql::client"
+
+node['mysql']['client']['packages'].each do |mysql_pack|
+  resources("package[#{mysql_pack}]").run_action(:install)
 end
+
+chef_gem "mysql"

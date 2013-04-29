@@ -1,3 +1,104 @@
+## v3.0.0:
+
+**Note** This is a backwards incompatible version with previous
+  versions of the cookbook. Tickets that introduce incompatibility are
+  COOK-2615 and COOK-2617.
+
+* [COOK-2478] - Duplicate 'read_only' server attribute in base and tunable
+* [COOK-2471] - Add tunable to set slave_compressed_protocol for reduced network traffic
+* [COOK-1059] - Update attributes in mysql cookbook to support missing options for my.cnf usable by Percona
+* [COOK-2590] - Typo in server recipe to do with conf_dir and confd_dir
+* [COOK-2602] - Add `lower_case_table_names` tunable
+* [COOK-2430] - Add a tunable to create a network ACL when allowing `remote_root_access`
+* [COOK-2619] - mysql: isamchk deprecated
+* [COOK-2515] - Better support for SUSE distribution for mysql cookbook
+* [COOK-2557] - mysql::percona_repo attributes missing and key server typo
+* [COOK-2614] - Duplicate `innodb_file_per_table`
+* [COOK-2145] - MySQL cookbook should remove anonymous and password less accounts
+* [COOK-2553] - Enable include directory in my.cnf template for any platform
+* [COOK-2615] - Rename `key_buffer` to `key_buffer_size`
+* [COOK-2626] - Percona repo URL is being constructed incorrectly
+* [COOK-2616] - Unneeded attribute thread_cache
+* [COOK-2618] - myisam-recover not using attribute value
+* [COOK-2617] - open-files is a duplicate of open-files-limit
+
+## v2.1.2:
+
+* [COOK-2172] - Mysql cookbook duplicates `binlog_format`
+  configuration
+
+## v2.1.0:
+
+* [COOK-1669] - Using platform("ubuntu") in default attributes always
+  returns true
+* [COOK-1694] - Added additional my.cnf fields and reorganized
+  cookbook to avoid race conditions with mysql startup and sql script
+  execution
+* [COOK-1851] - Support server-id and binlog_format settings
+* [COOK-1929] - Update msyql server attributes file because setting
+  attributes without specifying a precedence is deprecated
+* [COOK-1999] - Add read_only tunable useful for replication slave
+  servers
+
+## v2.0.2:
+
+* [COOK-1967] - mysql: trailing comma in server.rb platform family
+
+## v2.0.0:
+
+**Important note for this release**
+
+Under Chef Solo, you must set the node attributes for the root, debian
+and repl passwords or the run will completely fail. See COOK-1737 for
+background on this.
+
+* [COOK-1390] - MySQL service cannot start after reboot
+* [COOK-1610] - Set root password outside preseed (blocker for drop-in mysql
+  replacements)
+* [COOK-1624] - Mysql cookbook fails to even compile on windows
+* [COOK-1669] - Using platform("ubuntu") in default attributes always returns true
+* [COOK-1686] - Add mysql service start
+* [COOK-1687] - duplicate `innodb_buffer_pool_size` attribute
+* [COOK-1704] - mysql cookbook fails spec tests when minitest-handler cookbook enabled
+* [COOK-1737] - Fail a chef-solo run when `server_root_password`,
+  `server_debian_password`, and/or `server_repl_password` is not set
+* [COOK-1769] - link to database recipe in mysql README goes to old opscode/cookbooks
+  repo instead of opscode-cookbook organization
+* [COOK-1963] - use `platform_family`
+
+## v1.3.0:
+
+**Important note for this release**
+
+This version no longer installs Ruby bindings in the client recipe by
+default. Use the ruby recipe if you'd like the RubyGem. If you'd like
+packages from your distribution, use them in your application's
+specific cookbook/recipe, or modify the client packages attribute.
+This resolves the following tickets:
+
+* COOK-932
+* COOK-1009
+* COOK-1384
+
+Additionally, this cookbook now has tests (COOK-1439) for use under
+test-kitchen.
+
+The following issues are also addressed in this release.
+
+* [COOK-1443] - MySQL (>= 5.1.24) does not support `innodb_flush_method`
+  = fdatasync
+* [COOK-1175] - Add Mac OS X support
+* [COOK-1289] - handle additional tunable attributes
+* [COOK-1305] - add auto-increment-increment and auto-increment-offset
+  attributes
+* [COOK-1397] - make the port an attribute
+* [COOK-1439] - Add MySQL cookbook tests for test-kitchen support
+* [COOK-1236] - Move package names into attributes to allow percona to
+  free-ride
+* [COOK-934] - remove deprecated mysql/libraries/database.rb, use the
+  database cookbook instead.
+* [COOK-1475] - fix restart on config change
+
 ## v1.2.6:
 
 * [COOK-1113] - Use an attribute to determine if upstart is used

@@ -24,13 +24,16 @@ require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
 include Chef::Mixin::ShellOut
 
+def whyrun_supported?
+  true
+end
+
 action :discover do
   unless exists?
     Chef::Log.info("Discovering pear channel #{@new_resource}")
     execute "pear channel-discover #{@new_resource.channel_name}" do
       action :run
     end
-    new_resource.updated_by_last_action(true)
   end
 end
 
@@ -40,7 +43,6 @@ action :add do
     execute "pear channel-add #{@new_resource.channel_xml}" do
       action :run
     end
-    new_resource.updated_by_last_action(true)
   end
 end
 
@@ -55,9 +57,11 @@ action :update do
       update_needed = true
     end
     if update_needed
-      Chef::Log.info("Updating pear channel #{@new_resource}")
-      shell_out!("pear channel-update #{@new_resource.channel_name}")
-      new_resource.updated_by_last_action(true)
+      description = "update pear channel #{@new_resource}"
+      converge_by(description) do
+         Chef::Log.info("Updating pear channel #{@new_resource}")
+         shell_out!("pear channel-update #{@new_resource.channel_name}")
+      end
     end
   end
 end
@@ -68,7 +72,6 @@ action :remove do
     execute "pear channel-delete #{@new_resource.channel_name}" do
       action :run
     end
-    new_resource.updated_by_last_action(true)
   end
 end
 
@@ -84,6 +87,7 @@ def exists?
     shell_out!("pear channel-info #{@current_resource.channel_name}")
     true
   rescue Chef::Exceptions::ShellCommandFailed
+  rescue Mixlib::ShellOut::ShellCommandFailed
     false
   end
 end
