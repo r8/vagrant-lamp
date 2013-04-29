@@ -32,15 +32,15 @@ action :add do
   preference_dir = directory "/etc/apt/preferences.d" do
     owner "root"
     group "root"
-    mode "0644"
+    mode 00755
     recursive true
     action :nothing
   end
 
-  preference_file = file "/etc/apt/preferences.d/#{new_resource.package_name}" do
+  preference_file = file "/etc/apt/preferences.d/#{new_resource.name}" do
     owner "root"
     group "root"
-    mode 0644
+    mode 00644
     content preference
     action :nothing
   end
@@ -51,9 +51,9 @@ action :add do
 end
 
 action :remove do
-  if ::File.exists?("/etc/apt/preferences.d/#{new_resource.package_name}")
-    Chef::Log.info "Un-pinning #{new_resource.package_name} from /etc/apt/preferences.d/"
-    file "/etc/apt/preferences.d/#{new_resource.package_name}" do
+  if ::File.exists?("/etc/apt/preferences.d/#{new_resource.name}")
+    Chef::Log.info "Un-pinning #{new_resource.name} from /etc/apt/preferences.d/"
+    file "/etc/apt/preferences.d/#{new_resource.name}" do
       action :delete
     end
     new_resource.updated_by_last_action(true)

@@ -19,7 +19,7 @@
 
 #remove Acquire::http::Proxy lines from /etc/apt/apt.conf since we use 01proxy
 #these are leftover from preseed installs
-execute "Remove proxy from /etc/apt/apt.conf" do
+execute 'Remove proxy from /etc/apt/apt.conf' do
   command "sed --in-place '/^Acquire::http::Proxy/d' /etc/apt/apt.conf"
   only_if "grep Acquire::http::Proxy /etc/apt/apt.conf"
 end
@@ -32,23 +32,27 @@ if node['apt'] && node['apt']['cacher_ipaddress']
   servers << cacher
 end
 
-servers += search(:node, 'recipes:apt\:\:cacher-ng') unless Chef::Config[:solo]
+unless Chef::Config[:solo]
+  query = 'recipes:apt\:\:cacher-ng'
+  query += " AND chef_environment:#{node.chef_environment}" if node['apt']['cacher-client']['restrict_environment']
+  Chef::Log.debug("apt::cacher-client searching for '#{query}'")
+  servers += search(:node, query)
+end
 
 if servers.length > 0
   Chef::Log.info("apt-cacher-ng server found on #{servers[0]}.")
-  proxy = "Acquire::http::Proxy \"http://#{servers[0].ipaddress}:3142\";\n"
-  proxy += "Acquire::https::Proxy \"DIRECT\";\n"
-  file "/etc/apt/apt.conf.d/01proxy" do
-    owner "root"
-    group "root"
-    mode "0644"
-    content proxy
-    action :create
-  end
+  template '/etc/apt/apt.conf.d/01proxy' do
+    source '01proxy.erb'
+    owner 'root'
+    group 'root'
+    mode 00644
+    variables(
+      :proxy => servers[0]['ipaddress']
+      )
+  end.run_action(:create)
 else
-  Chef::Log.info("No apt-cacher-ng server found.")
-  file "/etc/apt/apt.conf.d/01proxy" do
+  Chef::Log.info('No apt-cacher-ng server found.')
+  file '/etc/apt/apt.conf.d/01proxy' do
     action :delete
-    only_if {::File.exists?("/etc/apt/apt.conf.d/01proxy")}
   end
 end

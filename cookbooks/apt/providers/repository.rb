@@ -49,14 +49,14 @@ def install_key_from_uri(uri)
   if new_resource.key =~ /http/
     r = remote_file cached_keyfile do
       source new_resource.key
-      mode "0644"
+      mode 00644
       action :nothing
     end
   else
     r = cookbook_file cached_keyfile do
       source new_resource.key
       cookbook new_resource.cookbook
-      mode "0644"
+      mode 00644
       action :nothing
     end
   end
@@ -74,9 +74,10 @@ def install_key_from_uri(uri)
 end
 
 # build repo file contents
-def build_repo(uri, distribution, components, add_deb_src)
+def build_repo(uri, distribution, components, arch, add_deb_src)
   components = components.join(' ') if components.respond_to?(:join)
   repo_info = "#{uri} #{distribution} #{components}\n"
+  repo_info = "arch=#{arch} #{repo_info}" if arch
   repo =  "deb     #{repo_info}"
   repo << "deb-src #{repo_info}" if add_deb_src
   repo
@@ -105,12 +106,13 @@ action :add do
   repository = build_repo(new_resource.uri,
                            new_resource.distribution,
                            new_resource.components,
+                           new_resource.arch,
                            new_resource.deb_src)
 
-  f = file "/etc/apt/sources.list.d/#{new_resource.repo_name}-source.list" do
+  f = file "/etc/apt/sources.list.d/#{new_resource.name}.list" do
     owner "root"
     group "root"
-    mode 0644
+    mode 00644
     content repository
     action :create
     notifies :delete, resources(:file => "/var/lib/apt/periodic/update-success-stamp"), :immediately
@@ -120,9 +122,9 @@ action :add do
 end
 
 action :remove do
-  if ::File.exists?("/etc/apt/sources.list.d/#{new_resource.repo_name}-source.list")
-    Chef::Log.info "Removing #{new_resource.repo_name} repository from /etc/apt/sources.list.d/"
-    file "/etc/apt/sources.list.d/#{new_resource.repo_name}-source.list" do
+  if ::File.exists?("/etc/apt/sources.list.d/#{new_resource.name}.list")
+    Chef::Log.info "Removing #{new_resource.name} repository from /etc/apt/sources.list.d/"
+    file "/etc/apt/sources.list.d/#{new_resource.name}.list" do
       action :delete
     end
   end

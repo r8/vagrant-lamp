@@ -29,6 +29,7 @@ attribute :repo_name, :kind_of => String, :name_attribute => true
 attribute :uri, :kind_of => String
 attribute :distribution, :kind_of => String
 attribute :components, :kind_of => Array, :default => []
+attribute :arch, :kind_of => String, :default => nil
 #whether or not to add the repository as a source repo as well
 attribute :deb_src, :default => false
 attribute :keyserver, :kind_of => String, :default => nil

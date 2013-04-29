@@ -1,3 +1,3 @@
 source :rubygems
 
-gem 'test-kitchen', :git => 'git@github.com:opscode/test-kitchen.git'
+gem 'test-kitchen', '>= 0.7.0'
