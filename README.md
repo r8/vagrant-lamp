@@ -41,6 +41,8 @@ Installed software:
 
 Apache virtual hosts are created in `public` folder or optionally in a per site configurable docroot and configured with data bag `sites`.
 
+MySQL password is configured in Vagrantfile and is currently 'vagrant'.
+
 Webgrind and phpMyAdmin are available on every domain. For example:
 
 * http://local.dev/phpmyadmin
@@ -50,7 +52,4 @@ PHP is configured to send mail via MailCatcher. Web frontend of MailCatcher is r
 
 * http://local.dev:1080 
 
-MySQL password is configured in Vagrantfile and is currently 'vagrant'.
-
 Composer binary is installed globally (to `/usr/local/bin`), so you can simply call `composer` from any directory.
-
