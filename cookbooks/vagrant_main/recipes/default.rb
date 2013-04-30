@@ -6,6 +6,7 @@ include_recipe "apache2::mod_rewrite"
 include_recipe "apache2::mod_ssl"
 include_recipe "mysql::server"
 include_recipe "php"
+include_recipe "php::module_mysql"
 include_recipe "apache2::mod_php5"
 include_recipe "composer"
 
@@ -105,6 +106,7 @@ eth1_ip = node[:network][:interfaces][:eth1][:addresses].select{|key,val| val[:f
 # Setup MailCatcher
 bash "mailcatcher" do
   code "mailcatcher --http-ip #{eth1_ip} --smtp-port 25"
+	not_if "ps ax | grep -v grep | grep mailcatcher";
 end
 template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
   source "mailcatcher.ini.erb"
