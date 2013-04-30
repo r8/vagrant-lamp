@@ -9,6 +9,9 @@ Vagrant::Config.run do |config|
   # Assign this VM to a host-only network IP, allowing you to access it via the IP.
   config.vm.network :hostonly, "33.33.33.10"
 
+  # Setup the shared folder with www-data ownership
+  config.vm.share_folder "vagrant-lamp", "/vagrant", Dir.pwd, :owner => "www-data", :group => "www-data"
+
   # Enable provisioning with chef solo, specifying a cookbooks path (relative
   # to this Vagrantfile), and adding some recipes and/or roles.
   config.vm.provision :chef_solo do |chef|
