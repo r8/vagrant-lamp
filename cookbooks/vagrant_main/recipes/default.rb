@@ -7,6 +7,7 @@ include_recipe "apache2::mod_ssl"
 include_recipe "mysql::server"
 include_recipe "php"
 include_recipe "apache2::mod_php5"
+include_recipe "composer"
 
 # Install packages
 %w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev libxml2-utils lynx links}.each do |a_package|
@@ -136,12 +137,4 @@ bash "apt-get-update" do
 end
 %w{ libmysqlclient16 percona-toolkit }.each do |a_package|
   package a_package
-end
-
-# Install Composer
-bash "composer" do
-  code <<-EOH
-    curl -s https://getcomposer.org/installer | php
-    sudo mv composer.phar /usr/local/bin/composer
-  EOH
 end
