@@ -37,6 +37,7 @@ Installed software:
 * git, subversion
 * mc, vim, screen, tmux, curl
 * [MailCatcher](http://mailcatcher.me/)
+* [Composer](http://getcomposer.org/)
 
 Apache virtual hosts are created in `public` folder or optionally in a per site configurable docroot and configured with data bag `sites`.
 
@@ -50,3 +51,6 @@ PHP is configured to send mail via MailCatcher. Web frontend of MailCatcher is r
 * http://local.dev:1080 
 
 MySQL password is configured in Vagrantfile and is currently 'vagrant'.
+
+Composer binary is installed globally (to `/usr/local/bin`), so you can simply call `composer` from any directory.
+
