@@ -72,18 +72,68 @@ $ vagrant up
 <li>git, subversion</li>
 <li>mc, vim, screen, tmux, curl</li>
 <li><a href="http://mailcatcher.me/">MailCatcher</a></li>
-</ul><p>Apache virtual hosts are created in <code>public</code> folder or optionally in a per site configurable docroot and configured with data bag <code>sites</code>.</p>
+<li><a href="http://getcomposer.org/">Composer</a></li>
+<li><a href="http://drupal.org/project/drush">Drush</a></li>
+</ul><h2>Notes</h2>
 
-<p>Webgrind and phpMyAdmin are available on every domain. For example:</p>
+<h3>Apache virtual hosts</h3>
 
-<ul>
-<li><a href="http://local.dev/phpmyadmin">http://local.dev/phpmyadmin</a></li>
-<li><a href="http://local.dev/webgrind">http://local.dev/webgrind</a></li>
-</ul><p>PHP is configured to send mail via MailCatcher. Web frontend of MailCatcher is running on port 1080 and also available on every domain:</p>
+<p>You can add virtual hosts to apache by adding a file to the <code>data_bags/sites</code>
+directory. A docroot will be created automatically in the <code>public</code> folder, or 
+you may specify a docroot explicitly by adding a docroot key in the json file.  </p>
 
-<ul>
-<li><a href="http://local.dev:1080">http://local.dev:1080</a></li>
-</ul>
+<h3>phpMyAdmin</h3>
+
+<p>phpMyAdmin is available on every domain. For example:</p>
+
+<pre><code>http://local.dev/phpmyadmin
+</code></pre>
+
+<h3>XDebug and webgrind</h3>
+
+<p>XDebug is configured to connect back to your host machine on port 9000 when 
+starting a debug session from a browser running on your host. A debug session is 
+started by appending GET variable XDEBUG_SESSION_START to the URL (if you use an 
+integrated debugger like Eclipse PDT, it will do this for you).</p>
+
+<p>XDebug is also configured to generate cachegrind profile output on demand by 
+adding GET variable XDEBUG_PROFILE to your URL. For example:</p>
+
+<pre><code>http://local.dev/index.php?XDEBUG_PROFILE
+</code></pre>
+
+<p>Webgrind is available on each domain. For example:</p>
+
+<pre><code>http://local.dev/webgrind
+</code></pre>
+
+<p>It looks for cachegrind files in the <code>/tmp</code> directory, where xdebug leaves them.</p>
+
+<p><strong>Note:</strong> xdebug uses the default value for xdebug.profiler_output_name, which 
+means the output filename only includes the process ID as a unique part. This 
+was done to prevent a real need to clean out cachgrind files. If you wish to 
+configure xdebug to always generate profiler output 
+(<code>xdebug.profiler_enable = 1</code>), you <em>will</em> need to change this setting to 
+something like</p>
+
+<pre><code>xdebug.profiler_output_name = cachegrind.out.%t.%p
+</code></pre>
+
+<p>so your call to webgrind will not overwrite the file for the process that 
+happens to serve webgrind. </p>
+
+<h3>Mailcatcher</h3>
+
+<p>PHP is configured to send mail via MailCatcher, so you can see the emails that 
+the vagrant box generates. The Web frontend for MailCatcher is running on port 
+1080 and also available on every domain:</p>
+
+<pre><code>http://local.dev:1080
+</code></pre>
+
+<h3>Composer</h3>
+
+<p>Composer binary is installed globally (to <code>/usr/local/bin</code>), so you can simply call <code>composer</code> from any directory.</p>
         </section>
 
         <footer>
