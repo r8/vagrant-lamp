@@ -1,8 +1,8 @@
 # 
 # Author:: Mark Sonnabaum <mark.sonnabaum@acquia.com>
-# Author:: Patrick Connolly <patrick@myplanetdigital.com>
+# Contributor:: Patrick Connolly <patrick@myplanetdigital.com>
 # Cookbook Name:: drush
-# Recipe:: default
+# Recipe:: upgrade_pear
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,12 @@
 # limitations under the License.
 #
 
-include_recipe "php"
-# Upgrade PEAR if current version is < 1.9.1
-include_recipe "drush::upgrade_pear" if node['drush']['install_method'] == "pear"
-include_recipe "drush::install_console_table"
-include_recipe "drush::#{node['drush']['install_method']}"
+# Drush PEAR channel requires >= 1.9.1 due to hosting
+# on GitHub, where PEAR repo uses CNAME record.
+
+# Chef resources need unique names in case in run_list twice.
+php_pear "PEAR-drush" do
+  package_name "PEAR"
+  version "1.9.1"
+  action :upgrade
+end

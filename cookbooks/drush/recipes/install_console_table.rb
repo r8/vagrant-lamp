@@ -1,8 +1,8 @@
 # 
 # Author:: Mark Sonnabaum <mark.sonnabaum@acquia.com>
-# Author:: Patrick Connolly <patrick@myplanetdigital.com>
+# Contributor:: Patrick Connolly <patrick@myplanetdigital.com>
 # Cookbook Name:: drush
-# Recipe:: default
+# Recipe:: install_console_table
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 # limitations under the License.
 #
 
-include_recipe "php"
-# Upgrade PEAR if current version is < 1.9.1
-include_recipe "drush::upgrade_pear" if node['drush']['install_method'] == "pear"
-include_recipe "drush::install_console_table"
-include_recipe "drush::#{node['drush']['install_method']}"
+php_pear "Console_Table" do
+  action :install
+end
