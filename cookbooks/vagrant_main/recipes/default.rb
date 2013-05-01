@@ -106,7 +106,7 @@ eth1_ip = node[:network][:interfaces][:eth1][:addresses].select{|key,val| val[:f
 # Setup MailCatcher
 bash "mailcatcher" do
   code "mailcatcher --http-ip #{eth1_ip} --smtp-port 25"
-	not_if "ps ax | grep -v grep | grep mailcatcher";
+  not_if "ps ax | grep -v grep | grep mailcatcher";
 end
 template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
   source "mailcatcher.ini.erb"
