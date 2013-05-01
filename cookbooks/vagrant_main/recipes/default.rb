@@ -9,9 +9,10 @@ include_recipe "php"
 include_recipe "php::module_mysql"
 include_recipe "apache2::mod_php5"
 include_recipe "composer"
+include_recipe "drush"
 
 # Install packages
-%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev libxml2-utils lynx links}.each do |a_package|
+%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links}.each do |a_package|
   package a_package
 end
 
@@ -93,6 +94,13 @@ template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
   mode 0644
   action :create
   notifies :restart, resources("service[apache2]"), :delayed
+end
+template "/var/www/webgrind/config.php" do
+  source "webgrind.config.php.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  action :create
 end
 
 # Install php-curl

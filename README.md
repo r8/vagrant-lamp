@@ -1,5 +1,5 @@
 Vagrant LAMP
-============
+==============================
 
 My default LAMP development stack configuration for Vagrant.
 
@@ -38,6 +38,7 @@ Installed software:
 * mc, vim, screen, tmux, curl
 * [MailCatcher](http://mailcatcher.me/)
 * [Composer](http://getcomposer.org/)
+* [Drush](http://drupal.org/project/drush)
 
 Apache virtual hosts are created in `public` folder or optionally in a per site configurable docroot and configured with data bag `sites`.
 
