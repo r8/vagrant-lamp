@@ -3,8 +3,8 @@
 
 Vagrant::Config.run do |config|
   # Set box configuration
-  config.vm.box = "lucid32"
-  config.vm.box_url = "http://files.vagrantup.com/lucid32.box"
+  config.vm.box = "precise32"
+  config.vm.box_url = "http://files.vagrantup.com/precise32.box"
 
   # Uncomment these lines to give the virtual machine more memory and "dual core cpu"
   #config.vm.customize ["modifyvm", :id, "--memory", 1024]
