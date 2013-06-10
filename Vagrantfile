@@ -1,31 +1,46 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Vagrant::Config.run do |config|
-  # Set box configuration
+Vagrant.configure("2") do |config|
+  # All Vagrant configuration is done here. The most common configuration
+  # options are documented and commented below. For a complete reference,
+  # please see the online documentation at vagrantup.com.
+
+  # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "precise32"
+
+  # The url from where the 'config.vm.box' box will be fetched if it
+  # doesn't already exist on the user's system.
   config.vm.box_url = "http://files.vagrantup.com/precise32.box"
 
-  # Uncomment these lines to give the virtual machine more memory and "dual core cpu"
-  #config.vm.customize ["modifyvm", :id, "--memory", 1024]
-  #config.vm.customize ["modifyvm", :id, "--cpus", 2]
+  # Create a forwarded port mapping which allows access to a specific port
+  # within the machine from a port on the host machine.
+  # Forward MySql port on 33066, used for connecting admin-clients 
+  # to localhost:33066
+  config.vm.network :forwarded_port, guest: 3306, host: 33066
 
-  # Forward MySql port on 33066, used for connecting admin-clients to localhost:33066
-  config.vm.forward_port 3306, 33066
+  # Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  config.vm.network :private_network, ip: "192.168.33.10"
 
   # Set share folder permissions to 777 so that apache can write files
-  config.vm.share_folder("v-root", "/vagrant", ".", :extra => 'dmode=777,fmode=666')
+  config.vm.synced_folder ".", "/vagrant", :extra => 'dmode=777,fmode=666'
 
-  # Assign this VM to a host-only network IP, allowing you to access it via the IP.
-  config.vm.network :hostonly, "33.33.33.10"
+  # Provider-specific configuration so you can fine-tune VirtualBox for Vagrant.
+  # These expose provider-specific options.
+  config.vm.provider :virtualbox do |vb|
+    # Use VBoxManage to customize the VM. For example to change memory:
+    vb.customize ["modifyvm", :id, "--memory", "512"]
+  end
 
-  # Enable provisioning with chef solo, specifying a cookbooks path (relative
-  # to this Vagrantfile), and adding some recipes and/or roles.
+  # Enable provisioning with chef solo, specifying a cookbooks path, roles
+  # path, and data_bags path (all relative to this Vagrantfile), and adding
+  # some recipes and/or roles.
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = "cookbooks"
     chef.data_bags_path = "data_bags"
     chef.add_recipe "vagrant_main"
-
+  
     chef.json.merge!({
       "mysql" => {
         "server_root_password" => "vagrant",
@@ -44,4 +59,5 @@ Vagrant::Config.run do |config|
       }
     })
   end
+
 end
