@@ -31,11 +31,13 @@
         <hr>
 
         <section id="main_content">
-          <h1>Vagrant LAMP</h1>
+          <h1>
+<a name="vagrant-lamp" class="anchor" href="#vagrant-lamp"><span class="octicon octicon-link"></span></a>Vagrant LAMP</h1>
 
 <p>My default LAMP development stack configuration for Vagrant.</p>
 
-<h2>Installation:</h2>
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation:</h2>
 
 <p>Install <a href="http://vagrantup.com/">vagrant</a></p>
 
@@ -57,7 +59,8 @@
 $ vagrant up
 </code></pre>
 
-<h2>What's inside:</h2>
+<h2>
+<a name="whats-inside" class="anchor" href="#whats-inside"><span class="octicon octicon-link"></span></a>What's inside:</h2>
 
 <p>Installed software:</p>
 
@@ -74,22 +77,26 @@ $ vagrant up
 <li><a href="http://mailcatcher.me/">MailCatcher</a></li>
 <li><a href="http://getcomposer.org/">Composer</a></li>
 <li><a href="http://drupal.org/project/drush">Drush</a></li>
-</ul><h2>Notes</h2>
+</ul><h2>
+<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h2>
 
-<h3>Apache virtual hosts</h3>
+<h3>
+<a name="apache-virtual-hosts" class="anchor" href="#apache-virtual-hosts"><span class="octicon octicon-link"></span></a>Apache virtual hosts</h3>
 
 <p>You can add virtual hosts to apache by adding a file to the <code>data_bags/sites</code>
 directory. A docroot will be created automatically in the <code>public</code> folder, or 
 you may specify a docroot explicitly by adding a docroot key in the json file.  </p>
 
-<h3>phpMyAdmin</h3>
+<h3>
+<a name="phpmyadmin" class="anchor" href="#phpmyadmin"><span class="octicon octicon-link"></span></a>phpMyAdmin</h3>
 
 <p>phpMyAdmin is available on every domain. For example:</p>
 
 <pre><code>http://local.dev/phpmyadmin
 </code></pre>
 
-<h3>XDebug and webgrind</h3>
+<h3>
+<a name="xdebug-and-webgrind" class="anchor" href="#xdebug-and-webgrind"><span class="octicon octicon-link"></span></a>XDebug and webgrind</h3>
 
 <p>XDebug is configured to connect back to your host machine on port 9000 when 
 starting a debug session from a browser running on your host. A debug session is 
@@ -122,7 +129,8 @@ something like</p>
 <p>so your call to webgrind will not overwrite the file for the process that 
 happens to serve webgrind. </p>
 
-<h3>Mailcatcher</h3>
+<h3>
+<a name="mailcatcher" class="anchor" href="#mailcatcher"><span class="octicon octicon-link"></span></a>Mailcatcher</h3>
 
 <p>PHP is configured to send mail via MailCatcher, so you can see the emails that 
 the vagrant box generates. The Web frontend for MailCatcher is running on port 
@@ -131,7 +139,8 @@ the vagrant box generates. The Web frontend for MailCatcher is running on port
 <pre><code>http://local.dev:1080
 </code></pre>
 
-<h3>Composer</h3>
+<h3>
+<a name="composer" class="anchor" href="#composer"><span class="octicon octicon-link"></span></a>Composer</h3>
 
 <p>Composer binary is installed globally (to <code>/usr/local/bin</code>), so you can simply call <code>composer</code> from any directory.</p>
         </section>
