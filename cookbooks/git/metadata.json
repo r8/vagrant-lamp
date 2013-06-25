@@ -73,5 +73,5 @@
     "git::server": "Sets up a runit_service for git daemon",
     "git::source": "Installs git from source"
   },
-  "version": "2.5.0"
+  "version": "2.5.2"
 }
