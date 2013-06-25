@@ -43,6 +43,6 @@ execute "Extracting and Building Git #{node['git']['version']} from Source" do
     (mkdir git-#{node['git']['version']} && tar -zxf git-#{node['git']['version']}.tar.gz -C git-#{node['git']['version']} --strip-components 1)
     (cd git-#{node['git']['version']} && make prefix=#{node['git']['prefix']} install)
   COMMAND
-  creates "node['git']['prefix']}/bin/git"
+  creates "#{node['git']['prefix']}/bin/git"
   not_if "git --version | grep #{node['git']['version']}"
 end

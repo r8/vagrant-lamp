@@ -1,3 +1,9 @@
+## v2.5.2:
+
+### Bug
+
+- [COOK-2813]: Fix bad string interpolation in source recipe
+
 ## v2.5.0:
 
 * Relax runit version constraint (now depend on 1.0+).
