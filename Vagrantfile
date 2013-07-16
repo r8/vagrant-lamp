@@ -18,6 +18,7 @@ Vagrant.configure("2") do |config|
   # Forward MySql port on 33066, used for connecting admin-clients 
   # to localhost:33066
   config.vm.network :forwarded_port, guest: 3306, host: 33066
+  config.vm.network :forwarded_port, guest: 80, host: 8080
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
