@@ -39,6 +39,7 @@ Installed software:
 * [MailCatcher](http://mailcatcher.me/)
 * [Composer](http://getcomposer.org/)
 * [Drush](http://drupal.org/project/drush)
+* [wp2github.py](http://github.com/r8/wp2github.py)
 
 Notes
 -----
