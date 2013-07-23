@@ -8,6 +8,7 @@ include_recipe "mysql::server"
 include_recipe "php"
 include_recipe "php::module_mysql"
 include_recipe "apache2::mod_php5"
+include_recipe "python"
 include_recipe "composer"
 include_recipe "drush"
 
@@ -153,3 +154,6 @@ end
 %w{ libmysqlclient16 percona-toolkit }.each do |a_package|
   package a_package
 end
+
+# Install wp2github
+python_pip "wp2github"
