@@ -145,6 +145,16 @@ bash "deploy" do
   notifies :restart, resources("service[apache2]"), :delayed
 end
 
+# Install Phing
+channel = php_pear_channel "pear.phing.info" do
+  action :discover
+end
+php_pear "phing" do
+  version "stable"
+  channel channel.channel_name
+  action :install
+end
+
 # Install Percona Toolkit
 bash "percona-key" do
   # Install percona repo key. 

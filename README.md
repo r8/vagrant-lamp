@@ -36,6 +36,7 @@ Installed software:
 * mc, vim, screen, tmux, curl
 * [MailCatcher](http://mailcatcher.me/)
 * [Composer](http://getcomposer.org/)
+* Phing
 * [Drush](http://drupal.org/project/drush)
 * [wp2github.py](http://github.com/r8/wp2github.py)
 * Node.js with following packages:
