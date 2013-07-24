@@ -41,34 +41,5 @@ Vagrant.configure("2") do |config|
     chef.cookbooks_path = "cookbooks"
     chef.data_bags_path = "data_bags"
     chef.add_recipe "vagrant_main"
-  
-    chef.json.merge!({
-      "mysql" => {
-        "server_root_password" => "vagrant",
-        "server_repl_password" => "vagrant",
-        "server_debian_password" => "vagrant",
-        "bind_address" => "0.0.0.0"
-      },
-      "oh_my_zsh" => {
-        :users => [
-          {
-            :login => 'vagrant',
-            :theme => 'blinks',
-            :plugins => ['git', 'gem']
-          }
-        ]
-      },
-      'nodejs' => {
-        'install_method' => 'binary',
-        'version' => '0.10.13',
-        'checksum' => 'a102fad260d216b95611ddd57aeb6531c92ad1038508390654423feb1b51c059',
-        'checksum_linux_x86' => 'ea7332fcbbee8e33c2f7d9b0e75c9bb299f276b334b26752725aa8b9b0ee3c99',
-        'checksum_linux_x64' => 'dcbad86b863faf4a1e10fec9ecd7864cebbbb6783805f1808f563797ce5db2b8',
-      },
-      'npm' => {
-        'version' => '1.3.4',
-      },
-    })
   end
-
 end
