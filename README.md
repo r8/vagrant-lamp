@@ -6,15 +6,13 @@ My default LAMP development stack configuration for Vagrant.
 Installation:
 -------------
 
-Install [vagrant](http://vagrantup.com/)
+Download and install [VirtualBox](http://www.virtualbox.org/)
 
-    $ gem install vagrant
+Download and install [vagrant](http://vagrantup.com/)
 
-Download and Install [VirtualBox](http://www.virtualbox.org/)
+Download a vagrant box (name of the box is supposed to be precise32)
 
-Download a vagrant box (name of the box is supposed to be lucid32)
-
-    $ vagrant box add lucid32 http://files.vagrantup.com/lucid32.box
+    $ vagrant box add lucid32 http://files.vagrantup.com/precise32.box
 
 Clone this repository
 
@@ -40,6 +38,13 @@ Installed software:
 * [Composer](http://getcomposer.org/)
 * [Drush](http://drupal.org/project/drush)
 * [wp2github.py](http://github.com/r8/wp2github.py)
+* Node.js with following packages:
+    * [CoffeeScript](http://coffeescript.org)
+    * [Grunt](http://gruntjs.com/)
+    * [Bower](http://bower.io)
+    * [Yeoman](http://yeoman.io)
+    * [LESS](http://lesscss.org)
+    * [CSS Lint](http://csslint.net)
 
 Notes
 -----
