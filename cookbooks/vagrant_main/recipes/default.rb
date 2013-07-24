@@ -9,6 +9,8 @@ include_recipe "php"
 include_recipe "php::module_mysql"
 include_recipe "apache2::mod_php5"
 include_recipe "python"
+include_recipe "nodejs::install_from_binary"
+include_recipe "npm"
 include_recipe "composer"
 include_recipe "drush"
 
