@@ -38,6 +38,13 @@ Installed software:
 * [Composer](http://getcomposer.org/)
 * [Drush](http://drupal.org/project/drush)
 * [wp2github.py](http://github.com/r8/wp2github.py)
+* Node.js with following packages:
+    * [CoffeeScript](http://coffeescript.org)
+    * [Grunt](http://gruntjs.com/)
+    * [Bower](http://bower.io)
+    * [Yeoman](http://yeoman.io)
+    * [LESS](http://lesscss.org)
+    * [CSS Lint](http://csslint.net)
 
 Notes
 -----

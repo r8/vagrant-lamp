@@ -25,6 +25,11 @@ end
   gem_package a_gem
 end
 
+# Install npm modules
+%w{ coffee-script grunt-cli bower yo less csslint }.each do |a_package|
+  npm_package a_package
+end
+
 # Generate selfsigned ssl
 execute "make-ssl-cert" do
   command "make-ssl-cert generate-default-snakeoil --force-overwrite"
