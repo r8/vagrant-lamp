@@ -14,6 +14,7 @@ include_recipe "nodejs"
 include_recipe "npm"
 include_recipe "composer"
 include_recipe "drush"
+include_recipe "phing"
 
 # Install packages
 %w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links}.each do |a_package|
@@ -143,16 +144,6 @@ end
 bash "deploy" do
   code "sudo perl -pi -e 's/(\s*)#/$1;/' /etc/php5/cli/conf.d/*ini"
   notifies :restart, resources("service[apache2]"), :delayed
-end
-
-# Install Phing
-channel = php_pear_channel "pear.phing.info" do
-  action :discover
-end
-php_pear "phing" do
-  version "stable"
-  channel channel.channel_name
-  action :install
 end
 
 # Install Percona Toolkit
