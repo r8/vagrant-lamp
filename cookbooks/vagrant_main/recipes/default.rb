@@ -12,7 +12,6 @@ include_recipe "apache2::mod_php5"
 include_recipe "nodejs"
 include_recipe "npm"
 include_recipe "composer"
-include_recipe "drush"
 include_recipe "phing"
 
 # Install packages
