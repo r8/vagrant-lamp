@@ -9,8 +9,6 @@ include_recipe "mysql::server"
 include_recipe "php"
 include_recipe "php::module_mysql"
 include_recipe "apache2::mod_php5"
-include_recipe "nodejs"
-include_recipe "npm"
 include_recipe "composer"
 include_recipe "phing"
 
@@ -22,11 +20,6 @@ end
 # Install ruby gems
 %w{ rake mailcatcher }.each do |a_gem|
   gem_package a_gem
-end
-
-# Install npm modules
-%w{ coffee-script grunt-cli bower yo less csslint }.each do |a_package|
-  npm_package a_package
 end
 
 # Generate selfsigned ssl
