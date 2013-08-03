@@ -41,5 +41,6 @@ Vagrant.configure("2") do |config|
     chef.cookbooks_path = "cookbooks"
     chef.data_bags_path = "data_bags"
     chef.add_recipe "vagrant_main"
+    chef.add_recipe "vagrant_wordpress"
   end
 end
