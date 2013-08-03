@@ -1,3 +1,13 @@
+## v1.3.6
+
+### Bug
+
+- [COOK-3305]: distribute merged back into setuptools
+
+### New Feature
+
+- [COOK-3248]: Improve testing suite in the python cookbook
+
 ## v1.3.4:
 
 ### Bug

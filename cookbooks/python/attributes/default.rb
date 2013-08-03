@@ -38,5 +38,5 @@ default['python']['version'] = '2.7.5'
 default['python']['checksum'] = '3b477554864e616a041ee4d7cef9849751770bc7c39adaf78a94ea145c488059'
 default['python']['configure_options'] = %W{--prefix=#{python['prefix_dir']}}
 
-default['python']['distribute_script_url'] = 'http://python-distribute.org/distribute_setup.py'
-default['python']['distribute_option']['download_base'] = 'https://pypi.python.org/packages/source/d/distribute/'
+default['python']['setuptools_script_url'] = 'https://bitbucket.org/pypa/setuptools/raw/0.8/ez_setup.py'
+default['python']['pip_script_url'] = 'https://raw.github.com/pypa/pip/master/contrib/get-pip.py'
