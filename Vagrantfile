@@ -40,6 +40,11 @@ Vagrant.configure("2") do |config|
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = "cookbooks"
     chef.data_bags_path = "data_bags"
+
+    # List of recipes to run
     chef.add_recipe "vagrant_main"
+    chef.add_recipe "vagrant_main::wordpress"
+    chef.add_recipe "vagrant_main::drupal"
+    chef.add_recipe "vagrant_main::nodejs"
   end
 end
