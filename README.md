@@ -12,7 +12,7 @@ Download and install [vagrant](http://vagrantup.com/)
 
 Download a vagrant box (name of the box is supposed to be precise32)
 
-    $ vagrant box add lucid32 http://files.vagrantup.com/precise32.box
+    $ vagrant box add precise32 http://files.vagrantup.com/precise32.box
 
 Clone this repository
 
