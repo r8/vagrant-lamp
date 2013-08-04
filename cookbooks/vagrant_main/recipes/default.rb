@@ -8,9 +8,12 @@ include_recipe "apache2::mod_ssl"
 include_recipe "mysql::server"
 include_recipe "php"
 include_recipe "php::module_mysql"
+include_recipe "php::module_apc"
+include_recipe "php::module_curl"
 include_recipe "apache2::mod_php5"
 include_recipe "composer"
 include_recipe "phing"
+include_recipe "php-box"
 
 # Install packages
 %w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links}.each do |a_package|
@@ -102,11 +105,6 @@ template "/var/www/webgrind/config.php" do
   group "root"
   mode 0644
   action :create
-end
-
-# Install php-curl
-package "php5-curl" do
-  action :install
 end
 
 # Install php-xsl
