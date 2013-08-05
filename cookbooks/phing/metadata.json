@@ -1,0 +1,38 @@
+{
+  "name": "phing",
+  "description": "Installs/Configures Phing",
+  "long_description": "chef-phing\n============\n\nThis cookbook installs Phing via PEAR.\n\nRequirements\n------------\n\n### Cookbooks:\n\n* php\n\n### Platforms:\n\n* Ubuntu\n* Debian\n* RHEL\n* CentOS\n* Fedora\n\nAttributes\n----------\n\n* `default[\"phing\"][\"install_method\"]` тАФ Phing installation method (only \"pear\" is currently supported)\n* `default[\"phing\"][\"version\"]` тАФ When installing via PEAR, this is the preferred state (stable, beta, devel) or a specific x.y.z PEAR version (eg. 4.5.0) (default: \"stable\")\n* `default[\"phing\"][\"allreleases\"]` тАФ URL of allreleases.xml for PEAR to install from preferred states (default: \"http://pear.phing.info/rest/r/phing/allreleases.xml\")\n\nLicense\n-------\n\nCopyright (c) 2013 Sergey Storchay, http://r8.com.ua\n\nLicensed under MIT:\nhttp://raw.github.com/r8/chef-phing/master/LICENSE.txt\n",
+  "maintainer": "Sergey Storchay",
+  "maintainer_email": "r8@r8.com.ua",
+  "license": "MIT",
+  "platforms": {
+    "debian": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "amazon": ">= 0.0.0"
+  },
+  "dependencies": {
+    "php": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+    "phing": "Installs Phing"
+  },
+  "version": "0.0.1"
+}
