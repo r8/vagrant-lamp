@@ -34,6 +34,7 @@ Installed software:
 * zsh with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 * git, subversion
 * mc, vim, screen, tmux, curl
+* [WP-Cli](http://wp-cli.org/)
 * [MailCatcher](http://mailcatcher.me/)
 * [Composer](http://getcomposer.org/)
 * Phing
