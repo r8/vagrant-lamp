@@ -34,13 +34,13 @@ Installed software:
 * zsh with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 * git, subversion
 * mc, vim, screen, tmux, curl
-* [WP-Cli](http://wp-cli.org/)
 * [MailCatcher](http://mailcatcher.me/)
 * [Composer](http://getcomposer.org/)
 * Phing
 * Drupal utils:
     * [Drush](http://drupal.org/project/drush)
 * Wordpress utils:
+    * [WP-Cli](http://wp-cli.org/)
     * [wp2github.py](http://github.com/r8/wp2github.py)
 * Magento utils:
     * [n98-magerun](https://github.com/netz98/n98-magerun)
