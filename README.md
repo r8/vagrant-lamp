@@ -34,6 +34,7 @@ Installed software:
 * zsh with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 * git, subversion
 * mc, vim, screen, tmux, curl
+* [WP-Cli](http://wp-cli.org/)
 * [MailCatcher](http://mailcatcher.me/)
 * [Composer](http://getcomposer.org/)
 * Phing
@@ -102,7 +103,7 @@ happens to serve webgrind.
 
 PHP is configured to send mail via MailCatcher, so you can see the emails that 
 the vagrant box generates. The Web frontend for MailCatcher is running on port 
-1080 and also available on every domain:
+8025 and also available on every domain:
 
     http://local.dev:1080
 
