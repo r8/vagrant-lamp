@@ -63,6 +63,10 @@ You can add virtual hosts to apache by adding a file to the `data_bags/sites`
 directory. A docroot will be created automatically in the `public` folder, or 
 you may specify a docroot explicitly by adding a docroot key in the json file.  
 
+### MySQL
+
+The guests local 3306 port is available on the host at port 33066. It is also available on every domain. Logging in can be done with username=root, password=vagrant.
+
 ### phpMyAdmin
 
 phpMyAdmin is available on every domain. For example:
