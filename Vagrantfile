@@ -19,8 +19,6 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 3306, host: 33066
   # Forward http port on 8080, used for connecting web browsers to localhost:8080
   config.vm.network :forwarded_port, guest: 80, host: 8080
-  # Forward mailcatcher port on 8025, used for connecting to mailcatcher
-  config.vm.network :forwarded_port, guest: 1080, host: 8025
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.

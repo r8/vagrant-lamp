@@ -107,9 +107,9 @@ happens to serve webgrind.
 
 PHP is configured to send mail via MailCatcher, so you can see the emails that 
 the vagrant box generates. The Web frontend for MailCatcher is running on port 
-8025 and also available on every domain:
+1080 and also available on every domain:
 
-    http://local.dev:8025
+    http://local.dev:1080
 
 ### Composer
 
