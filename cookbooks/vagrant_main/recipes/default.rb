@@ -112,12 +112,9 @@ package "php5-xsl" do
   action :install
 end
 
-# Get eth1 ip
-eth1_ip = node[:network][:interfaces][:eth1][:addresses].select{|key,val| val[:family] == 'inet'}.flatten[0]
-
 # Setup MailCatcher
 bash "mailcatcher" do
-  code "mailcatcher --http-ip #{eth1_ip} --smtp-port 25"
+  code "mailcatcher --http-ip 0.0.0.0 --smtp-port 25"
   not_if "ps ax | grep -v grep | grep mailcatcher";
 end
 template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
