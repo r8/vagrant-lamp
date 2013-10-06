@@ -21,7 +21,7 @@ include_recipe "php-box"
 end
 
 # Install ruby gems
-%w{ rake mailcatcher }.each do |a_gem|
+%w{ rdoc rake mailcatcher }.each do |a_gem|
   gem_package a_gem
 end
 
@@ -125,8 +125,15 @@ template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
   action :create
   notifies :restart, resources("service[apache2]"), :delayed
 end
+cookbook_file "/etc/rc.local" do
+  source "rc.local"
+  owner "root"
+  group "root"
+  mode "0755"
+  action :create
+end
 
-# Fix deprecated php comments style in ini files
+# Fixing deprecated php comments style in ini files
 bash "deploy" do
   code "sudo perl -pi -e 's/(\s*)#/$1;/' /etc/php5/cli/conf.d/*ini"
   notifies :restart, resources("service[apache2]"), :delayed
