@@ -60,8 +60,9 @@ Notes
 ### Apache virtual hosts
 
 You can add virtual hosts to apache by adding a file to the `data_bags/sites`
-directory. A docroot will be created automatically in the `public` folder, or 
-you may specify a docroot explicitly by adding a docroot key in the json file.  
+directory. The docroot of the new virtual host will be a directory within the
+`public/` folder matching the `host` you specified. Alternately you may specify
+a docroot explicitly by adding a `docroot` key in the json file.
 
 ### MySQL
 
