@@ -1,0 +1,38 @@
+{
+  "name": "php-box",
+  "description": "Installs/Configures box.phar",
+  "long_description": "chef-php-box\n============\n\nThis cookbook provides an easy way to install Box CLI — tool that simplifies the Phar building process.\n\nMore info about Box itself can be found at [Box homepage](http://box-project.org).\n\nRequirements\n------------\n\n### Cookbooks:\n\n* php\n\n### Platforms:\n\n* Ubuntu\n* Debian\n* RHEL\n* CentOS\n* Fedora\n\nAttributes\n----------\n\n* `default[\"php-box\"][\"install_globally\"]` — Should we intall executable globally (default: \"true\")\n* `default[\"php-box\"][\"prefix\"]` — Location prefix of where the installation files will go if installing globally (default: \"/usr/local\")\n\nLicense\n-------\n\nCopyright (c) 2013 Sergey Storchay, http://r8.com.ua\n\nLicensed under MIT:\nhttp://raw.github.com/r8/chef-php-box/master/LICENSE.txt\n",
+  "maintainer": "Sergey Storchay",
+  "maintainer_email": "r8@r8.com.ua",
+  "license": "MIT",
+  "platforms": {
+    "debian": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "amazon": ">= 0.0.0"
+  },
+  "dependencies": {
+    "php": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+    "php-box": "Installs box.phar"
+  },
+  "version": "0.0.2"
+}
