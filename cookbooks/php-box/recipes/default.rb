@@ -21,7 +21,7 @@ package "curl" do
   action :upgrade
 end
 
-command = "curl -s http://box-project.org/installer.php | php"
+command = "curl -Ls http://box-project.org/installer.php | php"
 
 bash "download_box" do
   cwd "#{Chef::Config[:file_cache_path]}"
