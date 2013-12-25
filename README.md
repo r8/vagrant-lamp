@@ -106,9 +106,7 @@ happens to serve webgrind.
 
 ### Mailcatcher
 
-PHP is configured to send mail via MailCatcher, so you can see the emails that 
-the vagrant box generates. The Web frontend for MailCatcher is running on port 
-1080 and also available on every domain:
+All emails sent by PHP are intercepted by MailCatcher. So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailCatcher, which is running on port 1080 and also available on every domain:
 
     http://local.dev:1080
 
