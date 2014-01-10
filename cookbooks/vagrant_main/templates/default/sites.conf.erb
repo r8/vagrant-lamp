@@ -3,8 +3,8 @@
   ServerAlias <% @params[:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
   DocumentRoot <%= @params[:docroot] %>
   <% if @params[:server_include] %>
-  <% @params[:server_include].each do |b| %>Include <%= "#{b}" %>
-  <% end %>
+    <% @params[:server_include].each do |b| %>Include <%= "#{b}" %>
+    <% end %>
   <% end %>
   RewriteEngine On
 
