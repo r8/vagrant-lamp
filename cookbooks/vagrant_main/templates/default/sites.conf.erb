@@ -2,15 +2,19 @@
   ServerName <%= @params[:server_name] %>
   ServerAlias <% @params[:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
   DocumentRoot <%= @params[:docroot] %>
+  <% if @params[:server_include] %>
+  <% @params[:server_include].each do |b| %>Include <%= "#{b}" %>
+  <% end %>
+  <% end %>
   RewriteEngine On
-  
+
   <Directory <%= @params[:docroot] %>>
     Options FollowSymLinks
     AllowOverride All
     Order allow,deny
     Allow from all
   </Directory>
-  
+
   <Directory />
     Options FollowSymLinks
     AllowOverride None
@@ -37,15 +41,19 @@
   ServerName <%= @params[:server_name] %>
   ServerAlias <% @params[:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
   DocumentRoot <%= @params[:docroot] %>
+  <% if @params[:server_include] %>
+  <% @params[:server_include].each do |b| %>Include <%= "#{b}" %>
+  <% end %>
+  <% end %>
   RewriteEngine On
-  
+
   <Directory <%= @params[:docroot] %>>
     Options FollowSymLinks
     AllowOverride All
     Order allow,deny
     Allow from all
   </Directory>
-  
+
   <Directory />
     Options FollowSymLinks
     AllowOverride None
