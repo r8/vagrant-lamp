@@ -49,8 +49,9 @@ sites.each do |name|
     template "sites.conf.erb"
     server_name site["host"]
     server_aliases site["aliases"]
+    server_include site["include"]
     docroot site["docroot"]?site["docroot"]:"/vagrant/public/#{site["host"]}"
-  end  
+  end
 
    # Add site info in /etc/hosts
    bash "hosts" do
@@ -60,7 +61,7 @@ end
 
 # Disable default site
 apache_site "default" do
-  enable false  
+  enable false
 end
 
 # Install phpmyadmin
@@ -141,7 +142,7 @@ end
 
 # Install Percona Toolkit
 bash "percona-key" do
-  # Install percona repo key. 
+  # Install percona repo key.
   # We can't use 'apt' recipe, because this command should be run with sudo
   code "sudo apt-key adv --keyserver keys.gnupg.net --recv 1C4CBDCDCD2EFD2A"
 end
