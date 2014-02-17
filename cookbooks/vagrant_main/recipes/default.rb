@@ -37,7 +37,7 @@ sites = []
 begin
   sites = data_bag("sites")
 rescue
-  puts "Sites data bag is empty"
+  puts "Unable to load sites data bag."
 end
 
 # Configure sites
