@@ -16,3 +16,6 @@ override['nodejs']['checksum_linux_x86'] = 'ea7332fcbbee8e33c2f7d9b0e75c9bb299f2
 override['nodejs']['checksum_linux_x64'] = 'dcbad86b863faf4a1e10fec9ecd7864cebbbb6783805f1808f563797ce5db2b8'
 
 override['npm']['version'] = '1.3.11'
+
+override['drush']['install_method'] = "git"
+override['drush']['version'] = "8.x-6.x"
