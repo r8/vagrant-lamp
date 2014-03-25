@@ -21,8 +21,12 @@ include_recipe "php-box"
 end
 
 # Install ruby gems
-%w{ rdoc rake mailcatcher }.each do |a_gem|
+%w{ rdoc mailcatcher }.each do |a_gem|
   gem_package a_gem
+end
+
+gem_package "rake" do
+  version "0.8.7"
 end
 
 # Generate selfsigned ssl
