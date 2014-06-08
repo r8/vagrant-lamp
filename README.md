@@ -76,12 +76,12 @@ phpMyAdmin is available on every domain. For example:
 
 ### XDebug and webgrind
 
-XDebug is configured to connect back to your host machine on port 9000 when 
-starting a debug session from a browser running on your host. A debug session is 
-started by appending GET variable XDEBUG_SESSION_START to the URL (if you use an 
+XDebug is configured to connect back to your host machine on port 9000 when
+starting a debug session from a browser running on your host. A debug session is
+started by appending GET variable XDEBUG_SESSION_START to the URL (if you use an
 integrated debugger like Eclipse PDT, it will do this for you).
 
-XDebug is also configured to generate cachegrind profile output on demand by 
+XDebug is also configured to generate cachegrind profile output on demand by
 adding GET variable XDEBUG_PROFILE to your URL. For example:
 
     http://local.dev/index.php?XDEBUG_PROFILE
@@ -92,17 +92,17 @@ Webgrind is available on each domain. For example:
 
 It looks for cachegrind files in the `/tmp` directory, where xdebug leaves them.
 
-**Note:** xdebug uses the default value for xdebug.profiler_output_name, which 
-means the output filename only includes the process ID as a unique part. This 
-was done to prevent a real need to clean out cachgrind files. If you wish to 
-configure xdebug to always generate profiler output 
-(`xdebug.profiler_enable = 1`), you *will* need to change this setting to 
+**Note:** xdebug uses the default value for xdebug.profiler_output_name, which
+means the output filename only includes the process ID as a unique part. This
+was done to prevent a real need to clean out cachgrind files. If you wish to
+configure xdebug to always generate profiler output
+(`xdebug.profiler_enable = 1`), you *will* need to change this setting to
 something like
- 
+
     xdebug.profiler_output_name = cachegrind.out.%t.%p
-    
-so your call to webgrind will not overwrite the file for the process that 
-happens to serve webgrind. 
+
+so your call to webgrind will not overwrite the file for the process that
+happens to serve webgrind.
 
 ### Mailcatcher
 
