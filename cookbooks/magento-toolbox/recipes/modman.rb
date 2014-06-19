@@ -11,7 +11,7 @@ package "curl" do
   action :upgrade
 end
 
-command = "curl -o modman https://raw.github.com/colinmollenhour/modman/master/modman && chmod +x ./modman"
+command = "curl -L -o modman https://raw.github.com/colinmollenhour/modman/master/modman && chmod +x ./modman"
 
 bash "download_modman" do
   cwd "#{Chef::Config[:file_cache_path]}"
