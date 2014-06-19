@@ -11,7 +11,7 @@ package "curl" do
   action :upgrade
 end
 
-command = "curl -o modgit https://raw.github.com/jreinke/modgit/master/modgit && chmod +x ./modgit"
+command = "curl -L -o modgit https://raw.github.com/jreinke/modgit/master/modgit && chmod +x ./modgit"
 
 bash "download_modgit" do
   cwd "#{Chef::Config[:file_cache_path]}"
