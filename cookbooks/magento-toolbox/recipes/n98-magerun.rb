@@ -13,7 +13,7 @@ package "curl" do
   action :upgrade
 end
 
-command = "curl -o n98-magerun.phar https://raw.github.com/netz98/n98-magerun/master/n98-magerun.phar && chmod +x ./n98-magerun.phar"
+command = "curl -L -o n98-magerun.phar https://raw.github.com/netz98/n98-magerun/master/n98-magerun.phar && chmod +x ./n98-magerun.phar"
 
 bash "download_n98-magerun" do
   cwd "#{Chef::Config[:file_cache_path]}"
