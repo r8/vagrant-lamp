@@ -1,5 +1,6 @@
 Vagrant LAMP
 ============
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/r8/vagrant-lamp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 My default LAMP development stack configuration for Vagrant.
 
