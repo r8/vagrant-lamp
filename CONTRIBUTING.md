@@ -5,7 +5,7 @@ I appreciate any kind of contributions. Please feel free to submit issue reports
 ## Got a Question?
 
 Please don't use Github Issues for asking questions. This project uses Github Issues for bug tracking and feature management only, not as some kind of support forum.
-If you have personal support request or any questions about how to use this project, please feel free to send an email to project maintainer. You may find the email address in maintainer's Github profile.
+If you have personal support request or any questions about how to use this project, please feel free to use [Gitter chat room](https://gitter.im/r8/vagrant-lamp?utm_source=contributing&utm_medium=contributing&utm_campaign=pr-contributing&utm_content=contributing) or send email to project maintainer.
 
 ## Reporting bugs
 
