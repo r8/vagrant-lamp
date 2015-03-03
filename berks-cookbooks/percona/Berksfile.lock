@@ -1,0 +1,13 @@
+DEPENDENCIES
+  percona
+    path: .
+    metadata: true
+
+GRAPH
+  apt (2.4.0)
+  openssl (1.1.0)
+  percona (0.15.4)
+    apt (>= 1.9.0)
+    openssl (>= 0.0.0)
+    yum (~> 3.0)
+  yum (3.2.0)

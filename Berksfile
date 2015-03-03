@@ -15,4 +15,4 @@ cookbook 'phing', '~> 0.0.3'
 cookbook 'php', '~> 1.5.0'
 cookbook 'php-box', '~> 0.0.2'
 cookbook 'python', '~> 1.4.6'
-
+cookbook 'percona', '~> 0.15.5'
