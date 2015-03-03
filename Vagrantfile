@@ -38,7 +38,7 @@ Vagrant.configure("2") do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = "cookbooks"
+    chef.cookbooks_path = ["berks-cookbooks", "cookbooks"] 
     chef.data_bags_path = "data_bags"
 
     # List of recipes to run

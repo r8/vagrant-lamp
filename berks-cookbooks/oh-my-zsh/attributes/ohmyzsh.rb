@@ -1,0 +1,1 @@
+default[:ohmyzsh][:theme] = "afowler"

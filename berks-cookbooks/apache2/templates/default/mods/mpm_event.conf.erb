@@ -1,0 +1,32 @@
+# event MPM
+<IfModule mpm_event_module>
+ <% if node['apache']['version'] == '2.4' -%>
+  # StartServers: initial number of server processes to start
+  # MinSpareThreads: minimum number of worker threads which are kept spare
+  # MaxSpareThreads: maximum number of worker threads which are kept spare
+  # ThreadsPerChild: constant number of worker threads in each server process
+  # MaxRequestWorkers: maximum number of worker threads
+  # MaxConnectionsPerChild: maximum number of requests a server process serves
+  StartServers           <%= node['apache']['event']['startservers'] %>
+  MinSpareThreads        <%= node['apache']['event']['minsparethreads'] %>
+  MaxSpareThreads        <%= node['apache']['event']['maxsparethreads'] %>
+  ThreadsPerChild        <%= node['apache']['event']['threadsperchild'] %>
+  MaxRequestWorkers      <%= node['apache']['event']['maxrequestworkers'] %>
+  MaxConnectionsPerChild <%= node['apache']['event']['maxconnectionsperchild'] %>
+  ThreadLimit            <%= node['apache']['event']['threadlimit'] %>
+  ServerLimit            <%= node['apache']['event']['serverlimit'] %>
+ <% else -%>
+  # StartServers: number of server processes to start
+  # MinSpareServers: minimum number of server processes which are kept spare
+  # MaxSpareServers: maximum number of server processes which are kept spare
+  # MaxClients: maximum number of server processes allowed to start
+  # MaxRequestsPerChild: maximum number of requests a server process serves
+  StartServers          <%= node['apache']['event']['startservers'] %>
+  MinSpareThreads       <%= node['apache']['event']['minsparethreads'] %>
+  MaxSpareThreads       <%= node['apache']['event']['maxsparethreads'] %>
+  MaxClients            <%= node['apache']['event']['maxrequestworkers'] %>
+  MaxRequestsPerChild   <%= node['apache']['event']['maxconnectionsperchild'] %>
+  ThreadLimit           <%= node['apache']['event']['threadlimit'] %>
+  ServerLimit           <%= node['apache']['event']['serverlimit'] %>
+ <% end -%>
+</IfModule>

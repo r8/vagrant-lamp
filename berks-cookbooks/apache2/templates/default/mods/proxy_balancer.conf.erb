@@ -1,0 +1,18 @@
+<IfModule mod_proxy_balancer.c>
+  # Balancer manager enables dynamic update of balancer members
+  # (needs mod_status). Uncomment to enable.
+  #
+  #<IfModule mod_status.c>
+  #   <Location /balancer-manager>
+  #     SetHandler balancer-manager
+<% if node['apache']['version'] == '2.4' -%>
+  #     Require local
+<% else -%>
+  #     Order deny,allow
+  #     Deny from all
+  #     Allow from 127.0.0.1 ::1
+  #     Satisfy all
+<% end -%>
+  #   </Location>
+  #</IfModule>
+</IfModule>

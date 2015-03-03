@@ -1,0 +1,27 @@
+# prefork MPM
+<IfModule mpm_prefork_module>
+ <% if node['apache']['version'] == '2.4' -%>
+  # StartServers: number of server processes to start
+  # MinSpareServers: minimum number of server processes which are kept spare
+  # MaxSpareServers: maximum number of server processes which are kept spare
+  # MaxRequestWorkers: maximum number of server processes allowed to start
+  # MaxConnectionsPerChild: maximum number of requests a server process serves
+  StartServers           <%= node['apache']['prefork']['startservers'] %>
+  MinSpareServers        <%= node['apache']['prefork']['minspareservers'] %>
+  MaxSpareServers        <%= node['apache']['prefork']['maxspareservers'] %>
+  MaxRequestWorkers      <%= node['apache']['prefork']['maxrequestworkers'] %>
+  MaxConnectionsPerChild <%= node['apache']['prefork']['maxconnectionsperchild'] %>
+ <% else -%>
+  # StartServers: number of server processes to start
+  # MinSpareServers: minimum number of server processes which are kept spare
+  # MaxSpareServers: maximum number of server processes which are kept spare
+  # MaxClients: maximum number of server processes allowed to start
+  # MaxRequestsPerChild: maximum number of requests a server process serves
+  StartServers          <%= node['apache']['prefork']['startservers'] %>
+  MinSpareServers       <%= node['apache']['prefork']['minspareservers'] %>
+  MaxSpareServers       <%= node['apache']['prefork']['maxspareservers'] %>
+  ServerLimit           <%= node['apache']['prefork']['serverlimit'] %>
+  MaxClients            <%= node['apache']['prefork']['maxrequestworkers'] %>
+  MaxRequestsPerChild   <%= node['apache']['prefork']['maxconnectionsperchild'] %>
+ <% end -%>
+</IfModule>

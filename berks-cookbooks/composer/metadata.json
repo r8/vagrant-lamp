@@ -1,0 +1,49 @@
+{
+  "name": "composer",
+  "description": "Installs/Configures Composer",
+  "long_description": "[![Build Status](https://travis-ci.org/escapestudios-cookbooks/composer.png)](https://travis-ci.org/escapestudios-cookbooks/composer)\n\nDescription\n===========\n\nThis cookbook provides an easy way to install Composer, a dependency manager for PHP.\n\nMore information?\nhttp://getcomposer.org/\n\nRequirements\n============\n\n## Cookbooks:\n\n* php\n\nThis cookbook recommends the following cookbooks:\n\n* windows\n\n### Depending on your environment, these recommended cookbooks are actual dependencies (depends):\n* Using the community PHP cookbook to get PHP installed? You'll need the php cookbook to be available.\n* Running on Windows? You'll need the windows cookbook to be available.\n\n## Platforms:\n\n* Ubuntu\n* Debian\n* RHEL\n* CentOS\n* Fedora\n* Windows\n\nAttributes\n==========\n\n* `node['composer']['url']` - Location of the source\n* `node['composer']['install_dir']` - Installation target directory (absolute or relative path) if installing locally\n* `node['composer']['bin']` - bin directory\n* `node['composer']['install_globally']` - Installation method, ':source' or ':package' - default true\n* `node['composer']['mask']` - Mask for composer.phar - 0755\n* `node['composer']['link_type']` - link type for composer.phar link - default :symbolic\n* `node['composer']['global_configs']` - Hash with global config options for users, eg. { \"userX\" => { \"github-oauth\" => { \"github.com\" => \"userX_oauth_token\" }, \"vendor-dir\" => \"myvendordir\" } } - default {}\n* `node['composer']['home_dir']` - COMPOSER_HOME, defaults to nil (in which case install_dir will be used), please do read the [Composer documentation on COMPOSER_HOME](https://getcomposer.org/doc/03-cli.md#composer-home) when setting a custom home_dir\n* `node['composer']['php_recipe']` - The php recipe to include, defaults to \"php::default\"\n\nResources / Providers\n=====================\n\nThis cookbook includes an LWRP for managing a Composer project\n\n### `composer_project`\n\n#### Actions\n- :install: Reads the composer.json file from the current directory, resolves the dependencies, and installs them into vendor - this is the default action\n- :update: Gets the latest versions of the dependencies and updates the composer.lock file\n- :dump_autoload: Updates the autoloader without having to go through an install or update (eg. because of new classes in a classmap package)\n\n#### Attribute parameters\n- project_dir: The directory where your project's composer.json can be found\n- dev: Install packages listed in require-dev, default false\n- quiet: Do not output any message, default true\n- optimize_autoloader: Optimize PSR0 packages to use classmaps, default false\n\n#### Examples\n```\n#install project vendors\ncomposer_project \"/path/to/project\" do\n    dev false\n    quiet true\n    prefer_dist false\n    action :install\nend\n\n#update project vendors\ncomposer_project \"/path/to/project\" do\n    dev false\n    quiet true\n    action :update\nend\n\n#dump-autoload for project\ncomposer_project \"/path/to/project\" do\n    dev false\n    quiet true\n    action :dump_autoload\nend\n```\n\nUsage\n=====\n\n1) include `recipe[composer]` in a run list\n2) tweak the attributes via attributes/default.rb\n    --- OR ---\n    override the attribute on a higher level (http://wiki.opscode.com/display/chef/Attributes#Attributes-AttributesPrecedence)\n\nReferences\n==========\n\n* [Composer home page] (http://getcomposer.org/)\n\nLicense and Authors\n===================\n\nAuthor: David Joos <david.joos@escapestudios.com>\nAuthor: Escape Studios Development <dev@escapestudios.com>\nCopyright: 2012-2014, Escape Studios\n\nUnless otherwise noted, all files are released under the MIT license,\npossible exceptions will contain licensing information in them.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n",
+  "maintainer": "Escape Studios",
+  "maintainer_email": "dev@escapestudios.com",
+  "license": "MIT",
+  "platforms": {
+    "debian": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "amazon": ">= 0.0.0",
+    "windows": ">= 0.0.0"
+  },
+  "dependencies": {
+    "php": ">= 0.0.0"
+  },
+  "recommendations": {
+    "windows": ">= 0.0.0"
+  },
+  "suggestions": {
+
+  },
+  "conflicting": {
+
+  },
+  "providing": {
+
+  },
+  "replacing": {
+
+  },
+  "attributes": {
+
+  },
+  "groupings": {
+
+  },
+  "recipes": {
+    "composer": "Installs (if applicable) and self-updates composer.",
+    "composer::install": "Installs composer.",
+    "composer::self_update": "Installs (if applicable) and self-updates composer.",
+    "composer::global_configs": "Sets up global config options via `composer config --global`"
+  },
+  "version": "2.0.0"
+}

@@ -1,0 +1,37 @@
+{
+  "name": "oh-my-zsh",
+  "description": "Installs/Configures oh-my-zsh",
+  "long_description": "= DESCRIPTION:\n\nA cookbook that installs and configures oh-my-zsh!\n\nhttps://github.com/robbyrussell/oh-my-zsh\n\n= REQUIREMENTS:\n\n== Platform:\n\nTested on Ubuntu 10.04, but should work on most Debian and Red Hat derivatives.\n\n== Cookbooks:\n\nDepends on users, git and zsh.\n\n= ATTRIBUTES:\n\n* +ohmyzsh[:theme]+ sets the default oh-my-zsh theme.\n\n= USAGE:\n\nAny user data bag item with a shell set to zsh will have this recipe applied.\nPer-user themes are set by including an +oh-my-zsh-theme+ entry in a user data bag item.\n\nThe default recipe clones a copy of the git repository in each home directory once.\nThe \"shared\" recipe clones a single copy, links from each home directory\nand syncs it each time chef runs.\n",
+  "maintainer": "Heavy Water Ops, LLC",
+  "maintainer_email": "support@hw-ops.com",
+  "license": "Apache 2.0",
+  "platforms": {
+    "ubuntu": ">= 0.0.0",
+    "debian": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "fedora": ">= 0.0.0"
+  },
+  "dependencies": {
+    "git": ">= 0.0.0",
+    "zsh": ">= 0.0.0",
+    "users": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+  },
+  "version": "0.4.3"
+}

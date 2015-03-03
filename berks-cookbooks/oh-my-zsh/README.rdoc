@@ -1,0 +1,28 @@
+= DESCRIPTION:
+
+A cookbook that installs and configures oh-my-zsh!
+
+https://github.com/robbyrussell/oh-my-zsh
+
+= REQUIREMENTS:
+
+== Platform:
+
+Tested on Ubuntu 10.04, but should work on most Debian and Red Hat derivatives.
+
+== Cookbooks:
+
+Depends on users, git and zsh.
+
+= ATTRIBUTES:
+
+* +ohmyzsh[:theme]+ sets the default oh-my-zsh theme.
+
+= USAGE:
+
+Any user data bag item with a shell set to zsh will have this recipe applied.
+Per-user themes are set by including an +oh-my-zsh-theme+ entry in a user data bag item.
+
+The default recipe clones a copy of the git repository in each home directory once.
+The "shared" recipe clones a single copy, links from each home directory
+and syncs it each time chef runs.

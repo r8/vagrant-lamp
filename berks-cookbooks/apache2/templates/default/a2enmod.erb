@@ -1,0 +1,532 @@
+#!/usr/bin/perl -w
+#
+# a2enmod by Stefan Fritsch <sf@debian.org>
+# Licensed under Apache License 2.0
+#
+# The coding style is "perltidy -pbp"
+
+use strict;
+use Cwd 'realpath';
+use File::Spec;
+use File::Basename;
+use File::Path;
+use Getopt::Long;
+
+my $quiet;
+my $force;
+my $maintmode;
+my $purge;
+
+Getopt::Long::Configure('bundling');
+GetOptions(
+    'quiet|q'     => \$quiet,
+    'force|f'     => \$force,
+    'maintmode|m' => \$maintmode,
+    'purge|p'     => \$purge
+) or exit 2;
+
+my $basename = basename($0);
+$basename =~ /^a2(en|dis)(mod|site|conf)((?:-.+)?)$/
+    or die "$basename call name unknown\n";
+my $act        = $1;
+my $obj        = $2;
+my $dir_suffix = $3;
+
+my $env_file = $ENV{APACHE_ENVVARS}
+    || (
+    $ENV{APACHE_CONFDIR}
+    ? "$ENV{APACHE_CONFDIR}/envvars"
+    : "<%= node['apache']['dir'] %>$dir_suffix/envvars"
+    );
+$ENV{LANG} = 'C';
+read_env_file($env_file);
+
+$act .= 'able';
+my ( $name, $dir, $sffx, $reload );
+if ( $obj eq 'mod' ) {
+    $obj    = 'module';
+    $dir    = 'mods';
+    $sffx   = '.load';
+    $reload = 'restart';
+}
+elsif ( $obj eq 'conf' ) {
+    $obj    = 'conf';
+    $dir    = 'conf';
+    $sffx   = '.conf';
+    $reload = 'reload';
+}
+else {
+    $dir    = 'sites';
+    $sffx   = '.conf';
+    $reload = 'reload';
+}
+$name = ucfirst($obj);
+
+my $confdir = $ENV{APACHE_CONFDIR} || "<%= node['apache']['dir'] %>$dir_suffix";
+my $availdir = $ENV{ uc("APACHE_${dir}_AVAILABLE") }
+    || "$confdir/$dir-available";
+my $enabldir = $ENV{ uc("APACHE_${dir}_ENABLED") } || "$confdir/$dir-enabled";
+my $statedir = $ENV{ uc("APACHE_STATE_DIRECTORY") } || "<%= node['apache']['lib_dir'] %>";
+
+$statedir .= "/$obj";
+
+my $choicedir = $act eq 'enable' ? $availdir : $enabldir;
+my $linkdir = File::Spec->abs2rel( $availdir, $enabldir );
+
+my $request_reload = 0;
+
+my $rc = 0;
+
+if ( !scalar @ARGV ) {
+    my @choices = myglob('*');
+    print "Your choices are: @choices\n";
+    print "Which ${obj}(s) do you want to $act (wildcards ok)?\n";
+    my $input = <>;
+    @ARGV = split /\s+/, $input;
+
+}
+
+my @objs;
+foreach my $arg (@ARGV) {
+    $arg =~ s/${sffx}$//;
+    my @glob = myglob($arg);
+    if ( !@glob ) {
+        error("No $obj found matching $arg!\n");
+        $rc = 1;
+    }
+    else {
+        push @objs, @glob;
+    }
+}
+
+foreach my $acton (@objs) {
+    doit($acton) or $rc = 1;
+}
+
+info(
+    "To activate the new configuration, you need to run:\n  service apache2 $reload\n"
+) if $request_reload;
+
+exit($rc);
+
+##############################################################################
+
+sub myglob {
+    my $arg = shift;
+
+    my @glob = map {
+        s{^$choicedir/}{};
+        s{$sffx$}{};
+        $_
+    } glob("$choicedir/$arg$sffx");
+
+    return @glob;
+}
+
+sub doit {
+    my $acton = shift;
+
+    my ( $conftgt, $conflink );
+    if ( $obj eq 'module' ) {
+        if ( $acton eq 'cgi' && threaded() ) {
+            print
+                "Your MPM seems to be threaded. Selecting cgid instead of cgi.\n";
+            $acton = 'cgid';
+        }
+
+        $conftgt = "$availdir/$acton.conf";
+        if ( -e $conftgt ) {
+            $conflink = "$enabldir/$acton.conf";
+        }
+    }
+
+    my $tgt  = "$availdir/$acton$sffx";
+    my $link = "$enabldir/$acton$sffx";
+
+    if ( !-e $tgt ) {
+        if ( -l $link && !-e $link ) {
+            if ( $act eq 'disable' ) {
+                info("removing dangling symlink $link\n");
+                unlink($link);
+
+                # force a .conf path. It may exist as dangling link, too
+                $conflink = "$enabldir/$acton.conf";
+
+                if ( -l $conflink && !-e $conflink ) {
+                    info("removing dangling symlink $conflink\n");
+                    unlink($conflink);
+                }
+
+                return 1;
+            }
+            else {
+                error("$link is a dangling symlink!\n");
+            }
+        }
+
+        if ( $purge ) {
+            switch_marker( $obj, $act, $acton );
+            # exit silently, we are purging anyway
+            return 1;
+        }
+
+        error("$name $acton does not exist!\n");
+        return 0;
+    }
+
+    # handle module dependencies
+    if ( $obj eq 'module' ) {
+        if ( $act eq 'enable' ) {
+            if ( $acton eq 'mpm_itk' ) {
+                warning(  "MPM_ITK is a third party module that is not part "
+                        . "of the official Apache HTTPD. It has seen less "
+                        . "testing than the official MPM modules." );
+            }
+            my @depends = get_deps("$availdir/$acton.load");
+            do_deps( $acton, @depends ) or return 0;
+
+            my @conflicts = get_deps( "$availdir/$acton.load", "Conflicts" );
+            check_conflicts( $acton, @conflicts ) or return 0;
+        }
+        else {
+            my @depending;
+            foreach my $d ( glob("$enabldir/*.load") ) {
+                my @deps = get_deps($d);
+                if ( is_in( $acton, @deps ) ) {
+                    $d =~ m,/([^/]+).load$,;
+                    push @depending, $1;
+                }
+            }
+            if ( scalar @depending ) {
+                if ($force) {
+                    do_deps( $acton, @depending ) or return 0;
+                }
+                else {
+                    error(
+                        "The following modules depend on $acton ",
+                        "and need to be disabled first: @depending\n"
+                    );
+                    return 0;
+                }
+            }
+        }
+    }
+    elsif ( $act eq 'enable' ) {
+        my @depends = get_deps("$availdir/$acton$sffx");
+        warn_deps( $acton, @depends ) or return 0;
+    }
+
+    if ( $act eq 'enable' ) {
+        my $check = check_link( $tgt, $link );
+        if ( $check eq 'ok' ) {
+            if ($conflink) {
+
+                # handle .conf file
+                my $confcheck = check_link( $conftgt, $conflink );
+                if ( $confcheck eq 'ok' ) {
+                    info("$name $acton already enabled\n");
+                    return 1;
+                }
+                elsif ( $confcheck eq 'missing' ) {
+                    print "Enabling config file $acton.conf.\n";
+                    add_link( $conftgt, $conflink ) or return 0;
+                }
+                else {
+                    error(
+                        "Config file $acton.conf not properly enabled: $confcheck\n"
+                    );
+                    return 0;
+                }
+            }
+            else {
+                info("$name $acton already enabled\n");
+                return 1;
+            }
+        }
+        elsif ( $check eq 'missing' ) {
+            if ($conflink) {
+
+                # handle .conf file
+                my $confcheck = check_link( $conftgt, $conflink );
+                if ( $confcheck eq 'missing' ) {
+                    add_link( $conftgt, $conflink ) or return 0;
+                }
+                elsif ( $confcheck ne 'ok' ) {
+                    error(
+                        "Config file $acton.conf not properly enabled: $confcheck\n"
+                    );
+                    return 0;
+                }
+            }
+
+            print "Enabling $obj $acton.\n";
+            if ( $acton eq 'ssl' ) {
+                info(     "See /usr/share/doc/apache2/README.Debian.gz on "
+                        . "how to configure SSL and create self-signed certificates.\n"
+                );
+            }
+            return add_link( $tgt, $link )
+                && switch_marker( $obj, $act, $acton );
+        }
+        else {
+            error("$name $acton not properly enabled: $check\n");
+            return 0;
+        }
+    }
+    else {
+        if ( -e $link || -l $link ) {
+            remove_link($link);
+            if ( $conflink && -e $conflink ) {
+                remove_link($conflink);
+            }
+            switch_marker( $obj, $act, $acton );
+            print "$name $acton disabled.\n";
+        }
+        elsif ( $conflink && -e $conflink ) {
+            print "Disabling stale config file $acton.conf.\n";
+            remove_link($conflink);
+        }
+        else {
+            info("$name $acton already disabled\n");
+            if ( $purge ) {
+                switch_marker( $obj, $act, $acton );
+            }
+            return 1;
+        }
+    }
+
+    return 1;
+}
+
+sub get_deps {
+    my $file = shift;
+    my $type = shift || "Depends";
+
+    my $fd;
+    if ( !open( $fd, '<', $file ) ) {
+        error("Can't open $file: $!");
+        return;
+    }
+    my $line;
+    while ( defined( $line = <$fd> ) ) {
+        chomp $line;
+        if ( $line =~ /^# $type:\s+(.*?)\s*$/ ) {
+            my $deps = $1;
+            return split( /[\n\s]+/, $deps );
+        }
+
+        # only check until the first non-empty non-comment line
+        last if ( $line !~ /^\s*(?:#.*)?$/ );
+    }
+    return;
+}
+
+sub do_deps {
+    my $acton = shift;
+    foreach my $d (@_) {
+        info("Considering dependency $d for $acton:\n");
+        if ( !doit($d) ) {
+            error("Could not $act dependency $d for $acton, aborting\n");
+            return 0;
+        }
+    }
+    return 1;
+}
+
+sub warn_deps {
+    my $acton = shift;
+    my $modsenabldir = $ENV{APACHE_MODS_ENABLED} || "$confdir/mods-enabled";
+    foreach my $d (@_) {
+        info("Checking dependency $d for $acton:\n");
+        if ( !-e "$modsenabldir/$d.load" ) {
+            warning(
+                "Module $d is not enabled, but $acton depends on it, aborting\n"
+            );
+            return 0;
+        }
+    }
+    return 1;
+}
+
+sub check_conflicts {
+    my $acton    = shift;
+    my $haderror = 0;
+    foreach my $d (@_) {
+        info("Considering conflict $d for $acton:\n");
+
+        my $tgt  = "$availdir/$d$sffx";
+        my $link = "$enabldir/$d$sffx";
+
+        my $confcheck = check_link( $tgt, $link );
+        if ( $confcheck eq 'ok' ) {
+            error(
+                "Module $d is enabled - cannot proceed due to conflicts. It needs to be disabled first!\n"
+            );
+
+            # Don't return immediately, there could be several conflicts
+            $haderror++;
+        }
+    }
+
+    if ($haderror) {
+        return 0;
+    }
+
+    return 1;
+}
+
+sub add_link {
+    my ( $tgt, $link ) = @_;
+
+    # create relative link
+    if ( !symlink( File::Spec->abs2rel( $tgt, dirname($link) ), $link ) ) {
+        die("Could not create $link: $!\n");
+    }
+    $request_reload = 1;
+    return 1;
+}
+
+sub check_link {
+    my ( $tgt, $link ) = @_;
+
+    if ( !-e $link ) {
+        if ( -l $link ) {
+
+            # points to nowhere
+            info("Removing dangling link $link");
+            unlink($link) or die "Could not remove $link\n";
+        }
+        return 'missing';
+    }
+
+    if ( -e $link && !-l $link ) {
+        return "$link is a real file, not touching it";
+    }
+    if ( realpath($link) ne realpath($tgt) ) {
+        return "$link exists but does not point to $tgt, not touching it";
+    }
+    return 'ok';
+}
+
+sub remove_link {
+    my ($link) = @_;
+
+    if ( -l $link ) {
+        unlink($link) or die "Could not remove $link: $!\n";
+    }
+    elsif ( -e $link ) {
+        error("$link is not a symbolic link, not deleting\n");
+        return 0;
+    }
+    $request_reload = 1;
+    return 1;
+}
+
+sub threaded {
+    my $result = "";
+    $result = qx{<%= node['apache']['apachectl'] %> -V | grep 'threaded'}
+        if -x '<%= node['apache']['apachectl'] %>';
+    if ( $? != 0 ) {
+
+        # config doesn't work
+        if ( -e "$enabldir/mpm_prefork.load" || -e "$enabldir/mpm_itk.load" )
+        {
+            return 0;
+        }
+        elsif (-e "$enabldir/mpm_worker.load"
+            || -e "$enabldir/mpm_event.load" )
+        {
+            return 1;
+        }
+        else {
+            error("Can't determine enabled MPM");
+
+            # do what user requested
+            return 0;
+        }
+    }
+    if ( $result =~ / no/ ) {
+        return 0;
+    }
+    elsif ( $result =~ / yes/ ) {
+        return 1;
+    }
+    else {
+        die("Can't parse output from apache2ctl -V:\n$result\n");
+    }
+}
+
+sub info {
+    print @_ if !$quiet;
+}
+
+sub error {
+    print STDERR 'ERROR: ', @_;
+}
+
+sub warning {
+    print STDERR 'WARNING: ', @_;
+}
+
+sub is_in {
+    my $needle = shift;
+    foreach my $e (@_) {
+        return 1 if $needle eq $e;
+    }
+    return 0;
+}
+
+sub read_env_file {
+    my $file = shift;
+
+    -r $file or return;
+    my @lines = qx{env - sh -c '. $file && env'};
+    if ($?) {
+        die "Could not read $file\n";
+    }
+
+    foreach my $l (@lines) {
+        chomp $l;
+        $l =~ /^(.*)?=(.*)$/ or die "Could not parse $file\n";
+        $ENV{$1} = $2;
+    }
+}
+
+sub switch_marker {
+    die('usage: switch_marker([module|site|conf], [enable|disable], $name)')
+        if @_ != 3;
+    my $which = shift;
+    my $what  = shift;
+    my $name  = shift;
+
+    my $mode = "admin";
+    $mode = "maint" if $maintmode;
+
+    #print("switch_marker $which $what $name\n");
+    # TODO: get rid of the magic string(s)
+    my $state_marker_dir = "$statedir/$what" . "d" . "_by_$mode";
+    my $state_marker     = "$state_marker_dir/$name";
+    if ( !-d $state_marker_dir ) {
+        File::Path::mkpath("$state_marker_dir")
+            || error(
+            "Failed to create marker directory: '$state_marker_dir'\n");
+    }
+
+    # XXX: swap find with perl alternative
+    my @markers = qx{find "$statedir" -type f -a -name "$name"};
+    chomp(@markers);
+    foreach (@markers) {
+        unless ( unlink $_ ) {
+            error("Failed to remove old marker '$_'!\n") && return 0;
+        }
+    }
+    unless ($purge) {
+        qx{touch "$state_marker"};
+        if ( $? != 0 ) {
+            error("Failed to create marker '$state_marker'!\n") && return 0;
+        }
+        return 1;
+    }
+}
+
+# vim: syntax=perl sw=4 sts=4 sr et

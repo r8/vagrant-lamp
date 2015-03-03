@@ -1,0 +1,38 @@
+{
+  "name": "magento-toolbox",
+  "description": "Installs/Configures tools for Magento development",
+  "long_description": "magento toolbox\n===============\n\nThis cookbook installs several tools for Magento developers.\n\nRequirements\n------------\n\n### Cookbooks:\n\n* php\n\n### Platforms:\n\n* Ubuntu\n* Debian\n* RHEL\n* CentOS\n* Fedora\n\nRecipes\n-------\n\n### magento-toolbox::n98-magerun\n\nInstalls [n98-magerun](https://github.com/netz98/n98-magerun)\n\n### magento-toolbox::modman\n\nInstalls [modman](https://github.com/colinmollenhour/modman)\n\n### magento-toolbox::modgit\n\nInstalls [modgit](https://github.com/jreinke/modgit)\n\nLicense\n-------\n\nCopyright (c) 2013 Sergey Storchay, http://r8.com.ua\n\nLicensed under MIT:\nhttp://raw.github.com/r8/magento-toolbox/master/LICENSE.txt\n",
+  "maintainer": "Sergey Storchay",
+  "maintainer_email": "r8@r8.com.ua",
+  "license": "MIT",
+  "platforms": {
+    "debian": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "amazon": ">= 0.0.0"
+  },
+  "dependencies": {
+    "php": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+    "magento-toolbox": "Installs/Configures tools for Magento development"
+  },
+  "version": "0.0.3"
+}
