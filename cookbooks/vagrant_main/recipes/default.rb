@@ -4,7 +4,6 @@ include_recipe "git"
 include_recipe "apache2"
 include_recipe "apache2::mod_rewrite"
 include_recipe "apache2::mod_ssl"
-include_recipe "mysql::server"
 include_recipe "percona::toolkit"
 include_recipe "php"
 include_recipe "php::module_mysql"
@@ -34,6 +33,13 @@ execute "make-ssl-cert" do
   command "make-ssl-cert generate-default-snakeoil --force-overwrite"
   ignore_failure true
   action :nothing
+end
+
+mysql_service "default" do
+  port '3306'
+  version '5.5'
+  initial_root_password 'vagrant'
+  action [:create, :start]
 end
 
 # Initialize sites data bag
