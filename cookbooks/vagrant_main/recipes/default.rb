@@ -103,13 +103,8 @@ git "/var/www/webgrind" do
   reference "master"
   action :sync
 end
-template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
-  source "webgrind.conf.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  action :create
-  notifies :restart, resources("service[apache2]"), :delayed
+apache_conf "webgrind" do
+  enable true
 end
 template "/var/www/webgrind/config.php" do
   source "webgrind.config.php.erb"
@@ -144,10 +139,3 @@ cookbook_file "/etc/rc.local" do
   mode "0755"
   action :create
 end
-
-# Fixing deprecated php comments style in ini files
-bash "deploy" do
-  code "sudo perl -pi -e 's/(\s*)#/$1;/' /etc/php5/cli/conf.d/*ini"
-  notifies :restart, resources("service[apache2]"), :delayed
-end
-
