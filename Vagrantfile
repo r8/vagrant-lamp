@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
-  config.vm.provision :chef_solo do |chef|
+  config.vm.provision :chef_zero do |chef|
     chef.cookbooks_path = ["berks-cookbooks", "cookbooks"] 
     chef.data_bags_path = "data_bags"
 
