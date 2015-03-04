@@ -3,12 +3,6 @@ override['mysql']['server_repl_password'] = 'vagrant'
 override['mysql']['server_debian_password'] = 'vagrant'
 override['mysql']['bind_address'] = '0.0.0.0'
 
-override['oh_my_zsh']['users'] = [{
-  :login => 'vagrant',
-  :theme => 'blinks',
-  :plugins => ['git', 'gem']
-}]
-
 override['nodejs']['install_method'] = 'binary'
 override['nodejs']['version'] = '0.10.13'
 override['nodejs']['checksum'] = 'a102fad260d216b95611ddd57aeb6531c92ad1038508390654423feb1b51c059'

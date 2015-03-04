@@ -15,27 +15,18 @@
     "resource-control": ">= 0.0.0"
   },
   "suggestions": {
-
   },
   "conflicting": {
-
   },
   "providing": {
-
   },
   "replacing": {
-
   },
   "attributes": {
-
   },
   "groupings": {
-
   },
   "recipes": {
-
   },
-  "version": "2.2.3",
-  "source_url": "",
-  "issues_url": ""
+  "version": "2.2.4"
 }
