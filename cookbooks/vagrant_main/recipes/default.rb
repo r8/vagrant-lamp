@@ -84,15 +84,17 @@ package "phpmyadmin"
 
 # Install Xdebug
 php_pear "xdebug" do
+  # Specify that xdebug.so must be loaded as a zend extension
+  zend_extensions ["xdebug.so"]
+  directives(
+      :remote_enable => 1,
+      :remote_connect_back => 1,
+      :remote_port => 9000,
+      :remote_handler => "dbgp",
+      :profiler_enable => 0,
+      :profiler_enable_trigger => 1
+  )
   action :install
-end
-template "#{node['php']['ext_conf_dir']}/xdebug.ini" do
-  source "xdebug.ini.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  action :create
-  notifies :restart, resources("service[apache2]"), :delayed
 end
 
 # Install Webgrind
