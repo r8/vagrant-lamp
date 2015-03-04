@@ -12,7 +12,6 @@ DEPENDENCIES
   percona (~> 0.15.5)
   phing (~> 0.0.3)
   php (~> 1.5.0)
-  php-box (~> 0.0.2)
   python (~> 1.4.6)
 
 GRAPH
@@ -72,8 +71,6 @@ GRAPH
     windows (>= 0.0.0)
     xml (>= 0.0.0)
     yum-epel (>= 0.0.0)
-  php-box (0.0.2)
-    php (>= 0.0.0)
   python (1.4.6)
     build-essential (>= 0.0.0)
     yum-epel (>= 0.0.0)
