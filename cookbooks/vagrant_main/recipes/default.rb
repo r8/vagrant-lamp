@@ -33,8 +33,6 @@ end
 # Generate selfsigned ssl
 execute "make-ssl-cert" do
   command "make-ssl-cert generate-default-snakeoil --force-overwrite"
-  ignore_failure true
-  action :nothing
 end
 
 # Install Mysql
@@ -67,6 +65,7 @@ sites.each do |name|
     server_aliases site["aliases"]
     server_include site["include"]
     docroot site["docroot"]?site["docroot"]:"/vagrant/public/#{site["host"]}"
+    notifies :restart, resources("service[apache2]"), :delayed
   end
 
    # Add site info in /etc/hosts
@@ -102,6 +101,7 @@ php_pear "xdebug" do
       :profiler_enable_trigger => 1
   )
   action :install
+  notifies :restart, resources("service[apache2]"), :delayed
 end
 php_extensions.push 'xdebug'
 
@@ -113,6 +113,7 @@ git "/var/www/webgrind" do
 end
 apache_conf "webgrind" do
   enable true
+  notifies :restart, resources("service[apache2]"), :delayed
 end
 template "/var/www/webgrind/config.php" do
   source "webgrind.config.php.erb"
