@@ -13,6 +13,9 @@ include_recipe "apache2::mod_php5"
 include_recipe "composer"
 include_recipe "phing"
 
+# Initialize php extensions list
+php_extensions = []
+
 # Install packages
 %w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links}.each do |a_package|
   package a_package
@@ -100,6 +103,7 @@ php_pear "xdebug" do
   )
   action :install
 end
+php_extensions.push 'xdebug'
 
 # Install Webgrind
 git "/var/www/webgrind" do
@@ -142,4 +146,18 @@ cookbook_file "/etc/rc.local" do
   group "root"
   mode "0755"
   action :create
+end
+php_extensions.push 'mailcatcher'
+
+# Enable installed php extensions
+case node['platform']
+  when 'ubuntu'
+    if node['platform_version'].to_f >= 14.04
+      php_extensions.each do |extension|
+        execute 'enable_php_extension' do
+          command "php5enmod #{extension}"
+        end
+      end
+    end
+  else
 end
