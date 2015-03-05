@@ -1,3 +1,7 @@
+default['mysql']['initial_root_password'] = 'vagrant'
+default['mysql']['version'] = '5.5'
+default['mysql']['port'] = '3306'
+
 override['percona']['apt_keyserver'] = 'keyserver.ubuntu.com'
 
 override['nodejs']['install_method'] = 'binary'

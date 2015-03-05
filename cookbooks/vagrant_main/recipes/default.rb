@@ -34,11 +34,15 @@ execute "make-ssl-cert" do
   action :nothing
 end
 
+# Install Mysql
 mysql_service "default" do
-  port '3306'
-  version '5.5'
-  initial_root_password 'vagrant'
+  port node['mysql']['port']
+  version node['mysql']['version']
+  initial_root_password node['mysql']['initial_root_password']
   action [:create, :start]
+end
+mysql_client 'default' do
+  action :create
 end
 
 # Initialize sites data bag
