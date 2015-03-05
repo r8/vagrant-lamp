@@ -62,7 +62,7 @@ sites.each do |name|
 
   # Add site to apache config
   web_app site["host"] do
-    template "sites.conf.erb"
+    template "web_app.conf.erb"
     server_name site["host"]
     server_aliases site["aliases"]
     server_include site["include"]
