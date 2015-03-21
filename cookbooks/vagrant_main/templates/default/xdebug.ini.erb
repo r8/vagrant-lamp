@@ -1,3 +1,4 @@
+; configuration for php xdebug module
 zend_extension = "<%= %x[ php -i | grep extension_dir | awk '{print $(NF)}' ].strip %>/xdebug.so"
 xdebug.remote_enable = 1
 xdebug.remote_connect_back = 1
