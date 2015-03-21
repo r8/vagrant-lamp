@@ -17,7 +17,7 @@ include_recipe "phing"
 php_extensions = []
 
 # Install packages
-%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links}.each do |a_package|
+%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links }.each do |a_package|
   package a_package
 end
 
@@ -103,7 +103,17 @@ php_pear "xdebug" do
   action :install
   notifies :restart, resources("service[apache2]"), :delayed
 end
-php_extensions.push 'xdebug'
+template "#{node['php']['ext_conf_dir']}/xdebug.ini" do
+  # Overwrite xdebug.ini
+  # (Temporary workaround for https://github.com/opscode-cookbooks/php/issues/108)
+  source "xdebug.ini.erb"
+  owner "root"
+  group "root"
+  mode "0644"
+  action :create
+  notifies :restart, resources("service[apache2]"), :delayed
+end
+php_extensions.push "xdebug"
 
 # Install Webgrind
 git "/var/www/webgrind" do
