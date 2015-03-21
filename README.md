@@ -11,9 +11,9 @@ Download and install [VirtualBox](http://www.virtualbox.org/)
 
 Download and install [vagrant](http://vagrantup.com/)
 
-Download a vagrant box (name of the box is supposed to be precise32)
+Install [vagrant-omnibus](https://github.com/chef/vagrant-omnibus) plugin
 
-    $ vagrant box add precise32 http://files.vagrantup.com/precise32.box
+    $ vagrant plugin install vagrant-omnibus
 
 Clone this repository
 

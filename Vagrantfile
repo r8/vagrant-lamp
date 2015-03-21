@@ -9,8 +9,14 @@ Vagrant.configure("2") do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "chef/ubuntu-14.04"
 
-  # Set Chef version for Omnibus
-  config.omnibus.chef_version = :latest
+  if Vagrant.has_plugin? 'vagrant-omnibus'
+    # Set Chef version for Omnibus
+    config.omnibus.chef_version = :latest
+  else
+    raise Vagrant::Errors::VagrantError.new,
+      "vagrant-omnibus missing, please install the plugin:\n" +
+      "vagrant plugin install vagrant-omnibus"
+  end
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine.
