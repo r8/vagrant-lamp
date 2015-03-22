@@ -93,23 +93,51 @@ module MysqlCookbook
       return 'mysql' if node['platform_family'] == 'smartos'
     end
 
-    def mysql_install_db_script
-      if scl_package?
-        <<-EOF
-          scl enable #{scl_name} \
-          "#{mysql_install_db_bin} --datadir=#{parsed_data_dir} --defaults-file=#{etc_dir}/my.cnf"
-          EOF
-      else
-        "#{mysql_install_db_bin} --datadir=#{parsed_data_dir} --defaults-file=#{etc_dir}/my.cnf"
-      end
+    def v56plus
+      return false if parsed_version.split('.')[0].to_i < 5
+      return false if parsed_version.split('.')[1].to_i < 6
+      true
     end
 
-    def mysql_safe_init_cmd
-      if scl_package?
-        "scl enable #{scl_name} \"#{mysqld_safe_bin} --defaults-file=#{etc_dir}/my.cnf --init-file=/tmp/#{mysql_name}/my.sql &\""
-      else
-        "#{mysqld_safe_bin} --defaults-file=#{defaults_file} --init-file=/tmp/#{mysql_name}/my.sql &"
-      end
+    def v57plus
+      return false if parsed_version.split('.')[0].to_i < 5
+      return false if parsed_version.split('.')[1].to_i < 7
+      true
+    end
+
+    # database and initial records
+    # initialization commands
+
+    def mysqld_initialize_cmd
+      cmd = mysqld_bin
+      cmd << " --defaults-file=#{etc_dir}/my.cnf"
+      cmd << ' --initialize'
+      cmd << ' --explicit_defaults_for_timestamp' if v56plus
+      return "scl enable #{scl_name} \"#{cmd}\"" if scl_package?
+      cmd
+    end
+
+    def mysql_install_db_cmd
+      cmd = mysql_install_db_bin
+      cmd << " --defaults-file=#{etc_dir}/my.cnf"
+      cmd << " --datadir=#{parsed_data_dir}"
+      return "scl enable #{scl_name} \"#{cmd}\"" if scl_package?
+      cmd
+    end
+
+    def record_init
+      cmd = v56plus ? mysqld_bin : mysqld_safe_bin
+      cmd << " --defaults-file=#{etc_dir}/my.cnf"
+      cmd << " --init-file=/tmp/#{mysql_name}/my.sql"
+      cmd << ' --explicit_defaults_for_timestamp' if v56plus
+      cmd << ' &'
+      return "scl enable #{scl_name} \"#{cmd}\"" if scl_package?
+      cmd
+    end
+
+    def db_init
+      return mysqld_initialize_cmd if v57plus
+      mysql_install_db_cmd
     end
 
     def init_records_script
@@ -117,6 +145,7 @@ module MysqlCookbook
         set -e
         rm -rf /tmp/#{mysql_name}
         mkdir /tmp/#{mysql_name}
+
         cat > /tmp/#{mysql_name}/my.sql <<-EOSQL
 DELETE FROM mysql.user ;
 CREATE USER 'root'@'%' IDENTIFIED BY '#{Shellwords.escape(new_resource.initial_root_password)}' ;
@@ -125,7 +154,9 @@ FLUSH PRIVILEGES;
 DROP DATABASE IF EXISTS test ;
 EOSQL
 
-       #{mysql_safe_init_cmd}
+       #{db_init}
+       #{record_init}
+
        while [ ! -f #{pid_file} ] ; do sleep 1 ; done
        kill `cat #{pid_file}`
        while [ -f #{pid_file} ] ; do sleep 1 ; done
@@ -158,6 +189,8 @@ EOSQL
     def mysqld_bin
       return "#{prefix_dir}/libexec/mysqld" if node['platform_family'] == 'smartos'
       return "#{base_dir}/bin/mysqld" if node['platform_family'] == 'omnios'
+      return '/usr/sbin/mysqld' if node['platform_family'] == 'fedora' && v56plus
+      return '/usr/libexec/mysqld' if node['platform_family'] == 'fedora'
       return 'mysqld' if scl_package?
       "#{prefix_dir}/usr/sbin/mysqld"
     end

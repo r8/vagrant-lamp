@@ -142,19 +142,12 @@ class Chef
           action :create
         end
 
-        # initialize mysql database
-        bash "#{new_resource.name} :create initialize mysql database" do
-          cwd prefix_dir
-          code mysql_install_db_script
-          not_if "/usr/bin/test -f #{parsed_data_dir}/mysql/user.frm"
-          notifies :run, "bash[#{new_resource.name} :create initial records]"
-          action :run
-        end
-
-        # create initial records
+        # initialize database and create initial records
         bash "#{new_resource.name} :create initial records" do
           code init_records_script
-          action :nothing
+          returns [0, 1, 2] # facepalm
+          not_if "/usr/bin/test -f #{parsed_data_dir}/mysql/user.frm"
+          action :run
         end
       end
 

@@ -1,53 +1,30 @@
-v3.0.12 (2015-1-16)
+v4.1.0 (2015-03-04)
 -------------------
+- Removed iis_pool attribute 'set_profile_environment' incompatible with < IIS-8.
+- Added pester test framework.
+- Condensed and fixed change-log to show public releases only.
+- Fixed bug where bindings were being overwritten by :config.
+- Code-cleanup and cosmetic fixes.
+
+v4.0.0 (2015-02-12)
+-------------------
+- [#91](https://github.com/chef-cookbooks/iis/pull/91) - bulk addition of new features
+  - Virtual Directory Support (allows virtual directories to be added to both websites and to webapplications under sites).
+  - section unlock and lock support (this is used to allow for the web.config of a site to define the authentication methods).
+  - fixed issue with :add on pool provider not running all config (this was a known issue and is now resolved).
+  - fixed issue with :config on all providers causing application pool recycles (every chef-client run).
+  - moved to better method for XML checking of previous settings to detect changes (changed all check to use xml searching with appcmd instead of the previous method [none]).
+- Improved pool resource with many more apppool properties that can be set.
+- Fixed bug with default attribute inheritance.
+- New recipe to enable ASP.NET 4.5.
+- Skeleton serverspec+test-kitchen framework.
+- Added Berksfile, Gemfile and .kitchen.yml to assist developers.
 - Fixed issue [#107] function is_new_or_empty was returning reverse results.
-
-v3.0.11 (2015-1-14)
--------------------
-- Removed BOM char from multiple files that was causing recipe compile errors
-
-v3.0.10 (2015-1-13)
--------------------
-- Removed dependency on "chef-client", ">= 3.7.0"
-- Changed all files to UTF-8 file format
-
-v3.0.9 (2015-1-5)
--------------------
-- Fixed issue with iis_vdir under iis_app usage.
-
-v3.0.8 (2015-1-5)
--------------------
-- Fixed issue with iis_vdir continually adding
-- Fixed issue with iis_pool not putting ApplicationPoolIdentity
-
-v3.0.7 (2015-1-5)
--------------------
-- Fixed issue with iis_vdir
-
-v3.0.6 (2015-1-2)
--------------------
-- Fixed issue with iis_pool with username/password
-
-v3.0.5 (2015-1-2)
--------------------
-- [#98] Fixed issues with bindings
-
-v3.0.4 (2014-12-25)
--------------------
-- [#95] had to remove unneeded variables
-- incorrect variables
-- add dependencies
-- bumped version
-- added backwards compatibility for chef-client < 12.x.x Chef::Util::PathHelper
-
-v3.0.0 Unreleased
--------------------
-- [#91](https://github.com/opscode-cookbooks/iis/pull/91) - bulk addition of new features
-  - Virtual Directory Support (allows virtual directories to be added to both websites and to webapplications under sites)
-  - section unlock and lock support (this is used to allow for the web.config of a site to define the authentication methods)
-  - fixed issue with :add on pool provider not running all config (this was a known issue and is now resolved)
-  - fixed issue with :config on all providers causing application pool recycles (every chef-client run)
-  - moved to better method for XML checking of previous settings to detect changes (changed all check to use xml searching with appcmd instead of the previous method [none])
+- Removed dependency on "chef-client", ">= 3.7.0".
+- Changed all files to UTF-8 file format.
+- Fixed issue with iis_pool not putting ApplicationPoolIdentity and username/password.
+- [#98] Fixed issues with bindings.
+- added backwards compatibility for chef-client < 12.x.x Chef::Util::PathHelper.
 
 v2.1.6 (2014-11-12)
 -------------------
@@ -96,36 +73,36 @@ Adding extra windows platform checks to helper library
 v1.6.4
 ------
 ### Bug
-- **[COOK-4138](https://tickets.opscode.com/browse/COOK-4138)** - iis cookbook won't load on non-Windows platforms
+- **[COOK-4138](https://tickets.chef.io/browse/COOK-4138)** - iis cookbook won't load on non-Windows platforms
 
 
 v1.6.2
 ------
 ### Improvement
-- **[COOK-3634](https://tickets.opscode.com/browse/COOK-3634)** - provide ability to set app pool managedRuntimeVersion to "No Managed Code"
+- **[COOK-3634](https://tickets.chef.io/browse/COOK-3634)** - provide ability to set app pool managedRuntimeVersion to "No Managed Code"
 
 
 v1.6.0
 ------
 ### Improvement
-- **[COOK-3922](https://tickets.opscode.com/browse/COOK-3922)** - refactor IIS cookbook to not require WebPI
+- **[COOK-3922](https://tickets.chef.io/browse/COOK-3922)** - refactor IIS cookbook to not require WebPI
 
 
 v1.5.6
 ------
 ### Improvement
-- **[COOK-3770](https://tickets.opscode.com/browse/COOK-3770)** - Add Enabled Protocols to IIS App Recipe
+- **[COOK-3770](https://tickets.chef.io/browse/COOK-3770)** - Add Enabled Protocols to IIS App Recipe
 
 
 v1.5.4
 ------
 ### New Feature
-- **[COOK-3675](https://tickets.opscode.com/browse/COOK-3675)** - Add recipe for CGI module
+- **[COOK-3675](https://tickets.chef.io/browse/COOK-3675)** - Add recipe for CGI module
 
 v1.5.2
 ------
 ### Bug
-- **[COOK-3232](https://tickets.opscode.com/browse/COOK-3232)** - Allow `iis_app` resource `:config` action with a virtual path
+- **[COOK-3232](https://tickets.chef.io/browse/COOK-3232)** - Allow `iis_app` resource `:config` action with a virtual path
 
 v1.5.0
 ------

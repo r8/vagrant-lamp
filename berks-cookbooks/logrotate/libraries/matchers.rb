@@ -56,19 +56,19 @@ if defined?(ChefSpec)
         if resource.performed_action?('create')
           if unmatched_parameters.empty?
             if @compile_time
-              %Q{expected "#{resource.to_s}" to be run at compile time}
+              %Q{expected "#{resource}" to be run at compile time}
             else
-              %Q{expected "#{resource.to_s}" to be run at converge time}
+              %Q{expected "#{resource}" to be run at converge time}
             end
           else
-            %Q{expected "#{resource.to_s}" to have parameters:} \
+            %Q{expected "#{resource}" to have parameters:} \
             "\n\n" \
             "  " + unmatched_parameters.collect { |parameter, h|
               "#{parameter} #{h[:expected].inspect}, was #{h[:actual].inspect}"
             }.join("\n  ")
           end
         else
-          %Q{expected "#{resource.to_s}" actions #{resource.performed_actions.inspect}} \
+          %Q{expected "#{resource}" actions #{resource.performed_actions.inspect}} \
           " to include : create"
         end
       else
@@ -82,9 +82,9 @@ if defined?(ChefSpec)
 
     def failure_message_for_should_not
       if resource
-        message = %Q{expected "#{resource.to_s}" actions #{resource.performed_actions.inspect} to not exist}
+        message = %Q{expected "#{resource}" actions #{resource.performed_actions.inspect} to not exist}
       else
-        message = %Q{expected "#{resource.to_s}" to not exist}
+        message = %Q{expected "#{resource}" to not exist}
       end
 
       message << " at compile time"  if @compile_time

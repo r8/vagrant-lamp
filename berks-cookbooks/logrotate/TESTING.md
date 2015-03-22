@@ -1,7 +1,7 @@
 This cookbook uses a variety of testing components:
 
 - Unit tests: [ChefSpec](https://github.com/acrmp/chefspec)
-- Integration tests: [Test Kitchen](https://github.com/opscode/test-kitchen)
+- Integration tests: [Test Kitchen](https://github.com/chef/test-kitchen)
 - Chef Style lints: [Foodcritic](https://github.com/acrmp/foodcritic)
 - Ruby Style lints: [Rubocop](https://github.com/bbatsov/rubocop)
 
@@ -43,7 +43,7 @@ Development
 6. Run the tests:
     - `bundle exec rspec`
     - `bundle exec foodcritic .`
-    - `bundle exec rubocop`
+    - `bundle exec rubocop -l `
     - `bundle exec kitchen test`
 
 7. Assuming the tests pass, open a Pull Request on GitHub

@@ -2,6 +2,10 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.5.18 (2015-03-13)
+--------------------
+* Add helper methods to detect installation presence
+
 v1.5.16 (2015-02-11)
 --------------------
 * Allow removal of env files(nhuff)
@@ -40,7 +44,7 @@ Fixing assignment/compare error
 v1.5.1
 ------
 ### Bug
-- **[COOK-3950](https://tickets.opscode.com/browse/COOK-3950)** - runit cookbook should use full service path when checking running status
+- **[COOK-3950](https://tickets.chef.io/browse/COOK-3950)** - runit cookbook should use full service path when checking running status
 
 
 v1.5.0
@@ -68,22 +72,22 @@ v1.4.0
 v1.3.0
 ------
 ### Improvement
-- **[COOK-3663](https://tickets.opscode.com/browse/COOK-3663)** - Add ./check scripts support
+- **[COOK-3663](https://tickets.chef.io/browse/COOK-3663)** - Add ./check scripts support
 
 ### Bug
-- **[COOK-3271](https://tickets.opscode.com/browse/COOK-3271)** - Fix an issue where runit fails to install rpm package on rehl systems
+- **[COOK-3271](https://tickets.chef.io/browse/COOK-3271)** - Fix an issue where runit fails to install rpm package on rehl systems
 
 v1.2.0
 ------
 ### New Feature
-- **[COOK-3243](https://tickets.opscode.com/browse/COOK-3243)** - Expose LSB init directory as a configurable
+- **[COOK-3243](https://tickets.chef.io/browse/COOK-3243)** - Expose LSB init directory as a configurable
 
 ### Bug
-- **[COOK-3182](https://tickets.opscode.com/browse/COOK-3182)** - Do not hardcode rpmbuild location
+- **[COOK-3182](https://tickets.chef.io/browse/COOK-3182)** - Do not hardcode rpmbuild location
 
 ### Improvement
-- **[COOK-3175](https://tickets.opscode.com/browse/COOK-3175)** - Add svlogd config file support
-- **[COOK-3115](https://tickets.opscode.com/browse/COOK-3115)** - Add ability to install 'runit' package from Yum
+- **[COOK-3175](https://tickets.chef.io/browse/COOK-3175)** - Add svlogd config file support
+- **[COOK-3115](https://tickets.chef.io/browse/COOK-3115)** - Add ability to install 'runit' package from Yum
 
 v1.1.6
 ------

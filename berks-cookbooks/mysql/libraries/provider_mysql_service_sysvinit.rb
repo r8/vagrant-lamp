@@ -16,7 +16,6 @@ class Chef
               mysql_name: mysql_name,
               mysqladmin_bin: mysqladmin_bin,
               mysqld_safe_bin: mysqld_safe_bin,
-              mysqld_safe_bin: mysqld_safe_bin,
               pid_file: pid_file,
               scl_name: scl_name
               )

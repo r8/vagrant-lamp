@@ -25,7 +25,3 @@ attribute :section, :kind_of => String
 attribute :returns, :kind_of => [Integer, Array], :default => 0
 
 attr_accessor :exists
-
-def initialize(*args)
-  super
-end

@@ -5,7 +5,7 @@ driver_config:
 platforms:
   - name: ubuntu-12.04
     run_list:
-      - recipe[apt::default]
+      - recipe[fake::prep]
   - name: centos-6.5
 
 suites:

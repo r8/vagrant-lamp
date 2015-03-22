@@ -38,7 +38,7 @@ node.override['logrotate']['global']['nocompress'] = true
 The same is true of frequency directives; to be certain the frequency directive you want is included in the global configuration, you should override the ones you don't want as false:
 
 ```ruby
-%w[ daily, weekly, yearly ].each do |freq|
+%w[ daily weekly yearly ].each do |freq|
   node.override['logrotate']['global'][freq] = false
 end
 node.override['logrotate']['global']['monthly'] = true
@@ -151,11 +151,11 @@ end
 License & Authors
 -----------------
 - Author:: Scott M. Likens (<scott@likens.us>)
-- Author:: Joshua Timberman (<joshua@opscode.com>)
+- Author:: Joshua Timberman (<joshua@chef.io>)
 
 ```text
 Copyright 2009, Scott M. Likens
-Copyright 2011-2012, Opscode, Inc.
+Copyright 2011-2012, Chef Software, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

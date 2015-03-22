@@ -2,7 +2,7 @@
 # Cookbook Name:: runit
 # Recipe:: default
 #
-# Copyright 2008-2010, Opscode, Inc.
+# Copyright 2008-2010, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -57,13 +57,17 @@ when 'rhel'
       package 'buildsys-macros'
     end
 
-    rpm_installed = "rpm -qa | grep -q '^runit'"
+    # This is the rpm spec and associated files to build a package of
+    # runit from source; the package will be installed.
     cookbook_file "#{Chef::Config[:file_cache_path]}/runit-2.1.1.tar.gz" do
       source 'runit-2.1.1.tar.gz'
-      not_if rpm_installed
+      not_if { runit_installed? }
       notifies :run, 'bash[rhel_build_install]', :immediately
     end
 
+    # This bash resource does the rpm install because we need to
+    # dynamically detect where the rpm output directory is from the
+    # rpm config directive '%{_rpmdir}'
     bash 'rhel_build_install' do
       user 'root'
       cwd Chef::Config[:file_cache_path]
@@ -75,7 +79,7 @@ when 'rhel'
         rpm -ivh "${rpm_root_dir}/runit-2.1.1.rpm"
       EOH
       action :run
-      not_if rpm_installed
+      not_if { runit_installed? }
     end
   end
 

@@ -187,7 +187,7 @@ exec svlogd -tt /var/log/service_name
 ```
 
 ### Examples
-These are example use cases of the `runit_service` resource described above. There are others in the `runit_test` cookbook that is included in the [git repository](https://github.com/opscode-cookbooks/runit).
+These are example use cases of the `runit_service` resource described above. There are others in the `runit_test` cookbook that is included in the [git repository](https://github.com/chef-cookbooks/runit).
 
 **Default Example**
 
@@ -398,16 +398,16 @@ end
 
 **More Examples**
 
-For more examples, see the `runit_test` cookbook's `service` recipe in the [git repository](https://github.com/opscode-cookbooks/runit).
+For more examples, see the `runit_test` cookbook's `service` recipe in the [git repository](https://github.com/chef-cookbooks/runit).
 
 
 License & Authors
 -----------------
-- Author:: Adam Jacob <adam@opscode.com>
-- Author:: Joshua Timberman <joshua@opscode.com>
+- Author:: Adam Jacob <adam@chef.io>
+- Author:: Joshua Timberman <joshua@chef.io>
 
 ```text
-Copyright:: 2008-2013, Opscode, Inc
+Copyright:: 2008-2013, Chef Software, Inc
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

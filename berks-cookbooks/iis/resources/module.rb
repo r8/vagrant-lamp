@@ -19,6 +19,7 @@
 #
 
 actions :add, :delete
+default_action :add
 
 attribute :module_name, :kind_of => String, :name_attribute => true
 attribute :type, :kind_of => String, :default => nil
@@ -26,8 +27,3 @@ attribute :precondition, :kind_of => String, :default => nil
 attribute :application, :kind_of => String, :default => nil
 
 attr_accessor :exists
-
-def initialize(*args)
-  super
-  @action = :add
-end

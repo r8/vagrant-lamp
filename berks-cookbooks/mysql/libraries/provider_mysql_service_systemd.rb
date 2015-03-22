@@ -26,10 +26,18 @@ class Chef
             variables(
               config: new_resource,
               etc_dir: etc_dir,
-              base_dir: base_dir
+              base_dir: base_dir,
+              mysqld_bin: mysqld_bin
               )
             cookbook 'mysql'
+            notifies :run, "execute[#{new_resource.name} :start systemctl daemon-reload]", :immediately
             action :create
+          end
+
+          # avoid 'Unit file changed on disk' warning
+          execute "#{new_resource.name} :start systemctl daemon-reload" do
+            command '/usr/bin/systemctl daemon-reload'
+            action :nothing
           end
 
           # tmpfiles.d config so the service survives reboot

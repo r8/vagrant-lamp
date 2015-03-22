@@ -12,9 +12,9 @@
     "rbac": ">= 1.0.1"
   },
   "recommendations": {
-    "resource-control": ">= 0.0.0"
   },
   "suggestions": {
+    "resource-control": ">= 0.0.0"
   },
   "conflicting": {
   },
@@ -28,5 +28,5 @@
   },
   "recipes": {
   },
-  "version": "2.2.4"
+  "version": "2.2.6"
 }

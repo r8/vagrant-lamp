@@ -2,7 +2,7 @@
 # Cookbook Name:: chef-sugar
 # Recipe:: default
 #
-# Copyright 2013-2014, Seth Vargo <sethvargo@gmail.com>
+# Copyright 2013-2015, Seth Vargo <sethvargo@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

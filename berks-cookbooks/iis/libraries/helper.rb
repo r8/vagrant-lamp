@@ -60,19 +60,19 @@ module Opscode
 
 
       def windows_cleanpath(path)
-        if(defined?(Chef::Util::PathHelper.cleanpath) != nil)
-          return Chef::Util::PathHelper.cleanpath(path)
+        if defined?(Chef::Util::PathHelper.cleanpath) != nil
+          Chef::Util::PathHelper.cleanpath(path)
         else
-          return win_friendly_path(path)
+          win_friendly_path(path)
         end
       end
 
       def is_new_value?(document, xpath, value_to_check)
-        return XPath.first(document, xpath).to_s == value_to_check ? false : true
+        XPath.first(document, xpath).to_s != value_to_check.to_s
       end
 
       def is_new_or_empty_value?(document, xpath, value_to_check)
-        return !is_new_value?(document, xpath, value_to_check) || value_to_check == '' ? false : true
+        value_to_check.to_s != '' && is_new_value?(document, xpath, value_to_check)
       end
 
       def appcmd(node)

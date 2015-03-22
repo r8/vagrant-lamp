@@ -20,6 +20,7 @@
 #
 
 actions :add, :config, :delete, :start, :stop, :restart, :recycle
+default_action :add
 
 # root
 attribute :pool_name, :kind_of => String, :name_attribute => true
@@ -39,7 +40,6 @@ attribute :load_user_profile, :kind_of => [TrueClass, FalseClass], :default => f
 attribute :pool_identity, :kind_of => Symbol, :equal_to => [:SpecificUser, :NetworkService, :LocalService, :LocalSystem, :ApplicationPoolIdentity ], :default => :ApplicationPoolIdentity
 attribute :pool_username, :kind_of => String
 attribute :pool_password, :kind_of => String
-attribute :set_profile_environment, :kind_of => [TrueClass, FalseClass], :default => true
 attribute :logon_type, :kind_of => Symbol, :equal_to => [:LogonBatch, :LogonService], :default => :LogonBatch
 attribute :manual_group_membership, :kind_of => [TrueClass, FalseClass], :default => false
 attribute :idle_timeout, :kind_of => String, :default => '00:20:00'
@@ -76,8 +76,3 @@ attribute :smp_processor_affinity_mask, :kind_of => Bignum, :default => 42949672
 attribute :smp_processor_affinity_mask_2, :kind_of => Bignum, :default => 4294967295
 
 attr_accessor :exists, :running
-
-def initialize(*args)
-  super
-  @action = :add
-end

@@ -19,6 +19,7 @@
 #
 
 actions :add, :delete, :start, :stop, :restart, :config
+default_action :add
 
 attribute :site_name, :kind_of => String, :name_attribute => true
 attribute :site_id, :kind_of => Integer
@@ -34,8 +35,3 @@ attribute :log_period, :kind_of => Symbol, :default => :Daily, :equal_to => [:Da
 attribute :log_truncsize, :kind_of => Integer, :default => 1048576 
 
 attr_accessor :exists, :running
-
-def initialize(*args)
-  super
-  @action = :add
-end

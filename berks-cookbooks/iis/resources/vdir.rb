@@ -30,7 +30,3 @@ attribute :logon_method, :kind_of => Symbol, :default => :ClearText, :equal_to =
 attribute :allow_sub_dir_config, :kind_of => [TrueClass, FalseClass], :default => true
 
 attr_accessor :exists
-
-def initialize(*args)
-  super
-end

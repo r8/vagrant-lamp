@@ -49,20 +49,20 @@ end
 action :delete do
   new_resource.updated_by_last_action(false)
 
-  return unless @current_resource.smf_exists?
+  if @current_resource.smf_exists?
+    service new_resource.name do
+      action [:stop, :disable]
+    end
 
-  service new_resource.name do
-    action [:stop, :disable]
+    execute "remove service #{new_resource.name} from SMF" do
+      command "svccfg delete #{new_resource.name}"
+    end
+
+    delete_manifest
+    new_resource.remove_checksum
+
+    new_resource.updated_by_last_action(true)
   end
-
-  execute "remove service #{new_resource.name} from SMF" do
-    command "svccfg delete #{new_resource.name}"
-  end
-
-  delete_manifest
-  new_resource.remove_checksum
-
-  new_resource.updated_by_last_action(true)
 end
 
 private

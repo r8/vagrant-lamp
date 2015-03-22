@@ -29,13 +29,13 @@ action :lock do
   @current_resource.exists = is_new_value?(doc.root, "CONFIG/@overrideMode", "Deny")
 
   unless @current_resource.exists
-    cmd = "#{appcmd(node)} lock config -section:\"#{@new_resource.section}\""
+    cmd = "#{appcmd(node)} lock config -section:\"#{new_resource.section}\""
     Chef::Log.debug(cmd)
-    shell_out!(cmd, :returns => @new_resource.returns)
-    @new_resource.updated_by_last_action(true)
+    shell_out!(cmd, :returns => new_resource.returns)
+    new_resource.updated_by_last_action(true)
     Chef::Log.info("IIS Config command run")
   else
-    Chef::Log.debug("#{@new_resource.section} already locked - nothing to do")
+    Chef::Log.debug("#{new_resource.section} already locked - nothing to do")
   end
 end
 
@@ -43,23 +43,23 @@ action :unlock do
   @current_resource.exists = is_new_value?(doc.root, "CONFIG/@overrideMode", "Allow")
 
   unless @current_resource.exists
-    cmd = "#{appcmd(node)} unlock config -section:\"#{@new_resource.section}\""
+    cmd = "#{appcmd(node)} unlock config -section:\"#{new_resource.section}\""
     Chef::Log.debug(cmd)
-    shell_out!(cmd, :returns => @new_resource.returns)
-    @new_resource.updated_by_last_action(true)
+    shell_out!(cmd, :returns => new_resource.returns)
+    new_resource.updated_by_last_action(true)
     Chef::Log.info("IIS Config command run")
   else
-    Chef::Log.debug("#{@new_resource.section} already unlocked - nothing to do")
+    Chef::Log.debug("#{new_resource.section} already unlocked - nothing to do")
   end
 end
 
 def load_current_resource
-  @current_resource = Chef::Resource::IisSection.new(@new_resource.section)
-  @current_resource.section(@new_resource.section)
+  @current_resource = Chef::Resource::IisSection.new(new_resource.section)
+  @current_resource.section(new_resource.section)
 end
 
 def doc
-  cmd_current_values = "#{appcmd(node)} list config \"\" -section:#{@new_resource.section} /config:* /xml"
+  cmd_current_values = "#{appcmd(node)} list config \"\" -section:#{new_resource.section} /config:* /xml"
   Chef::Log.debug(cmd_current_values)
   cmd_current_values = shell_out(cmd_current_values)
   if cmd_current_values.stderr.empty?

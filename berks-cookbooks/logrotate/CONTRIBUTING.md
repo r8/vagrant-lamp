@@ -1,7 +1,7 @@
 ## Contribution Guidelines
 
 - Please submit improvements and bug fixes via Github pull requests or
-  by sending an email to steve@getchef.com in git's format-patch
+  by sending an email to steve@chef.io in git's format-patch
   format.
 
 - All patches should have well-written commit message.  The first line
