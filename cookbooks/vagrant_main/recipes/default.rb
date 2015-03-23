@@ -12,6 +12,7 @@ include_recipe "php::module_curl"
 include_recipe "apache2::mod_php5"
 include_recipe "composer"
 include_recipe "phing"
+include_recipe "mailhog"
 
 # Initialize php extensions list
 php_extensions = []
@@ -19,15 +20,6 @@ php_extensions = []
 # Install packages
 %w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links }.each do |a_package|
   package a_package
-end
-
-# Install ruby gems
-%w{ rdoc mailcatcher }.each do |a_gem|
-  gem_package a_gem
-end
-
-gem_package "rake" do
-  version "0.8.7"
 end
 
 # Generate selfsigned ssl
@@ -137,28 +129,6 @@ end
 package "php5-xsl" do
   action :install
 end
-
-# Setup MailCatcher
-bash "mailcatcher" do
-  code "mailcatcher --http-ip 0.0.0.0 --smtp-port 25"
-  not_if "ps ax | grep -v grep | grep mailcatcher";
-end
-template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
-  source "mailcatcher.ini.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  action :create
-  notifies :restart, resources("service[apache2]"), :delayed
-end
-cookbook_file "/etc/rc.local" do
-  source "rc.local"
-  owner "root"
-  group "root"
-  mode "0755"
-  action :create
-end
-php_extensions.push 'mailcatcher'
 
 # Enable installed php extensions
 case node['platform']
