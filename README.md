@@ -32,14 +32,12 @@ Installed software:
 * php
 * phpMyAdmin
 * Xdebug with Webgrind
-* zsh with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
+* zsh
 * git, subversion
 * mc, vim, screen, tmux, curl
 * [MailCatcher](http://mailcatcher.me/)
 * [Composer](http://getcomposer.org/)
 * Phing
-* Drupal utils:
-    * [Drush](http://drupal.org/project/drush)
 * Wordpress utils:
     * [WP-Cli](http://wp-cli.org/)
     * [wp2github.py](http://github.com/r8/wp2github.py)
