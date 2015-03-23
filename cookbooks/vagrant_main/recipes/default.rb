@@ -13,6 +13,7 @@ include_recipe "apache2::mod_php5"
 include_recipe "composer"
 include_recipe "phing"
 include_recipe "mailhog"
+include_recipe "postfix"
 
 # Initialize php extensions list
 php_extensions = []
