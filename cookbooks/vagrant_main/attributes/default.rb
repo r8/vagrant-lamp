@@ -12,6 +12,6 @@ override['nodejs']['binary']['checksum']['linux_x86'] = 'd4130512228439bf9115b70
 
 override['npm']['version'] = '2.7.4'
 
-override['postfix']['main']['relayhost'] = 'localhost'
+override['postfix']['main']['relayhost'] = 'localhost:1025'
 
 include_attribute 'vagrant_main::php'
