@@ -1,0 +1,50 @@
+{
+  "name": "percona",
+  "description": "Installs Percona MySQL client and server",
+  "long_description": "Please refer to README.md",
+  "maintainer": "Phil Cohen",
+  "maintainer_email": "github@phlippers.net",
+  "license": "MIT",
+  "platforms": {
+    "debian": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "amazon": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "redhat": ">= 0.0.0"
+  },
+  "dependencies": {
+    "apt": ">= 1.9",
+    "yum": "~> 3.0",
+    "openssl": ">= 0.0.0"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+    "percona": "Includes the client recipe to configure a client",
+    "percona::package_repo": "Sets up the package repository and installs dependent packages",
+    "percona::client": "Installs client libraries",
+    "percona::server": "Installs the server daemon",
+    "percona::backup": "Installs the XtraBackup hot backup software",
+    "percona::toolkit": "Installs the Percona Toolkit software",
+    "percona::cluster": "Installs the Percona XtraDB Cluster server components",
+    "percona::configure_server": "Used internally to manage the server configuration.",
+    "percona::replication": "Used internally to grant permissions for replication.",
+    "percona::access_grants": "Used internally to grant permissions for recipes",
+    "percona::monitoring": "Installs Percona monitoring plugins for Nagios"
+  },
+  "version": "0.15.5"
+}

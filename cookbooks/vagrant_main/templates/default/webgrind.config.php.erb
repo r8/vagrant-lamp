@@ -2,8 +2,6 @@
 
 /**
  * Configuration for webgrind
- * @author Jacob Oettinger
- * @author Joakim Nygård
  */
 class Webgrind_Config extends Webgrind_MasterConfig {
     /**
@@ -24,7 +22,7 @@ class Webgrind_Config extends Webgrind_MasterConfig {
     */
     static $preprocessedSuffix = '.webgrind';
     
-    static $defaultTimezone = 'Europe/Copenhagen';
+    static $defaultTimezone = 'UTC';
     static $dateFormat = 'Y-m-d H:i:s';
     static $defaultCostformat = 'percent'; // 'percent', 'usec' or 'msec'
     static $defaultFunctionPercentage = 90;

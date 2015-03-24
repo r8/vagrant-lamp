@@ -7,11 +7,16 @@ Vagrant.configure("2") do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "precise32"
+  config.vm.box = "chef/ubuntu-14.04"
 
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-  config.vm.box_url = "http://files.vagrantup.com/precise32.box"
+  if Vagrant.has_plugin? 'vagrant-omnibus'
+    # Set Chef version for Omnibus
+    config.omnibus.chef_version = :latest
+  else
+    raise Vagrant::Errors::VagrantError.new,
+      "vagrant-omnibus missing, please install the plugin:\n" +
+      "vagrant plugin install vagrant-omnibus"
+  end
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine.
@@ -19,6 +24,8 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 3306, host: 33066
   # Forward http port on 8080, used for connecting web browsers to localhost:8080
   config.vm.network :forwarded_port, guest: 80, host: 8080
+  # Forward http port on 8025, used for connecting web browsers to MailHog
+  config.vm.network :forwarded_port, guest: 8025, host: 8025
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -30,22 +37,23 @@ Vagrant.configure("2") do |config|
   # Provider-specific configuration so you can fine-tune VirtualBox for Vagrant.
   # These expose provider-specific options.
   config.vm.provider :virtualbox do |vb|
-    # Use VBoxManage to customize the VM. For example to change memory:
-    vb.customize ["modifyvm", :id, "--memory", "512"]
+    # Use VBoxManage to customize the VM.
+    # For example to change memory or number of CPUs:
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
   end
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
-  config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = "cookbooks"
+  config.vm.provision :chef_zero do |chef|
+    chef.cookbooks_path = ["berks-cookbooks", "cookbooks"] 
     chef.data_bags_path = "data_bags"
 
     # List of recipes to run
     chef.add_recipe "vagrant_main"
-    chef.add_recipe "vagrant_main::wordpress"
-    chef.add_recipe "vagrant_main::drupal"
-    chef.add_recipe "vagrant_main::magento"
     chef.add_recipe "vagrant_main::nodejs"
+    chef.add_recipe "vagrant_main::wordpress"
+    chef.add_recipe "vagrant_main::magento"
   end
 end

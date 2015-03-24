@@ -11,9 +11,9 @@ Download and install [VirtualBox](http://www.virtualbox.org/)
 
 Download and install [vagrant](http://vagrantup.com/)
 
-Download a vagrant box (name of the box is supposed to be precise32)
+Install [vagrant-omnibus](https://github.com/chef/vagrant-omnibus) plugin
 
-    $ vagrant box add precise32 http://files.vagrantup.com/precise32.box
+    $ vagrant plugin install vagrant-omnibus
 
 Clone this repository
 
@@ -32,14 +32,12 @@ Installed software:
 * php
 * phpMyAdmin
 * Xdebug with Webgrind
-* zsh with [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
+* zsh
 * git, subversion
 * mc, vim, screen, tmux, curl
-* [MailCatcher](http://mailcatcher.me/)
+* [MailHog](https://github.com/mailhog/)
 * [Composer](http://getcomposer.org/)
 * Phing
-* Drupal utils:
-    * [Drush](http://drupal.org/project/drush)
 * Wordpress utils:
     * [WP-Cli](http://wp-cli.org/)
     * [wp2github.py](http://github.com/r8/wp2github.py)
@@ -105,11 +103,11 @@ something like
 so your call to webgrind will not overwrite the file for the process that
 happens to serve webgrind.
 
-### Mailcatcher
+### MailHog
 
-All emails sent by PHP are intercepted by MailCatcher. So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailCatcher, which is running on port 1080 and also available on every domain:
+ll emails sent via local mail transport are intercepted by MailHog. So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailHog, which is running on port 8025 and also available on every domain:
 
-    http://local.dev:1080
+    http://local.dev:8025
 
 ### Composer
 

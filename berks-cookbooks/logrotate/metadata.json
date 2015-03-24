@@ -1,0 +1,48 @@
+{
+  "name": "logrotate",
+  "description": "Installs logrotate package and provides a definition for logrotate configs",
+  "long_description": "Installs the logrotate package, manages /etc/logrotate.conf, and provides a logrotate_app definition.",
+  "maintainer": "Steven Danna",
+  "maintainer_email": "steve@chef.io",
+  "license": "Apache 2.0",
+  "platforms": {
+    "amazon": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "debian": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "solaris2": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0"
+  },
+  "dependencies": {
+
+  },
+  "recommendations": {
+
+  },
+  "suggestions": {
+
+  },
+  "conflicting": {
+
+  },
+  "providing": {
+    "logrotate_app": ">= 0.0.0"
+  },
+  "replacing": {
+
+  },
+  "attributes": {
+
+  },
+  "groupings": {
+
+  },
+  "recipes": {
+    "logrotate": "Installs logrotate package"
+  },
+  "version": "1.9.1",
+  "source_url": "",
+  "issues_url": ""
+}

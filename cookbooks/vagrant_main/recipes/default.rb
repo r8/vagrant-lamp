@@ -1,11 +1,10 @@
 include_recipe "apt"
 include_recipe "build-essential"
 include_recipe "git"
-include_recipe "oh-my-zsh"
 include_recipe "apache2"
 include_recipe "apache2::mod_rewrite"
 include_recipe "apache2::mod_ssl"
-include_recipe "mysql::server"
+include_recipe "percona::toolkit"
 include_recipe "php"
 include_recipe "php::module_mysql"
 include_recipe "php::module_apc"
@@ -13,13 +12,18 @@ include_recipe "php::module_curl"
 include_recipe "apache2::mod_php5"
 include_recipe "composer"
 include_recipe "phing"
-include_recipe "php-box"
+include_recipe "mailhog"
+include_recipe "postfix"
+
+# Initialize php extensions list
+php_extensions = []
 
 # Install packages
-%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links}.each do |a_package|
+%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links }.each do |a_package|
   package a_package
 end
 
+<<<<<<< HEAD
 # Install ruby gems
 %w{ rdoc mailcatcher }.each do |a_gem|
   gem_package a_gem
@@ -29,11 +33,22 @@ gem_package "rake" do
   version "0.8.7"
 end
 
+=======
+>>>>>>> develop
 # Generate selfsigned ssl
 execute "make-ssl-cert" do
   command "make-ssl-cert generate-default-snakeoil --force-overwrite"
-  ignore_failure true
-  action :nothing
+end
+
+# Install Mysql
+mysql_service "default" do
+  port node['mysql']['port']
+  version node['mysql']['version']
+  initial_root_password node['mysql']['initial_root_password']
+  action [:create, :start]
+end
+mysql_client 'default' do
+  action :create
 end
 
 # Initialize sites data bag
@@ -50,11 +65,15 @@ sites.each do |name|
 
   # Add site to apache config
   web_app site["host"] do
-    template "sites.conf.erb"
+    template "web_app.conf.erb"
     server_name site["host"]
     server_aliases site["aliases"]
     server_include site["include"]
     docroot site["docroot"]?site["docroot"]:"/vagrant/public/#{site["host"]}"
+<<<<<<< HEAD
+=======
+    notifies :restart, resources("service[apache2]"), :delayed
+>>>>>>> develop
   end
 
    # Add site info in /etc/hosts
@@ -79,9 +98,22 @@ package "phpmyadmin"
 
 # Install Xdebug
 php_pear "xdebug" do
+  # Specify that xdebug.so must be loaded as a zend extension
+  zend_extensions ["xdebug.so"]
+  directives(
+      :remote_enable => 1,
+      :remote_connect_back => 1,
+      :remote_port => 9000,
+      :remote_handler => "dbgp",
+      :profiler_enable => 0,
+      :profiler_enable_trigger => 1
+  )
   action :install
+  notifies :restart, resources("service[apache2]"), :delayed
 end
 template "#{node['php']['ext_conf_dir']}/xdebug.ini" do
+  # Overwrite xdebug.ini
+  # (Temporary workaround for https://github.com/opscode-cookbooks/php/issues/108)
   source "xdebug.ini.erb"
   owner "root"
   group "root"
@@ -89,6 +121,7 @@ template "#{node['php']['ext_conf_dir']}/xdebug.ini" do
   action :create
   notifies :restart, resources("service[apache2]"), :delayed
 end
+php_extensions.push "xdebug"
 
 # Install Webgrind
 git "/var/www/webgrind" do
@@ -96,12 +129,8 @@ git "/var/www/webgrind" do
   reference "master"
   action :sync
 end
-template "#{node[:apache][:dir]}/conf.d/webgrind.conf" do
-  source "webgrind.conf.erb"
-  owner "root"
-  group "root"
-  mode 0644
-  action :create
+apache_conf "webgrind" do
+  enable true
   notifies :restart, resources("service[apache2]"), :delayed
 end
 template "/var/www/webgrind/config.php" do
@@ -117,6 +146,7 @@ package "php5-xsl" do
   action :install
 end
 
+<<<<<<< HEAD
 # Setup MailCatcher
 bash "mailcatcher" do
   code "mailcatcher --http-ip 0.0.0.0 --smtp-port 25"
@@ -160,4 +190,17 @@ bash "apt-get-update" do
 end
 %w{ libmysqlclient16 percona-toolkit }.each do |a_package|
   package a_package
+=======
+# Enable installed php extensions
+case node['platform']
+  when 'ubuntu'
+    if node['platform_version'].to_f >= 14.04
+      php_extensions.each do |extension|
+        execute 'enable_php_extension' do
+          command "php5enmod #{extension}"
+        end
+      end
+    end
+  else
+>>>>>>> develop
 end

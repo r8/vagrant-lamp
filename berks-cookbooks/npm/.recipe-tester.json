@@ -1,0 +1,13 @@
+{
+    "type": "chef-solo",
+    "chef_version": "11.4.4",
+    "ami": "ami-e7582d8e",
+    "run_list": [
+        "recipe[chef-npm::default]"
+    ],
+    "node_attributes": {
+        "npm": {
+            "version": "1.2"
+        }
+    }
+}

@@ -1,21 +1,24 @@
-override['mysql']['server_root_password'] = 'vagrant'
-override['mysql']['server_repl_password'] = 'vagrant'
-override['mysql']['server_debian_password'] = 'vagrant'
-override['mysql']['bind_address'] = '0.0.0.0'
+override['mysql']['initial_root_password'] = 'vagrant'
+override['mysql']['version'] = '5.5'
+override['mysql']['port'] = '3306'
 
-override['oh_my_zsh']['users'] = [{
-  :login => 'vagrant',
-  :theme => 'blinks',
-  :plugins => ['git', 'gem']
-}]
+override['percona']['apt_keyserver'] = 'keyserver.ubuntu.com'
 
 override['nodejs']['install_method'] = 'binary'
-override['nodejs']['version'] = '0.10.13'
-override['nodejs']['checksum'] = 'a102fad260d216b95611ddd57aeb6531c92ad1038508390654423feb1b51c059'
-override['nodejs']['checksum_linux_x86'] = 'ea7332fcbbee8e33c2f7d9b0e75c9bb299f276b334b26752725aa8b9b0ee3c99'
-override['nodejs']['checksum_linux_x64'] = 'dcbad86b863faf4a1e10fec9ecd7864cebbbb6783805f1808f563797ce5db2b8'
+override['nodejs']['version'] = '0.12.0'
+override['nodejs']['source']['checksum'] = '9700e23af4e9b3643af48cef5f2ad20a1331ff531a12154eef2bfb0bb1682e32'
+override['nodejs']['binary']['checksum']['linux_x64'] = '3bdb7267ca7ee24ac59c54ae146741f70a6ae3a8a8afd42d06204647fe9d4206'
+override['nodejs']['binary']['checksum']['linux_x86'] = 'd4130512228439bf9115b7057fe145b095c1e49fa8e62c8d3e192b3dd3fe821b'
 
+<<<<<<< HEAD
 override['npm']['version'] = '1.3.11'
 
 override['drush']['install_method'] = "git"
 override['drush']['version'] = "8.x-6.x"
+=======
+override['npm']['version'] = '2.7.4'
+
+override['postfix']['main']['relayhost'] = 'localhost:1025'
+
+include_attribute 'vagrant_main::php'
+>>>>>>> develop

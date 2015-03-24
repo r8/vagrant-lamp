@@ -1,0 +1,17 @@
+<% if node['apache']['version'] == '2.4' -%>
+<IfModule mod_userdir.c>
+  UserDir public_html
+  UserDir disabled root
+
+  <Directory /home/*/public_html>
+    AllowOverride FileInfo AuthConfig Limit Indexes
+    Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec
+    <Limit GET POST OPTIONS>
+	Require all granted
+    </Limit>
+    <LimitExcept GET POST OPTIONS>
+	Require all denied
+    </LimitExcept>
+  </Directory>
+</IfModule>
+<% end -%>

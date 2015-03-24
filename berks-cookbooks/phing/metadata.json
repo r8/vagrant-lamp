@@ -1,0 +1,47 @@
+{
+  "name": "phing",
+  "description": "Installs/Configures Phing",
+  "long_description": "chef-phing\n============\n\nThis cookbook installs Phing\n\nRequirements\n------------\n\n### Cookbooks:\n\n* php\n* composer\n\n### Platforms:\n\n* Ubuntu\n* Debian\n* RHEL\n* CentOS\n* Fedora\n\nAttributes\n----------\n\n* `default[\"phing\"][\"install_method\"]` — Phing installation method (\"composer\" or  \"pear\" are currently supported)\n* `default[\"phing\"][\"preferred_state\"]` — When installing via PEAR, this is the preferred state (stable, alpha, beta, devel). default: \"stable\"\n* `default[\"phing\"][\"install_dir\"]` — Target path for Composer installation method\n* `default[\"phing\"][\"prefix\"]` — Prefix for Phing binary when installing via Composer\n* `default[\"phing\"][\"version\"]` — Phing version when installing via Composer\n\nLicense\n-------\n\nCopyright (c) 2015 Sergey Storchay, http://r8.com.ua\n\nLicensed under MIT:\nhttp://raw.github.com/r8/chef-phing/master/LICENSE.txt\n",
+  "maintainer": "Dieter Blomme",
+  "maintainer_email": "dieterblomme@gmail.com",
+  "license": "MIT",
+  "platforms": {
+    "debian": ">= 0.0.0",
+    "ubuntu": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "scientific": ">= 0.0.0",
+    "amazon": ">= 0.0.0"
+  },
+  "dependencies": {
+    "php": ">= 0.0.0",
+    "composer": ">= 0.0.0"
+  },
+  "recommendations": {
+
+  },
+  "suggestions": {
+
+  },
+  "conflicting": {
+
+  },
+  "providing": {
+
+  },
+  "replacing": {
+
+  },
+  "attributes": {
+
+  },
+  "groupings": {
+
+  },
+  "recipes": {
+    "phing": "Installs Phing",
+    "phing::pear": "Installs Phing through PEAR"
+  },
+  "version": "0.0.3"
+}

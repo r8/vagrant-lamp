@@ -1,0 +1,6 @@
+rvm:
+  - 2.0.0
+script:
+  - bundle exec foodcritic -f any . --tags ~FC015
+  - bundle exec rspec --color --format progress
+  - bundle exec rubocop -l

@@ -1,0 +1,13 @@
+#!/bin/bash
+# if we're on SunOS 5.10+, we should check for beat services.
+
+if [ "`uname -s`" = "SunOS" ] && [ `uname -r|cut -d. -f1` -ge 5 ] && [ `uname -r|cut -d. -f2` -ge 10 ]
+then
+  B=`svcs -Ha |egrep -v "disabled|online|legacy_run"`
+  if [ "foo$B" == "foo" ]
+  then
+    echo "OK"
+  else
+    echo $B
+  fi
+fi
