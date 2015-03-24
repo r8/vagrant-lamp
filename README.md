@@ -35,7 +35,7 @@ Installed software:
 * zsh
 * git, subversion
 * mc, vim, screen, tmux, curl
-* [MailCatcher](http://mailcatcher.me/)
+* [MailHog](https://github.com/mailhog/)
 * [Composer](http://getcomposer.org/)
 * Phing
 * Wordpress utils:
@@ -103,11 +103,11 @@ something like
 so your call to webgrind will not overwrite the file for the process that
 happens to serve webgrind.
 
-### Mailcatcher
+### MailHog
 
-All emails sent by PHP are intercepted by MailCatcher. So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailCatcher, which is running on port 1080 and also available on every domain:
+All emails sent via local mail transport are intercepted by MailHog. So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailHog, which is running on port 8025 and also available on every domain:
 
-    http://local.dev:1080
+    http://local.dev:8025
 
 ### Composer
 
