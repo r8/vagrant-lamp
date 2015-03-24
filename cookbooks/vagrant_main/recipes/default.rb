@@ -23,18 +23,6 @@ php_extensions = []
   package a_package
 end
 
-<<<<<<< HEAD
-# Install ruby gems
-%w{ rdoc mailcatcher }.each do |a_gem|
-  gem_package a_gem
-end
-
-gem_package "rake" do
-  version "0.8.7"
-end
-
-=======
->>>>>>> develop
 # Generate selfsigned ssl
 execute "make-ssl-cert" do
   command "make-ssl-cert generate-default-snakeoil --force-overwrite"
@@ -70,10 +58,7 @@ sites.each do |name|
     server_aliases site["aliases"]
     server_include site["include"]
     docroot site["docroot"]?site["docroot"]:"/vagrant/public/#{site["host"]}"
-<<<<<<< HEAD
-=======
     notifies :restart, resources("service[apache2]"), :delayed
->>>>>>> develop
   end
 
    # Add site info in /etc/hosts
@@ -146,51 +131,6 @@ package "php5-xsl" do
   action :install
 end
 
-<<<<<<< HEAD
-# Setup MailCatcher
-bash "mailcatcher" do
-  code "mailcatcher --http-ip 0.0.0.0 --smtp-port 25"
-  not_if "ps ax | grep -v grep | grep mailcatcher";
-end
-template "#{node['php']['ext_conf_dir']}/mailcatcher.ini" do
-  source "mailcatcher.ini.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  action :create
-  notifies :restart, resources("service[apache2]"), :delayed
-end
-cookbook_file "/etc/rc.local" do
-  source "rc.local"
-  owner "root"
-  group "root"
-  mode "0755"
-  action :create
-end
-
-# Fixing deprecated php comments style in ini files
-bash "deploy" do
-  code "sudo perl -pi -e 's/(\s*)#/$1;/' /etc/php5/cli/conf.d/*ini"
-  notifies :restart, resources("service[apache2]"), :delayed
-end
-
-# Install Percona Toolkit
-bash "percona-key" do
-  # Install percona repo key.
-  # We can't use 'apt' recipe, because this command should be run with sudo
-  code "sudo apt-key adv --keyserver keys.gnupg.net --recv 1C4CBDCDCD2EFD2A"
-end
-apt_repository "percona" do
-  uri "http://repo.percona.com/apt"
-  components ["main"]
-  distribution "lucid"
-end
-bash "apt-get-update" do
-  code "sudo apt-get update"
-end
-%w{ libmysqlclient16 percona-toolkit }.each do |a_package|
-  package a_package
-=======
 # Enable installed php extensions
 case node['platform']
   when 'ubuntu'
@@ -202,5 +142,4 @@ case node['platform']
       end
     end
   else
->>>>>>> develop
 end
