@@ -4,6 +4,13 @@ Vagrant LAMP
 
 My default LAMP development stack configuration for Vagrant.
 
+Requrements
+-----------
+
+* Virtualbox
+* Vagrant >= 1.7.0
+* vagrant-omnibus plugin
+
 Installation:
 -------------
 
@@ -35,7 +42,7 @@ Installed software:
 * zsh
 * git, subversion
 * mc, vim, screen, tmux, curl
-* [MailHog](https://github.com/mailhog/)
+* [MailHog](http://github.com/mailhog/MailHog)
 * [Composer](http://getcomposer.org/)
 * Phing
 * Wordpress utils:
@@ -105,7 +112,7 @@ happens to serve webgrind.
 
 ### MailHog
 
-ll emails sent via local mail transport are intercepted by MailHog. So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailHog, which is running on port 8025 and also available on every domain:
+ll emails sent via local mail transport are intercepted by [MailHog](http://github.com/mailhog/MailHog). So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailHog, which is running on port 8025 and also available on every domain:
 
     http://local.dev:8025
 
