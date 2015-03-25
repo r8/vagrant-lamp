@@ -4,6 +4,13 @@ Vagrant LAMP
 
 My default LAMP development stack configuration for Vagrant.
 
+Requrements
+-----------
+
+* Virtualbox
+* Vagrant >= 1.7.0
+* vagrant-omnibus plugin
+
 Installation:
 -------------
 
