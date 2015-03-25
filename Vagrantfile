@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--cpus", "1"]
   end
 
-  # Enable provisioning with chef solo, specifying a cookbooks path, roles
+  # Enable provisioning with chef zero, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   config.vm.provision :chef_zero do |chef|
