@@ -20,6 +20,8 @@ Vagrant.configure("2") do |config|
       "vagrant plugin install vagrant-omnibus"
   end
 
+  config.berkshelf.enabled = false
+
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine.
   # Forward MySql port on 33066, used for connecting admin-clients to localhost:33066
