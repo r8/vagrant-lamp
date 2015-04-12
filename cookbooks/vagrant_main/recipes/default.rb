@@ -29,9 +29,10 @@ execute "make-ssl-cert" do
 end
 
 # Install Mysql
-mysql_service "default" do
+mysql_service 'default' do
   port node['mysql']['port']
   version node['mysql']['version']
+  socket node['mysql']['socket']
   initial_root_password node['mysql']['initial_root_password']
   action [:create, :start]
 end

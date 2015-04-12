@@ -1,6 +1,7 @@
-override['mysql']['initial_root_password'] = 'vagrant'
 override['mysql']['version'] = '5.5'
 override['mysql']['port'] = '3306'
+override['mysql']['socket'] = '/var/run/mysqld/mysqld.sock'
+override['mysql']['initial_root_password'] = 'vagrant'
 
 override['percona']['apt_keyserver'] = 'keyserver.ubuntu.com'
 
