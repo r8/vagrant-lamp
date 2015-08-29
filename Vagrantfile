@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "chef/ubuntu-14.04"
+  config.vm.box = "bento/ubuntu-14.04"
 
   if Vagrant.has_plugin? 'vagrant-omnibus'
     # Set Chef version for Omnibus
