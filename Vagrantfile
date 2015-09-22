@@ -20,7 +20,11 @@ Vagrant.configure("2") do |config|
       "vagrant plugin install vagrant-omnibus"
   end
 
-  config.berkshelf.enabled = false
+  # Disable vagrant-berkshelf because it overrides chef cookbooks path
+  # See https://github.com/berkshelf/vagrant-berkshelf/issues/274
+  if Vagrant.has_plugin? 'vagrant-berkshelf'
+    config.berkshelf.enabled = false
+  end
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine.
@@ -51,13 +55,13 @@ Vagrant.configure("2") do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   config.vm.provision :chef_zero do |chef|
-    chef.cookbooks_path = ["berks-cookbooks", "cookbooks"] 
+    chef.cookbooks_path = ["berks-cookbooks", "cookbooks"]
     chef.data_bags_path = "data_bags"
 
     # List of recipes to run
     chef.add_recipe "vagrant_main"
-    chef.add_recipe "vagrant_main::nodejs"
-    chef.add_recipe "vagrant_main::wordpress"
-    chef.add_recipe "vagrant_main::magento"
+    # chef.add_recipe "vagrant_main::nodejs"
+    # chef.add_recipe "vagrant_main::wordpress"
+    # chef.add_recipe "vagrant_main::magento"
   end
 end
