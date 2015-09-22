@@ -76,9 +76,11 @@
   #   secure renegotiation protocol. Default: Off
   SSLInsecureRenegotiation <%= node['apache']['mod_ssl']['insecure_renegotiation'] %>
 
+<% unless node['apache']['mod_ssl']['strict_sni_vhost_check'] == "Off"%>
   #   Whether to forbid non-SNI clients to access name based virtual hosts.
   #   Default: Off
   SSLStrictSNIVHostCheck <%= node['apache']['mod_ssl']['strict_sni_vhost_check'] %>
+<% end %>
 
 <% if node['apache']['version'] == '2.4' -%>
   #   Enable compression on the SSL level

@@ -30,7 +30,7 @@ end
 # appcmd syntax for adding modules
 # appcmd add module /name:string /type:string /preCondition:string
 action :add do
-  unless @current_resource.exists
+  if !@current_resource.exists
     converge_by("add IIS module #{new_resource.module_name}") do
       cmd = "#{appcmd(node)} add module /module.name:\"#{new_resource.module_name}\""
 
@@ -46,7 +46,7 @@ action :add do
         cmd << " /preCondition:\"#{new_resource.precondition}\""
       end
 
-      shell_out!(cmd, {:returns => [0,42]})
+      shell_out!(cmd,  returns: [0, 42])
 
       Chef::Log.info("#{new_resource} added module '#{new_resource.module_name}'")
     end
@@ -58,13 +58,12 @@ end
 action :delete do
   if @current_resource.exists
     converge_by("delete IIS module #{new_resource.module_name}") do
-
       cmd = "#{appcmd(node)} delete module /module.name:\"#{new_resource.module_name}\""
       if new_resource.application
         cmd << " /app.name:\"#{new_resource.application}\""
       end
 
-      shell_out!(cmd, {:returns => [0,42]})
+      shell_out!(cmd,  returns: [0, 42])
     end
 
     Chef::Log.info("#{new_resource} deleted")

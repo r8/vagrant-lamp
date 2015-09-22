@@ -2,7 +2,7 @@
 # Cookbook Name:: apt
 # Resource:: repository
 #
-# Copyright 2010-2013, Opscode, Inc.
+# Copyright 2010-2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +26,21 @@ def initialize(*args)
   @action = :add
 end
 
+state_attrs :arch,
+            :cache_rebuild,
+            :components,
+            :cookbook,
+            :deb_src,
+            :distribution,
+            :key,
+            :keyserver,
+            :key_proxy,
+            :repo_name,
+            :trusted,
+            :uri
+
 # name of the repo, used for source.list filename
-attribute :repo_name, :kind_of => String, :name_attribute => true
+attribute :repo_name, :kind_of => String, :name_attribute => true, :regex => [/^([a-z]|[A-Z]|[0-9]|_|-|\.)+$/]
 attribute :uri, :kind_of => String
 attribute :distribution, :kind_of => String
 attribute :components, :kind_of => Array, :default => []
@@ -37,6 +50,7 @@ attribute :trusted, :kind_of => [TrueClass, FalseClass], :default => false
 attribute :deb_src, :default => false
 attribute :keyserver, :kind_of => String, :default => nil
 attribute :key, :kind_of => String, :default => nil
+attribute :key_proxy, :kind_of => String, :default => node['apt']['key_proxy']
 attribute :cookbook, :kind_of => String, :default => nil
 # trigger cache rebuild
 # If not you can trigger in the recipe itself after checking the status of resource.updated{_by_last_action}?

@@ -81,6 +81,9 @@ username=<%= @config.username %>
 <% if @config.password %>
 password=<%= @config.password %>
 <% end %>
+<% if @config.repo_gpgcheck %>
+repo_gpgcheck=1
+<% end %>
 <% if @config.max_retries %>
 retries=<%= @config.max_retries %>
 <% end %>
@@ -100,7 +103,7 @@ sslclientcert=<%= @config.sslclientcert %>
 sslclientkey=<%= @config.sslclientkey %>
 <% end %>
 <% unless @config.sslverify.nil? %>
-sslverify=<%= @config.sslverify %>
+sslverify=<%= ( @config.sslverify ) ? 'True' : 'False' %>
 <% end %>
 <% if @config.timeout %>
 timeout=<%= @config.timeout %>

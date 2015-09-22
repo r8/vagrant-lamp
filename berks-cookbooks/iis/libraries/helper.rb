@@ -21,6 +21,7 @@
 
 module Opscode
   module IIS
+    # Contains functions that are used throughout this cookbook
     module Helper
       if RUBY_PLATFORM =~ /mswin|mingw32|windows/
         require 'chef/win32/version'
@@ -34,12 +35,12 @@ module Opscode
         if RUBY_PLATFORM =~ /mswin|mingw32|windows/
           win_version = Chef::ReservedNames::Win32::Version.new
           win_version.windows_server_2008? ||
-          win_version.windows_vista? ||
-          win_version.windows_server_2003_r2? ||
-          win_version.windows_home_server? ||
-          win_version.windows_server_2003? ||
-          win_version.windows_xp? ||
-          win_version.windows_2000?
+            win_version.windows_vista? ||
+            win_version.windows_server_2003_r2? ||
+            win_version.windows_home_server? ||
+            win_version.windows_server_2003? ||
+            win_version.windows_xp? ||
+            win_version.windows_2000?
         end
       end
 
@@ -47,32 +48,33 @@ module Opscode
         if RUBY_PLATFORM =~ /mswin|mingw32|windows/
           win_version = Chef::ReservedNames::Win32::Version.new
           win_version.windows_7? ||
-          win_version.windows_server_2008_r2? ||
-          win_version.windows_server_2008? ||
-          win_version.windows_vista? ||
-          win_version.windows_server_2003_r2? ||
-          win_version.windows_home_server? ||
-          win_version.windows_server_2003? ||
-          win_version.windows_xp? ||
-          win_version.windows_2000?
+            win_version.windows_server_2008_r2? ||
+            win_version.windows_server_2008? ||
+            win_version.windows_vista? ||
+            win_version.windows_server_2003_r2? ||
+            win_version.windows_home_server? ||
+            win_version.windows_server_2003? ||
+            win_version.windows_xp? ||
+            win_version.windows_2000?
         end
       end
-
 
       def windows_cleanpath(path)
-        if defined?(Chef::Util::PathHelper.cleanpath) != nil
-          Chef::Util::PathHelper.cleanpath(path)
+        if !defined?(Chef::Util::PathHelper.cleanpath).nil?
+          path = Chef::Util::PathHelper.cleanpath(path)
         else
-          win_friendly_path(path)
+          path = win_friendly_path(path)
         end
+        # Remove any trailing slashes to prevent them from accidentally escaping any quotes.
+        path.chomp('/').chomp('\\')
       end
 
-      def is_new_value?(document, xpath, value_to_check)
+      def new_value?(document, xpath, value_to_check)
         XPath.first(document, xpath).to_s != value_to_check.to_s
       end
 
-      def is_new_or_empty_value?(document, xpath, value_to_check)
-        value_to_check.to_s != '' && is_new_value?(document, xpath, value_to_check)
+      def new_or_empty_value?(document, xpath, value_to_check)
+        value_to_check.to_s != '' && new_value?(document, xpath, value_to_check)
       end
 
       def appcmd(node)

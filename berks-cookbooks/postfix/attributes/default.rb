@@ -1,5 +1,5 @@
 # encoding: utf-8
-# Author:: Joshua Timberman <joshua@getchef.com>
+# Author:: Joshua Timberman <joshua@chef.io>
 # Copyright:: Copyright 2009-2014, Chef Software, Inc.
 # License:: Apache License, Version 2.0
 #
@@ -25,6 +25,7 @@ default['postfix']['use_transport_maps'] = false
 default['postfix']['use_access_maps'] = false
 default['postfix']['use_virtual_aliases'] = false
 default['postfix']['use_virtual_aliases_domains'] = false
+default['postfix']['use_relay_restirictions_maps'] = false
 default['postfix']['transports'] = {}
 default['postfix']['access'] = {}
 default['postfix']['virtual_aliases'] = {}
@@ -47,6 +48,7 @@ when 'smartos'
   default['postfix']['access_db'] = '/opt/local/etc/postfix/access'
   default['postfix']['virtual_alias_db'] = '/opt/local/etc/postfix/virtual'
   default['postfix']['virtual_alias_domains_db'] = '/opt/local/etc/postfix/virtual_domains'
+  default['postfix']['relay_restrictions_db'] = '/opt/local/etc/postfix/relay_restrictions'
 when 'freebsd'
   default['postfix']['conf_dir'] = '/usr/local/etc/postfix'
   default['postfix']['aliases_db'] = '/etc/aliases'
@@ -54,6 +56,7 @@ when 'freebsd'
   default['postfix']['access_db'] = '/usr/local/etc/postfix/access'
   default['postfix']['virtual_alias_db'] = '/usr/local/etc/postfix/virtual'
   default['postfix']['virtual_alias_domains_db'] = '/usr/local/etc/postfix/virtual_domains'
+  default['postfix']['relay_restrictions_db'] = '/etc/postfix/relay_restrictions'
 when 'omnios'
   default['postfix']['conf_dir'] = '/opt/omni/etc/postfix'
   default['postfix']['aliases_db'] = '/opt/omni/etc/postfix/aliases'
@@ -61,6 +64,7 @@ when 'omnios'
   default['postfix']['access_db'] = '/opt/omni/etc/postfix/access'
   default['postfix']['virtual_alias_db'] = '/etc/omni/etc/postfix/virtual'
   default['postfix']['virtual_alias_domains_db'] = '/etc/omni/etc/postfix/virtual_domains'
+  default['postfix']['relay_restrictions_db'] = '/opt/omni/etc/postfix/relay_restrictions'
   default['postfix']['uid'] = 11
 else
   default['postfix']['conf_dir'] = '/etc/postfix'
@@ -69,6 +73,7 @@ else
   default['postfix']['access_db'] = '/etc/postfix/access'
   default['postfix']['virtual_alias_db'] = '/etc/postfix/virtual'
   default['postfix']['virtual_alias_domains_db'] = '/etc/postfix/virtual_domains'
+  default['postfix']['relay_restrictions_db'] = '/etc/postfix/relay_restrictions'
 end
 
 # Non-default main.cf attributes
@@ -87,6 +92,8 @@ default['postfix']['main']['inet_interfaces'] = 'loopback-only'
 
 # Conditional attributes, also reference _attributes recipe
 case node['platform_family']
+when 'debian'
+  default['postfix']['cafile'] = '/etc/ssl/certs/ca-certificates.crt'
 when 'smartos'
   default['postfix']['main']['smtpd_use_tls'] = 'no'
   default['postfix']['main']['smtp_use_tls'] = 'no'
@@ -113,7 +120,6 @@ end
 # Master.cf attributes
 default['postfix']['master']['submission'] = false
 
-
 # OS Aliases
 case node['platform']
 when 'freebsd'
@@ -135,3 +141,8 @@ when 'freebsd'
 else
   default['postfix']['aliases'] = {}
 end
+
+if node['postfix']['use_relay_restirictions_maps']
+  default['postfix']['main']['smtpd_relay_restrictions'] = "hash:#{node['postfix']['relay_restrictions_db']}, reject"
+end
+

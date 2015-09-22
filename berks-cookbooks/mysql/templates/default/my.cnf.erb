@@ -38,6 +38,9 @@ datadir                        = <%= @data_dir %>
 <% if @tmp_dir %>
 tmpdir                         = <%= @tmp_dir %>
 <% end %>
+<% @config.mysqld_options.each do |option,value| %>
+<%= option %>                  = <%= value %>
+<% end %>
 <% if @lc_messages_dir %>
 lc-messages-dir                = <%= @lc_messages_dir %>
 <% end %>

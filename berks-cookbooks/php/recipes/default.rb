@@ -1,10 +1,10 @@
 #
-# Author::  Joshua Timberman (<joshua@opscode.com>)
-# Author::  Seth Chisamore (<schisamo@opscode.com>)
+# Author::  Joshua Timberman (<joshua@getchef.com>)
+# Author::  Seth Chisamore (<schisamo@getchef.com>)
 # Cookbook Name:: php
 # Recipe:: default
 #
-# Copyright 2009-2011, Opscode, Inc.
+# Copyright 2009-2014, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,4 +30,4 @@ php_pear_channel 'pecl.php.net' do
   action :update
 end
 
-include_recipe "php::ini"
+include_recipe 'php::ini'

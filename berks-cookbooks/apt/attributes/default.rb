@@ -2,7 +2,7 @@
 # Cookbook Name:: apt
 # Attributes:: default
 #
-# Copyright 2009-2013, Opscode, Inc.
+# Copyright 2009-2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ default['apt']['cacher-client']['restrict_environment'] = false
 default['apt']['cacher_dir'] = '/var/cache/apt-cacher-ng'
 default['apt']['cacher_interface'] = nil
 default['apt']['cacher_port'] = 3142
+default['apt']['cacher_ssl_support'] = false
 default['apt']['caching_server'] = false
 default['apt']['compiletime'] = false
 default['apt']['compile_time_update'] = false
@@ -43,4 +44,5 @@ default['apt']['unattended_upgrades']['mail'] = nil
 default['apt']['unattended_upgrades']['mail_only_on_error'] = true
 default['apt']['unattended_upgrades']['remove_unused_dependencies'] = false
 default['apt']['unattended_upgrades']['automatic_reboot'] = false
+default['apt']['unattended_upgrades']['automatic_reboot_time'] = 'now'
 default['apt']['unattended_upgrades']['dl_limit'] = nil

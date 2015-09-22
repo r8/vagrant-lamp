@@ -2,7 +2,7 @@
 # Cookbook Name:: apt
 # Resource:: preference
 #
-# Copyright 2010-2013, Opscode, Inc.
+# Copyright 2010-2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,12 @@ def initialize(*args)
   @action = :add
 end
 
-attribute :package_name, :kind_of => String, :name_attribute => true
+state_attrs :glob,
+            :package_name,
+            :pin,
+            :pin_priority
+
+attribute :package_name, :kind_of => String, :name_attribute => true, :regex => [/^([a-z]|[A-Z]|[0-9]|_|-|\.|\*)+$/]
 attribute :glob, :kind_of => String
 attribute :pin, :kind_of => String
 attribute :pin_priority, :kind_of => String

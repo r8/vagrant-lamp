@@ -2,7 +2,7 @@
 # Cookbook Name:: apt
 # Recipe:: cacher-client
 #
-# Copyright 2011-2013 Opscode, Inc.
+# Copyright 2011-2013 Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@ if node['apt']
     cacher.default.name = node['apt']['cacher_ipaddress']
     cacher.default.ipaddress = node['apt']['cacher_ipaddress']
     cacher.default.apt.cacher_port = node['apt']['cacher_port']
-    cacher.default.apt_cacher_interface = node['apt']['cacher_interface']
+    cacher.default.apt.cacher_interface = node['apt']['cacher_interface']
+    cacher.default.apt.cacher_ssl_support = node['apt']['cacher_ssl_support']
     servers << cacher
   elsif node['apt']['caching_server']
     node.override['apt']['compiletime'] = false
@@ -65,8 +66,9 @@ if servers.length > 0
     variables(
       :proxy => cacher_ipaddress,
       :port => servers[0]['apt']['cacher_port'],
+      :proxy_ssl => servers[0]['apt']['cacher_ssl_support'],
       :bypass => node['apt']['cache_bypass']
-      )
+    )
     action(node['apt']['compiletime'] ? :nothing : :create)
     notifies :run, 'execute[apt-get update]', :immediately
   end

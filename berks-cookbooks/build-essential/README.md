@@ -1,10 +1,10 @@
 Description
 ===========
 [![Cookbook Version](http://img.shields.io/cookbook/v/build-essential.svg)][cookbook]
-[![Build Status](http://img.shields.io/travis/opscode-cookbooks/build-essential.svg)][travis]
+[![Build Status](http://img.shields.io/travis/chef-cookbooks/build-essential.svg)][travis]
 
-[cookbook]: https://community.opscode.com/cookbooks/build-essential
-[travis]: http://travis-ci.org/opscode-cookbooks/build-essential
+[cookbook]: https://community.chef.io/cookbooks/build-essential
+[travis]: http://travis-ci.org/chef-cookbooks/build-essential
 
 Installs packages required for compiling C software from source. Use this
 cookbook if you wish to compile C programs, or install RubyGems with native
@@ -15,7 +15,7 @@ Requirements
 Chef 11+ and Ohai 6.14+ are required. For the latest list of supported
 platforms, please see the `metadata.rb`.
 
-**Note for Debian platform family:** On Debian platform-family systems, it is recommended that `apt-get update` be run, to ensure that the package cache is updated. It's not in the scope of this cookbook to do that, as it can [create a duplicate resource](https://tickets.opscode.com/browse/CHEF-3694). We recommend using the [apt](https://supermarket.getchef.com/cookbooks/apt) cookbook to do this.
+**Note for Debian platform family:** On Debian platform-family systems, it is recommended that `apt-get update` be run, to ensure that the package cache is updated. It's not in the scope of this cookbook to do that, as it can [create a duplicate resource](https://tickets.chef.io/browse/CHEF-3694). We recommend using the [apt](https://supermarket.chef.io/cookbooks/apt) cookbook to do this.
 
 **Note for OmniOS**: Currently, OmniOS's Ruby package is built with
 GCC 4.6.3, and the path is hardcoded, as the gcc binaries are not
@@ -87,11 +87,11 @@ extension:
 License & Authors
 -----------------
 - Author: Seth Vargo (<sethvargo@gmail.com>)
-- Author: Joshua Timberman (<joshua@opscode.com>)
-- Author: Seth Chisamore (<schisamo@opscode.com>)
+- Author: Joshua Timberman (<joshua@chef.io>)
+- Author: Seth Chisamore (<schisamo@chef.io>)
 
 ```text
-Copyright 2009-2014, Chef Software, Inc. (<legal@getchef.com>)
+Copyright 2009-2014, Chef Software, Inc. (<legal@chef.io>)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -105,3 +105,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+

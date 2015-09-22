@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+site 'https://supermarket.chef.io/api/v1'
+
+# loosely coupled prerequisites for test-kitchen
+cookbook 'apt'
+cookbook 'yum-epel'
+
+cookbook 'runit', path: '.'
+cookbook 'runit_test', path: './test/cookbooks/runit_test'
+cookbook 'runit_other_test', path: './test/cookbooks/runit_other_test'

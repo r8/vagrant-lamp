@@ -1,6 +1,6 @@
 # encoding: utf-8
 #
-# Author:: Joshua Timberman(<joshua@getchef.com>)
+# Author:: Joshua Timberman(<joshua@chef.io>)
 # Cookbook Name:: postfix
 # Recipe:: server
 #

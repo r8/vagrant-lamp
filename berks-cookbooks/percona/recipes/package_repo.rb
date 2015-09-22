@@ -17,12 +17,11 @@ when "debian"
   end
 
   apt_repository "percona" do
-    uri node["percona"]["apt_uri"]
+    uri node["percona"]["apt"]["uri"]
     distribution node["lsb"]["codename"]
     components ["main"]
-    keyserver node["percona"]["apt_keyserver"]
-    key node["percona"]["apt_key"]
-    action :add
+    keyserver node["percona"]["apt"]["keyserver"]
+    key node["percona"]["apt"]["key"]
   end
 
 when "rhel"
@@ -34,6 +33,5 @@ when "rhel"
     gpgkey node["percona"]["yum"]["gpgkey"]
     gpgcheck node["percona"]["yum"]["gpgcheck"]
     sslverify node["percona"]["yum"]["sslverify"]
-    action :create
   end
 end

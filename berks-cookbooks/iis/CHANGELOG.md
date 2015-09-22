@@ -1,3 +1,11 @@
+v4.1.1 (2015-05-07)
+-------------------
+- Detects changes in the physical path of apps.
+- Adds support for gMSA identity.
+- Performing add on a site will now reconfigure it if necessary.
+- Lock and unlock commands on configuration sections now use -commit:apphost.
+- Fix issue where popeline_mode was ignored during configuration of a pool.
+
 v4.1.0 (2015-03-04)
 -------------------
 - Removed iis_pool attribute 'set_profile_environment' incompatible with < IIS-8.

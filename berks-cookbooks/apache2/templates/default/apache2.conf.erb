@@ -51,7 +51,7 @@ Group <%= node['apache']['group'] %>
 
 <% if node['apache']['version'] == '2.4' -%>
 # Sets the default security model of the Apache2 HTTPD server. It does
-# not allow access to the root filesystem outside of /usr/share and node['apache']['docroot_dir'].
+# not allow access to the root filesystem outside of /usr/share and <%= node['apache']['docroot_dir'] %>.
 # If your system is serving content from a sub-directory in /srv you must allow
 # access in conf-enabled, or in any related virtual host. e.g.
 #
@@ -85,13 +85,20 @@ Group <%= node['apache']['group'] %>
 # directive.
 #
 
-AccessFileName .htaccess
+AccessFileName <%= node['apache']['access_file_name'] %>
 
 #
 # The following lines prevent .htaccess and .htpasswd files from being
 # viewed by Web clients.
 #
-<Files ~ "^\.ht">
+<% access_file_name_prefix = node['apache']['access_file_name'][0..2] if !node['apache']['access_file_name'].empty?
+   if access_file_name_prefix != '.ht'
+    file_name_prefix = '(' + access_file_name_prefix + '|.ht)'
+   else
+    file_name_prefix = '.ht'
+   end
+%>
+<Files ~ "^<%= file_name_prefix %>">
     <% if node['apache']['version'] == '2.2' -%>
     Order allow,deny
     Deny from all
@@ -129,7 +136,7 @@ HostnameLookups Off
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-<% if node['apache']['error_log'] =~ /^syslog:/ %>
+<% if node['apache']['error_log'] =~ /^syslog:/ || node['apache']['error_log'] =~ /^\|/ %>
 ErrorLog <%= node['apache']['error_log'] %>
 <% else %>
 ErrorLog <%= node['apache']['log_dir'] %>/<%= node['apache']['error_log'] %>
@@ -163,37 +170,6 @@ IncludeOptional <%= node['apache']['dir'] %>/mods-enabled/*.conf
 
 # Include ports listing
 Include <%= node['apache']['dir'] %>/ports.conf
-
-<% if node['apache']['version'] == '2.4' -%>
-# Sets the default security model of the Apache2 HTTPD server. It does
-# not allow access to the root filesystem outside of /usr/share and /var/www.
-# The former is used by web applications packaged in Debian,
-# the latter may be used for local directories served by the web server. If
-# your system is serving content from a sub-directory in /srv you must allow
-# access here, or in any related virtual host.
-<Directory />
-        Options FollowSymLinks
-        AllowOverride None
-        Require all denied
-</Directory>
-
-<Directory /usr/share>
-        AllowOverride None
-        Require all granted
-</Directory>
-
-<Directory <%= node['apache']['docroot_dir'] %>>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-
-#<Directory /srv/>
-#       Options Indexes FollowSymLinks
-#       AllowOverride None
-#       Require all granted
-#</Directory>
-<% end -%>
 
 #
 # The following directives define some format nicknames for use with

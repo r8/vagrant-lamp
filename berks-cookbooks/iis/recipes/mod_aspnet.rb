@@ -18,13 +18,13 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
-include_recipe "iis::mod_isapi"
+include_recipe 'iis'
+include_recipe 'iis::mod_isapi'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
-  features = %w{NET-Framework}
+  features = %w(NET-Framework)
 else
-  features = %w{IIS-NetFxExtensibility IIS-ASPNET}
+  features = %w(IIS-NetFxExtensibility IIS-ASPNET)
 end
 
 features.each do |feature|

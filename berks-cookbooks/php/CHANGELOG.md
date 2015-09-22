@@ -2,6 +2,31 @@ php Cookbook CHANGELOG
 ======================
 This file is used to list changes made in each version of the php cookbook.
 
+v1.7.2 (2015-8-24)
+------------------
+- Correct spelling in fpm_pool_start_servers (was servres)
+
+v1.7.1 (2015-8-17)
+------------------
+- Correct permissions on ext_conf_dir folder (644 -> 755)
+
+v1.7.0 (2015-7-31)
+------------------
+- NOTICE - This version changes the way the ['php']['directives'] is placed into configuration files. Quotes are no longer automatically placed around these aditional directives. Please take care when rolling out this version.
+- Allow additional PHP FPM config
+- Add recipe to recompile PHP from source
+- Move source dependencies to attributes file
+- Misc bug fixes
+
+v1.6.0 (2015-7-6)
+-----------------
+- Added ChefSpec matchers
+- Added basic PHP-FPM Support (Pre-Release)
+- Added support for FreeBSD
+- Updated cookbook to use MySQL 6.0 cookbook
+- Update cookbook to use php5enmod on supported platforms
+- Allow users to override php-mysql package
+
 v1.5.0 (2014-10-06)
 -------------------
 - Adding package_options attribute, utilizing in package resource

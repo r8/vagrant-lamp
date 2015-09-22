@@ -2,7 +2,8 @@
 # Cookbook Name:: apache2
 # Recipe:: default
 #
-# Copyright 2008-2013, Opscode, Inc.
+# Copyright 2008-2013, Chef Software, Inc.
+# Copyright 2014-2015, Alexander van Zoest
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,14 +30,16 @@ end
   end
 end
 
-%w(default 000-default).each do |site|
+%w(default default.conf 000-default 000-default.conf).each do |site|
   link "#{node['apache']['dir']}/sites-enabled/#{site}" do
     action :delete
+    not_if { site == "#{node['apache']['default_site_name']}.conf" && node['apache']['default_site_enabled'] }
   end
 
   file "#{node['apache']['dir']}/sites-available/#{site}" do
     action :delete
     backup false
+    not_if { site == "#{node['apache']['default_site_name']}.conf" && node['apache']['default_site_enabled'] }
   end
 end
 
@@ -181,7 +184,11 @@ end
 
 if node['apache']['version'] == '2.4' && !platform_family?('freebsd')
   # on freebsd the prefork mpm is staticly compiled in
-  include_recipe "apache2::mpm_#{node['apache']['mpm']}"
+  if node['apache']['mpm_support'].include?(node['apache']['mpm'])
+    include_recipe "apache2::mpm_#{node['apache']['mpm']}"
+  else
+    Chef::Log.warn("apache2: #{node['apache']['mpm']} module is not supported and must be handled separately!")
+  end
 end
 
 node['apache']['default_modules'].each do |mod|
@@ -189,20 +196,18 @@ node['apache']['default_modules'].each do |mod|
   include_recipe "apache2::#{module_recipe_name}"
 end
 
-web_app 'default' do
-  template 'default-site.conf.erb'
-  path "#{node['apache']['dir']}/sites-available/default.conf"
-  enable node['apache']['default_site_enabled']
-end
-
-apache_site node['apache']['default_site_name'] do
-  enable node['apache']['default_site_enabled']
+if node['apache']['default_site_enabled']
+  web_app node['apache']['default_site_name'] do
+    template 'default-site.conf.erb'
+    enable node['apache']['default_site_enabled']
+  end
 end
 
 service 'apache2' do
   service_name node['apache']['service_name']
   case node['platform_family']
   when 'rhel'
+    restart_command '/sbin/service httpd restart && sleep 1' if node['apache']['version'] == '2.2'
     reload_command '/sbin/service httpd graceful'
   when 'debian'
     provider Chef::Provider::Service::Debian

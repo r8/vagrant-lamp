@@ -5,6 +5,7 @@ class Chef
   class Provider
     class MysqlConfig < Chef::Provider::LWRPBase
       include MysqlCookbook::Helpers
+      provides :mysql_config if defined?(provides)
 
       use_inline_resources if defined?(use_inline_resources)
 

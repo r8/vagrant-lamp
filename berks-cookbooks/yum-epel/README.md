@@ -143,10 +143,10 @@ include_recipe 'yum-epel'
 
 License & Authors
 -----------------
-- Author:: Sean OMeara (<someara@opscode.com>)
+- Author:: Sean OMeara (<someara@chef.io>)
 
 ```text
-Copyright:: 2011-2013 Opscode, Inc.
+Copyright:: 2011-2013 Chef Software, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

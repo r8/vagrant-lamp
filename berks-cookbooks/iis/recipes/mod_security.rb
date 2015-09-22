@@ -18,12 +18,12 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
+include_recipe 'iis'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
-  features = %w{Web-Url-Auth Web-Filtering Web-IP-Security}
+  features = %w(Web-Url-Auth Web-Filtering Web-IP-Security)
 else
-  features = %w{IIS-URLAuthorization IIS-RequestFiltering IIS-IPSecurity}
+  features = %w(IIS-URLAuthorization IIS-RequestFiltering IIS-IPSecurity)
 end
 
 features.each do |feature|

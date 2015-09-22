@@ -6,14 +6,14 @@ end
 
 action :set do
   if @current_resource.exists
-    Chef::Log.info "#{ @new_resource } already exists - nothing to do."
+    Chef::Log.info "#{@new_resource} already exists - nothing to do."
   else
     execute "#{config_cmd} #{new_resource.key} \"#{new_resource.value}\"" do
       cwd new_resource.path
       user new_resource.user
       group new_resource.user
       environment cmd_env
-      Chef::Log.info "#{ @new_resource } created."
+      Chef::Log.info "#{@new_resource} created."
     end
   end
 end
@@ -39,7 +39,7 @@ end
 
 def config
   cmd = [config_cmd, new_resource.key].join(' ')
-  git_config = Mixlib::ShellOut.new(cmd, :user => new_resource.user, :group => new_resource.user, :cwd => new_resource.path, :env => cmd_env)
+  git_config = Mixlib::ShellOut.new(cmd, user: new_resource.user, group: new_resource.user, cwd: new_resource.path, env: cmd_env)
   Chef::Log.debug("Current config cmd: #{git_config.inspect}")
   git_config.run_command.stdout.chomp
 end

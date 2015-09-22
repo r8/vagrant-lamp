@@ -23,5 +23,5 @@ iis_site 'Default Web Site' do
 end
 
 iis_pool 'DefaultAppPool' do
-  action [:stop , :delete]
+  action [:stop, :delete]
 end

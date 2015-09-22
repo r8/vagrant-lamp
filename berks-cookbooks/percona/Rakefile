@@ -4,7 +4,14 @@ desc "Run all tests except `kitchen`"
 task test: [:rubocop, :foodcritic, :chefspec]
 
 desc "Run all tests"
-task all_tests: [:rubocop, :foodcritic, :chefspec, "kitchen:all"]
+task all_tests: [
+  :license_finder, :rubocop, :foodcritic, :chefspec, "kitchen:all"
+]
+
+# license finder
+task :license_finder do
+  sh "bundle exec license_finder --quiet"
+end
 
 # rubocop style checker
 require "rubocop/rake_task"

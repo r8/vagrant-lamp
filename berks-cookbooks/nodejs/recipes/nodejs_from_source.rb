@@ -18,7 +18,9 @@
 # limitations under the License.
 #
 
-Chef::Resource::User.send(:include, NodeJs::Helper)
+Chef::Recipe.send(:include, NodeJs::Helper)
+
+node.force_override['nodejs']['install_method'] = 'source' # ~FC019
 
 include_recipe 'build-essential'
 
@@ -30,10 +32,19 @@ when 'debian'
 end
 
 version = "v#{node['nodejs']['version']}/"
-filename = "node-v#{node['nodejs']['version']}.tar.gz"
-nodejs_src_url = node['nodejs']['source']['url'] || ::URI.join(node['nodejs']['prefix_url'], version, filename).to_s
+prefix = node['nodejs']['prefix_url'][node['nodejs']['engine']]
 
-ark 'nodejs-source' do
+if node['nodejs']['engine'] == 'iojs'
+  filename = "iojs-v#{node['nodejs']['version']}.tar.gz"
+  archive_name = 'iojs-source'
+else
+  filename = "node-v#{node['nodejs']['version']}.tar.gz"
+  archive_name = 'nodejs-source'
+end
+
+nodejs_src_url = node['nodejs']['source']['url'] || ::URI.join(prefix, version, filename).to_s
+
+ark archive_name do
   url nodejs_src_url
   version node['nodejs']['version']
   checksum node['nodejs']['source']['checksum']

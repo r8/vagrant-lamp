@@ -1,11 +1,10 @@
 apt Cookbook
 ============
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/opscode-cookbooks/apt?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Cookbook Version](http://img.shields.io/cookbook/v/apt.svg)][cookbook]
-[![Build Status](http://img.shields.io/travis/opscode-cookbooks/apt.svg)][travis]
+[![Build Status](https://img.shields.io/travis/opscode-cookbooks/apt.svg)][travis]
+[![Cookbook Version](https://img.shields.io/cookbook/v/apt.svg)][cookbook]
 
-[cookbook]: https://community.opscode.com/cookbooks/apt
-[travis]: http://travis-ci.org/opscode-cookbooks/apt
+[cookbook]: https://community.chef.io/cookbooks/apt
+[travis]: https://travis-ci.org/opscode-cookbooks/apt
 
 This cookbook includes recipes to execute apt-get update to ensure the local APT package cache is up to date. There are recipes for managing the apt-cacher-ng caching proxy and proxy clients. It also includes a LWRP for managing APT repositories in /etc/apt/sources.list.d as well as an LWRP for pinning packages via /etc/apt/preferences.d.
 
@@ -32,7 +31,7 @@ May work with or without modification on other Debian derivatives.
 
 -------
 ### default
-This recipe installs the `update-notifier-common` package to provide the timestamp file used to only run `apt-get update` if the cache is more than one day old.
+This recipe manually updates the timestamp file used to only run `apt-get update` if the cache is more than one day old.
 
 This recipe should appear first in the run list of Debian or Ubuntu nodes to ensure that the package cache is up to date before managing any `package` resources with Chef.
 
@@ -50,11 +49,9 @@ To do this, you need to override the `cache_bypass` attribute with an array of r
 
 ```json
 {
-    ...,
-    'apt': {
-        ...,
-        'cache_bypass': {
-            URL: PROTOCOL
+    "apt": {
+        "cache_bypass": {
+            "URL": "PROTOCOL"
         }
     }
 }
@@ -64,9 +61,9 @@ For example, to prevent caching and directly connect to the repository at `downl
 
 ```json
 {
-    'apt': {
-        'cache_bypass': {
-            'download.oracle.com': 'http'
+    "apt": {
+        "cache_bypass": {
+            "download.oracle.com": "http"
         }
     }
 }
@@ -77,18 +74,45 @@ Installs the `apt-cacher-ng` package and service so the system can provide APT c
 
 If you wish to help the `cacher-ng` recipe seed itself, you must now explicitly include the `cacher-client` recipe in your run list **after** `cacher-ng` or you will block your ability to install any packages (ie. `apt-cacher-ng`).
 
+### unattended-upgrades
+
+Installs and configures the `unattended-upgrades` package to provide automatic package updates. This can be configured to upgrade all packages or to just install security updates by setting `['apt']['unattended_upgrades']['allowed_origins']`.
+
+To pull just security updates, you'd set `allowed_origins` to something link `["Ubuntu trusty-security"]` (for Ubuntu trusty) or `["Debian wheezy-security"]` (for Debian wheezy). 
+
 
 Attributes
 ----------
+
+### General 
+* `['apt']['compile_time_update']` - force the default recipe to run `apt-get update` at compile time.
+* `['apt']['periodic_update_min_delay']` - minimum delay (in seconds) beetween two actual executions of `apt-get update` by the `execute[apt-get-update-periodic]` resource, default is '86400' (24 hours)
+
+### Caching
+
 * `['apt']['cacher_ipaddress']` - use a cacher server (or standard proxy server) not available via search
-* `['apt']['cacher_interface]` - interface to connect to the cacher-ng service, no default.
+* `['apt']['cacher_interface']` - interface to connect to the cacher-ng service, no default.
 * `['apt']['cacher_port']` - port for the cacher-ng service (either client or server), default is '3142'
+* `['apt']['cacher_ssl_support']` - indicates whether the cacher supports upstream SSL servers, default is 'false'
 * `['apt']['cacher_dir']` - directory used by cacher-ng service, default is '/var/cache/apt-cacher-ng'
 * `['apt']['cacher-client']['restrict_environment']` - restrict your node to using the `apt-cacher-ng` server in your Environment, default is 'false'
 * `['apt']['compiletime']` - force the `cacher-client` recipe to run before other recipes. It forces apt to use the proxy before other recipes run. Useful if your nodes have limited access to public apt repositories. This is overridden if the `cacher-ng` recipe is in your run list. Default is 'false'
-* `['apt']['compile_time_update']` - force the default recipe to run `apt-get update` at compile time.
 * `['apt']['cache_bypass']` - array of URLs to bypass the cache. Accepts the URL and protocol to  fetch directly from the remote repository and not attempt to cache
-* `['apt']['periodic_update_min_delay']` - minimum delay (in seconds) beetween two actual executions of `apt-get update` by the `execute[apt-get-update-periodic]` resource, default is '86400' (24 hours)
+
+### Unattended Upgrades
+
+* `['apt']['unattended_upgrades']['enable']` - enables unattended upgrades, default is false
+* `['apt']['unattended_upgrades']['update_package_lists']` - automatically update package list (`apt-get update`) daily, default is true
+* `['apt']['unattended_upgrades']['allowed_origins']` - array of allowed apt origins from which to pull automatic upgrades, defaults to a guess at the system's main origin and should almost always be overridden
+* `['apt']['unattended_upgrades']['package_blacklist']` - an array of package which should never be automatically upgraded, defaults to none
+* `['apt']['unattended_upgrades']['auto_fix_interrupted_dpkg']` - attempts to repair dpkg state with `dpkg --force-confold --configure -a` if it exits uncleanly, defaults to false (contrary to the unattended-upgrades default)
+* `['apt']['unattended_upgrades']['minimal_steps']` - Split the upgrade into the smallest possible chunks. This makes the upgrade a bit slower but it has the benefit that shutdown while a upgrade is running is possible (with a small delay). Defaults to false.
+* `['apt']['unattended_upgrades']['install_on_shutdown']` - Install upgrades when the machine is shuting down instead of doing it in the background while the machine is running. This will (obviously) make shutdown slower. Defaults to false.
+* `['apt']['unattended_upgrades']['mail']` - Send email to this address for problems or packages upgrades. Defaults to no email.
+* `['apt']['unattended_upgrades']['mail_only_on_error']` - If set, email will only be set on upgrade errors. Otherwise, an email will be sent after each upgrade. Defaults to true.
+* `['apt']['unattended_upgrades']['remove_unused_dependencies']` Do automatic removal of new unused dependencies after the upgrade. Defaults to false.
+* `['apt']['unattended_upgrades']['automatic_reboot']` - Automatically reboots *without confirmation* if a restart is required after the upgrade. Defaults to false.
+* `['apt']['unattended_upgrades']['dl_limit']` - Limits the bandwidth used by apt to download packages. Value given as an integer in kb/sec. Defaults to nil (no limit).
 
 Libraries
 ---------
@@ -127,6 +151,17 @@ apt_repository 'zenoss' do
 end
 ```
 
+Enable Ubuntu [multiverse](https://help.ubuntu.com/community/Repositories/Ubuntu) repositories:
+
+```ruby
+apt_repository 'security-ubuntu-multiverse' do
+  uri        'http://security.ubuntu.com/ubuntu'
+  distribution 'trusty-security'
+  components ['multiverse']
+  deb_src 'true'
+end
+```
+
 Add the Nginx PPA, autodetect the key and repository url:
 
 ```ruby
@@ -136,16 +171,17 @@ apt_repository 'nginx-php' do
 end
 ```
 
-Add the Nginx PPA, grab the key from the keyserver, and add source repo:
+Add the JuJu PPA, grab the key from the keyserver, and add source repo:
 
 ```ruby
-apt_repository 'nginx-php' do
-  uri          'http://ppa.launchpad.net/nginx/php5/ubuntu'
-  distribution node['lsb']['codename']
-  components   ['main']
-  keyserver    'keyserver.ubuntu.com'
-  key          'C300EE8C'
-  deb_src      true
+apt_repository 'juju' do
+  uri 'http://ppa.launchpad.net/juju/stable/ubuntu'
+  components ['main']
+  distribution 'trusty'
+  key 'C8068B11'
+  keyserver 'keyserver.ubuntu.com'
+  action :add
+  deb_src true
 end
 ```
 
@@ -232,12 +268,12 @@ If you want to cleanup unused packages, there is also the `apt-get autoclean` an
 
 License & Authors
 -----------------
-- Author:: Joshua Timberman (joshua@opscode.com)
-- Author:: Matt Ray (matt@opscode.com)
-- Author:: Seth Chisamore (schisamo@opscode.com)
+- Author:: Joshua Timberman (joshua@chef.io)
+- Author:: Matt Ray (matt@chef.io)
+- Author:: Seth Chisamore (schisamo@chef.io)
 
 ```text
-Copyright 2009-2013, Opscode, Inc.
+Copyright:: 2009-2015, Chef Software, Inc
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

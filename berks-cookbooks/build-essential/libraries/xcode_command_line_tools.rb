@@ -42,7 +42,7 @@ from Software Update, but there is a high probability that it will fail...
 
 If you have tested and verified OSX #{node['platform_version']} and you are sick
 of seeing this warning in your Chef Client runs, please submit a Pull Request to
-https://github.com/opscode-cookbooks/build-essential and add this version of OSX
+https://github.com/chef-cookbooks/build-essential and add this version of OSX
 to provider list.
 EOH
                     Provider::XcodeCommandLineToolsFromSoftwareUpdate

@@ -16,7 +16,9 @@
 # limitations under the License.
 #
 
-Chef::Resource::User.send(:include, NodeJs::Helper)
+Chef::Recipe.send(:include, NodeJs::Helper)
+
+node.force_override['nodejs']['install_method'] = 'binary' # ~FC019
 
 # Shamelessly borrowed from http://docs.opscode.com/dsl_recipe_method_platform.html
 # Surely there's a more canonical way to get arch?
@@ -28,19 +30,30 @@ end
 
 # package_stub is for example: "node-v0.8.20-linux-x64.tar.gz"
 version = "v#{node['nodejs']['version']}/"
-filename = "node-v#{node['nodejs']['version']}-linux-#{arch}.tar.gz"
+prefix = node['nodejs']['prefix_url'][node['nodejs']['engine']]
+
+if node['nodejs']['engine'] == 'iojs'
+  filename = "iojs-v#{node['nodejs']['version']}-linux-#{arch}.tar.gz"
+  archive_name = 'iojs-binary'
+  binaries = ['bin/iojs', 'bin/node', 'bin/npm']
+else
+  filename = "node-v#{node['nodejs']['version']}-linux-#{arch}.tar.gz"
+  archive_name = 'nodejs-binary'
+  binaries = ['bin/node', 'bin/npm']
+end
+
 if node['nodejs']['binary']['url']
   nodejs_bin_url = node['nodejs']['binary']['url']
   checksum = node['nodejs']['binary']['checksum']
 else
-  nodejs_bin_url = ::URI.join(node['nodejs']['prefix_url'], version, filename).to_s
+  nodejs_bin_url = ::URI.join(prefix, version, filename).to_s
   checksum = node['nodejs']['binary']['checksum']["linux_#{arch}"]
 end
 
-ark 'nodejs-binary' do
+ark archive_name do
   url nodejs_bin_url
   version node['nodejs']['version']
   checksum checksum
-  has_binaries ['bin/node', 'bin/npm']
+  has_binaries binaries
   action :install
 end

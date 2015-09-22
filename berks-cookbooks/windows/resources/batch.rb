@@ -33,4 +33,11 @@ def initialize(name, run_context=nil)
   super
   @action = :run
   @command = name
+  Chef::Log.warn <<-EOF
+Please use the batch resource in Chef Client 11 and 12.
+windows_batch will be removed in the next major version release
+of the Windows cookbook.
+EOF
+
+
 end

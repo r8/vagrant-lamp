@@ -2,7 +2,7 @@
 # Cookbook Name:: yum
 # Provider:: repository
 #
-# Author:: Sean OMeara <someara@getchef.com>
+# Author:: Sean OMeara <someara@chef.io>
 # Copyright 2013, Chef
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,14 +46,20 @@ action :create  do
     mode new_resource.mode
     variables(:config => new_resource)
     if new_resource.make_cache
+      notifies :run, "execute[yum clean #{new_resource.repositoryid}]", :immediately
       notifies :run, "execute[yum-makecache-#{new_resource.repositoryid}]", :immediately
       notifies :create, "ruby_block[yum-cache-reload-#{new_resource.repositoryid}]", :immediately
     end
   end
 
+  execute "yum clean #{new_resource.repositoryid}" do
+    command "yum clean all --disablerepo=* --enablerepo=#{new_resource.repositoryid}"
+    action :nothing
+  end
+
   # get the metadata for this repo only
   execute "yum-makecache-#{new_resource.repositoryid}" do
-    command "yum -q makecache --disablerepo=* --enablerepo=#{new_resource.repositoryid}"
+    command "yum -q -y makecache --disablerepo=* --enablerepo=#{new_resource.repositoryid}"
     action :nothing
     only_if { new_resource.enabled }
   end

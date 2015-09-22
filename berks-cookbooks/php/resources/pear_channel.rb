@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore <schisamo@opscode.com>
+# Author:: Seth Chisamore <schisamo@getchef.com>
 # Cookbook Name:: php
 # Resource:: pear_channel
 #
-# Copyright:: 2011, Opscode, Inc <legal@opscode.com>
+# Copyright:: 2011-2014, Chef Software, Inc <legal@getchef.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@
 
 default_action :discover
 actions :discover, :add, :update, :remove
+
+state_attrs :channel_name,
+            :channel_xml
 
 attribute :channel_name, :kind_of => String, :name_attribute => true
 attribute :channel_xml, :kind_of => String

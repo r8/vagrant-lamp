@@ -1,7 +1,9 @@
 apache2 Cookbook
 ================
-[![Build Status](https://travis-ci.org/svanzoest/apache2-cookbook.svg?branch=master)](https://travis-ci.org/svanzoest/apache2-cookbook)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/svanzoest/apache2-cookbook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Cookbook Version](https://img.shields.io/cookbook/v/apache2.svg?style=flat)](https://supermarket.chef.io/cookbooks/apache2)
+[![Build Status](https://travis-ci.org/svanzoest-cookbooks/apache2.svg?branch=master)](https://travis-ci.org/svanzoest-cookbooks/apache2)
+[![Dependency Status](http://img.shields.io/gemnasium/svanzoest-cookbooks/apache2.svg?style=flat)](https://gemnasium.com/svanzoest-cookbooks/apache2)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/svanzoest-cookbooks/apache2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 This cookbook provides a complete Debian/Ubuntu style Apache HTTPD
 configuration. Non-Debian based distributions such as Red Hat/CentOS,
@@ -39,8 +41,7 @@ this cookbook](https://supermarket.chef.io/cookbooks/apache2/versions/1.1.16).
 
 ## Cookbooks:
 
-This cookbook doesn't have direct dependencies on other cookbooks, as
-none are needed for the default recipe or the general use cases.
+This cookbook has no direct external dependencies.
 
 Depending on your OS configuration and security policy, you may need
 additional recipes or cookbooks for this cookbook's recipes to
@@ -64,7 +65,7 @@ contains a `permissive` recipe that can be used to set SELinux to
 by the user to address SELinux permissions.
 
 The easiest but **certainly not ideal way** to deal with IPtables is
-to flush all rules. Opscode does provide an `iptables` cookbook but is
+to flush all rules. Chef Software does provide an `iptables` cookbook but is
 migrating from the approach used there to a more robust solution
 utilizing a general "firewall" LWRP that would have an "iptables"
 provider. Alternately, you can use ufw, with Opscode's `ufw` and
@@ -82,10 +83,6 @@ you also need the `pacman` cookbook for the `pacman_aur` LWRP. Put
 role). This is not an explicit dependency because it is only required
 for this single recipe and platform; the pacman default recipe
 performs `pacman -Sy` to keep pacman's package cache updated.
-
-The `apache2::god_monitor` recipe uses a definition from the `god`
-cookbook. Include `recipe[god]` in the node's expanded run list to
-ensure that the cookbook is available to the node, and to set up `god`.
 
 ## Platforms:
 
@@ -127,7 +124,7 @@ Tests
 =====
 
 This cookbook in the
-[source repository](https://github.com/svanzoest/apache2-cookbook/)
+[source repository](https://github.com/svanzoest-cookbooks/apache2/)
 contains chefspec, serverspec and cucumber tests. This is an initial proof of
 concept that will be fleshed out with more supporting infrastructure
 at a future time.
@@ -229,6 +226,15 @@ configuration.
 * `node['apache']['event']['maxrequestworkers']` - Maximum number of connections that will be processed simultaneously.
 * `node['apache']['event']['maxconnectionsperchild']`  - Limit on the number of connections that an individual child server will handle during its life.
 
+Other/Unsupported MPM
+---------------------
+
+To use the cookbook with an unsupported mpm (other than prefork, event or worker):
+
+* set `node['apache']['mpm']` to the name of the module (e.g. `itk`)
+* in your cookbook, after `include_recipe 'apache2'` use the `apache_module` definition to enable/disable the required module(s)
+
+
 mod\_auth\_openid attributes
 ----------------------------
 
@@ -252,7 +258,7 @@ For general information on this attributes see http://httpd.apache.org/docs/curr
 * `node['apache']['mod_ssl']['cipher_suite']` - sets the SSLCiphersuite value to the specified string. The default is
   considered "sane" but you may need to change it for your local security policy, e.g. if you have PCI-DSS requirements. Additional
   commentary on the
-  [original pull request](https://github.com/svanzoest/apache2-cookbook/pull/15#commitcomment-1605406).
+  [original pull request](https://github.com/svanzoest-cookbooks/apache2/pull/15#commitcomment-1605406).
 * `node['apache']['mod_ssl']['honor_cipher_order']` - Option to prefer the server's cipher preference order. Default 'On'.
 * `node['apache']['mod_ssl']['insecure_renegotiation']` - Option to enable support for insecure renegotiation. Default 'Off'.
 * `node['apache']['mod_ssl']['strict_sni_vhost_check']` - Whether to allow non-SNI clients to access a name-based virtual host. Default 'Off'.
@@ -304,13 +310,6 @@ default
 The default recipe does a number of things to set up Apache HTTPd. It
 also includes a number of modules based on the attribute
 `node['apache']['default_modules']` as recipes.
-
-logrotate
----------
-
-Logrotate adds a logrotate entry for your apache2 logs. This recipe
-requires the `logrotate` cookbook; ensure that `recipe[logrotate]` is
-in the node's expanded run list.
 
 mod\_auth\_cas
 --------------
@@ -402,18 +401,6 @@ mod\_ssl
 Besides installing and enabling `mod_ssl`, this recipe will append
 port 443 to the `node['apache']['listen_ports']` attribute array and
 update the ports.conf.
-
-god\_monitor
-------------
-
-Sets up a `god` monitor for Apache. External requirements are the
-`god` and `runit` cookbooks from Opscode. When using this recipe,
-include `recipe[god]` in the node's expanded run list to ensure the
-client downloads it; `god` depends on runit so that will also be
-downloaded.
-
-**Note** This recipe is not tested under test-kitchen yet and is
-  pending fix in COOK-744.
 
 Definitions
 ===========
@@ -703,8 +690,8 @@ respective sections above.
 License and Authors
 ===================
 
-* Author:: Adam Jacob <adam@opscode.com>
-* Author:: Joshua Timberman <joshua@opscode.com>
+* Author:: Adam Jacob <adam@chef.io>
+* Author:: Joshua Timberman <joshua@chef.io>
 * Author:: Bryan McLellan <bryanm@widemile.com>
 * Author:: Dave Esposito <esposito@espolinux.corpnet.local>
 * Author:: David Abdemoulaie <github@hobodave.com>
@@ -714,13 +701,13 @@ License and Authors
 * Author:: Matthew Kent <mkent@magoazul.com>
 * Author:: Nathen Harvey <nharvey@customink.com>
 * Author:: Ringo De Smet <ringo.de.smet@amplidata.com>
-* Author:: Sean OMeara <someara@opscode.com>
-* Author:: Seth Chisamore <schisamo@opscode.com>
+* Author:: Sean OMeara <someara@chef.io>
+* Author:: Seth Chisamore <schisamo@chef.io>
 * Author:: Gilles Devaux <gilles@peerpong.com>
 * Author:: Sander van Zoest <sander+cookbooks@vanzoest.com>
 * Author:: Taylor Price <tayworm@gmail.com>
 
-* Copyright:: 2009-2012, Opscode, Inc
+* Copyright:: 2009-2012, Chef Software, Inc
 * Copyright:: 2011, Atriso
 * Copyright:: 2011, CustomInk, LLC.
 * Copyright:: 2013-2014, OneHealth Solutions, Inc.

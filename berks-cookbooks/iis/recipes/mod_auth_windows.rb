@@ -18,8 +18,7 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
-
+include_recipe 'iis'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
   feature = 'Web-Windows-Auth'
@@ -32,6 +31,6 @@ windows_feature feature do
 end
 
 iis_section 'unlocks windows authentication control in web.config' do
-  section "system.webServer/security/authentication/windowsAuthentication"
+  section 'system.webServer/security/authentication/windowsAuthentication'
   action :unlock
 end

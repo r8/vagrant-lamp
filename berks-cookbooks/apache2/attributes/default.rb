@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Attributes:: default
 #
-# Copyright 2008-2013, Opscode, Inc.
+# Copyright 2008-2013, Chef Software, Inc.
 # Copyright 2014, Viverae, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +55,12 @@ default['apache']['version'] =
       '2.4'
     end
   when 'rhel'
-    node['platform_version'].to_f >= 7.0 ? '2.4' : '2.2'
+    case node['platform']
+    when 'amazon'
+      node['platform_version'].to_f >= 2013.09 ? '2.4' : '2.2'
+    else
+      node['platform_version'].to_f >= 7.0 ? '2.4' : '2.2'
+    end
   when 'fedora'
     node['platform_version'].to_f >= 18 ? '2.4' : '2.2'
   when 'suse'
@@ -79,6 +84,8 @@ default['apache']['default_site_name'] = 'default'
 case node['platform']
 when 'redhat', 'centos', 'scientific', 'fedora', 'amazon', 'oracle'
   default['apache']['package']     = 'httpd'
+  default['apache']['service_name'] = 'httpd'
+  default['apache']['devel_package'] = 'httpd-devel'
   default['apache']['perl_pkg']    = 'perl'
   default['apache']['apachectl']   = '/usr/sbin/apachectl'
   default['apache']['dir']         = '/etc/httpd'
@@ -91,10 +98,18 @@ when 'redhat', 'centos', 'scientific', 'fedora', 'amazon', 'oracle'
   default['apache']['conf_dir']    = '/etc/httpd/conf'
   default['apache']['docroot_dir'] = '/var/www/html'
   default['apache']['cgibin_dir']  = '/var/www/cgi-bin'
-  default['apache']['icondir']     = '/var/www/icons'
+  if node['apache']['version'] == '2.4'
+    default['apache']['icondir'] = '/usr/share/httpd/icons'
+  else
+    default['apache']['icondir'] = '/var/www/icons'
+  end
   default['apache']['cache_dir']   = '/var/cache/httpd'
   default['apache']['run_dir']     = '/var/run/httpd'
   default['apache']['lock_dir']    = '/var/run/httpd'
+  if node['platform'] == 'amazon' && node['apache']['version'] == '2.4'
+    default['apache']['package']     = 'httpd24'
+    default['apache']['devel_package'] = 'httpd24-devel'
+  end
   if node['platform_version'].to_f >= 6
     default['apache']['pid_file'] = '/var/run/httpd/httpd.pid'
   else
@@ -105,6 +120,7 @@ when 'redhat', 'centos', 'scientific', 'fedora', 'amazon', 'oracle'
 when 'suse', 'opensuse'
   default['apache']['package']     = 'apache2'
   default['apache']['perl_pkg']    = 'perl'
+  default['apache']['devel_package'] = 'httpd-devel'
   default['apache']['apachectl']   = '/usr/sbin/apache2ctl'
   default['apache']['dir']         = '/etc/apache2'
   default['apache']['log_dir']     = '/var/log/apache2'
@@ -130,6 +146,11 @@ when 'suse', 'opensuse'
 when 'debian', 'ubuntu'
   default['apache']['package']     = 'apache2'
   default['apache']['perl_pkg']    = 'perl'
+  if node['apache']['mpm'] == 'prefork'
+    default['apache']['devel_package'] = 'apache2-prefork-dev'
+  else
+    default['apache']['devel_package'] = 'apache2-dev'
+  end
   default['apache']['apachectl']   = '/usr/sbin/apache2ctl'
   default['apache']['dir']         = '/etc/apache2'
   default['apache']['log_dir']     = '/var/log/apache2'
@@ -152,8 +173,9 @@ when 'debian', 'ubuntu'
     default['apache']['pid_file']    = '/var/run/apache2.pid'
     default['apache']['docroot_dir'] = '/var/www'
   end
-  default['apache']['lib_dir']     = '/usr/lib/apache2'
-  default['apache']['libexec_dir']  = "#{node['apache']['lib_dir']}/modules"
+  default['apache']['lib_dir']       = '/usr/lib/apache2'
+  default['apache']['build_dir']     = '/usr/share/apache2'
+  default['apache']['libexec_dir']   = "#{node['apache']['lib_dir']}/modules"
   default['apache']['default_site_name'] = '000-default'
 when 'arch'
   default['apache']['package']     = 'apache'
@@ -200,6 +222,7 @@ when 'freebsd'
     default['apache']['lock_dir']    = '/var/run'
     default['apache']['lib_dir']     = '/usr/local/libexec/apache22'
   end
+  default['apache']['devel_package'] = 'httpd-devel'
   default['apache']['perl_pkg']    = 'perl5'
   default['apache']['apachectl']   = '/usr/local/sbin/apachectl'
   default['apache']['pid_file']    = '/var/run/httpd.pid'
@@ -213,6 +236,7 @@ when 'freebsd'
   default['apache']['libexec_dir']  = node['apache']['lib_dir']
 else
   default['apache']['package']     = 'apache2'
+  default['apache']['devel_package'] = 'apache2-dev'
   default['apache']['perl_pkg']    = 'perl'
   default['apache']['dir']         = '/etc/apache2'
   default['apache']['log_dir']     = '/var/log/apache2'
@@ -239,7 +263,9 @@ end
 ###
 
 # General settings
-default['apache']['service_name'] = default['apache']['package']
+if node['apache']['service_name'].nil?
+  default['apache']['service_name'] = node['apache']['package']
+end
 default['apache']['listen_addresses']  = %w(*)
 default['apache']['listen_ports']      = %w(80)
 default['apache']['contact']           = 'ops@example.com'
@@ -250,6 +276,8 @@ default['apache']['keepalivetimeout']  = 5
 default['apache']['locale'] = 'C'
 default['apache']['sysconfig_additional_params'] = {}
 default['apache']['default_site_enabled'] = false
+default['apache']['default_site_port']    = '80'
+default['apache']['access_file_name'] = '.htaccess'
 
 # Security
 default['apache']['servertokens']    = 'Prod'
@@ -267,6 +295,9 @@ default['apache']['ext_status'] = false
 
 # mod_info Allow list, space seprated list of allowed entries.
 default['apache']['info_allow_list'] = '127.0.0.1 ::1'
+
+# Supported mpm list
+default['apache']['mpm_support'] = %w(prefork worker event)
 
 # Prefork Attributes
 default['apache']['prefork']['startservers']        = 16

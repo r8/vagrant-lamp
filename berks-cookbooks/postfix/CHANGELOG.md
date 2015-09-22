@@ -2,6 +2,11 @@ postfix Cookbook CHANGELOG
 ==========================
 This file is used to list changes made in each version of the postfix cookbook.
 
+v3.7.0 (2015-04-30)
+-------------------
+- Adding support for relay restrictions
+- Update chefspec and serverspec tests
+
 v3.6.2 (2014-10-31)
 -------------------
 - Fix FreeBSDisms
@@ -71,47 +76,47 @@ v3.1.4 (2014-02-27)
 v3.1.2 (2014-02-19)
 -------------------
 ### Bug
-- **[COOK-4357](https://tickets.opscode.com/browse/COOK-4357)** - postfix::sasl_auth recipe fails to converge
+- **[COOK-4357](https://tickets.chef.io/browse/COOK-4357)** - postfix::sasl_auth recipe fails to converge
 
 
 v3.1.0 (2014-02-19)
 -------------------
 ### Bug
-- **[COOK-4322](https://tickets.opscode.com/browse/COOK-4322)** - Postfix cookbook has incorrect default path for sasl_passwd
+- **[COOK-4322](https://tickets.chef.io/browse/COOK-4322)** - Postfix cookbook has incorrect default path for sasl_passwd
 
 ### New Feature
-- **[COOK-4086](https://tickets.opscode.com/browse/COOK-4086)** - use conf_dir attribute for sasl recipe, and add omnios support
-- **[COOK-2551](https://tickets.opscode.com/browse/COOK-2551)** - Support creating the sender_canonical map file
+- **[COOK-4086](https://tickets.chef.io/browse/COOK-4086)** - use conf_dir attribute for sasl recipe, and add omnios support
+- **[COOK-2551](https://tickets.chef.io/browse/COOK-2551)** - Support creating the sender_canonical map file
 
 
 v3.0.4
 ------
 ### Bug
-- **[COOK-3824](https://tickets.opscode.com/browse/COOK-3824)** - main.cf.erb mishandles lists
+- **[COOK-3824](https://tickets.chef.io/browse/COOK-3824)** - main.cf.erb mishandles lists
 
 ### Improvement
-- **[COOK-3822](https://tickets.opscode.com/browse/COOK-3822)** - postfix cookbook readme has an incorrect example
+- **[COOK-3822](https://tickets.chef.io/browse/COOK-3822)** - postfix cookbook readme has an incorrect example
 - Got rubocop errors down to 32
 
 ### New Feature
-- **[COOK-2551](https://tickets.opscode.com/browse/COOK-2551)** - Support creating the sender_canonical map file
+- **[COOK-2551](https://tickets.chef.io/browse/COOK-2551)** - Support creating the sender_canonical map file
 
 
 v3.0.2
 ------
 ### Bug
-- **[COOK-3617](https://tickets.opscode.com/browse/COOK-3617)** - Fix error when no there is no FQDN
-- **[COOK-3530](https://tickets.opscode.com/browse/COOK-3530)** - Update `client.rb` after 3.0.0 refactor
-- **[COOK-2499](https://tickets.opscode.com/browse/COOK-2499)** - Do not use resource cloning
+- **[COOK-3617](https://tickets.chef.io/browse/COOK-3617)** - Fix error when no there is no FQDN
+- **[COOK-3530](https://tickets.chef.io/browse/COOK-3530)** - Update `client.rb` after 3.0.0 refactor
+- **[COOK-2499](https://tickets.chef.io/browse/COOK-2499)** - Do not use resource cloning
 
 ### Improvement
-- **[COOK-3116](https://tickets.opscode.com/browse/COOK-3116)** - Add SmartOS support
+- **[COOK-3116](https://tickets.chef.io/browse/COOK-3116)** - Add SmartOS support
 
 
 v3.0.0
 ------
 ### Improvement
-- **[COOK-3328](https://tickets.opscode.com/browse/COOK-3328)** - Postfix main/master and attributes refactor
+- **[COOK-3328](https://tickets.chef.io/browse/COOK-3328)** - Postfix main/master and attributes refactor
 
 **Breaking changes**:
 - Attributes are namespaced as `node['postfix']`, `node['postfix']['main']`, and `node['postfix']['master']`.

@@ -21,9 +21,9 @@
 actions :add, :delete, :config
 default_action :add
 
-attribute :site_name, :kind_of => String, :name_attribute => true
-attribute :path, :kind_of => String, :default => '/'
-attribute :application_pool, :kind_of => String
-attribute :physical_path, :kind_of => String
-attribute :enabled_protocols, :kind_of => String
+attribute :site_name, kind_of: String, name_attribute: true
+attribute :path, kind_of: String, default: '/'
+attribute :application_pool, kind_of: String
+attribute :physical_path, kind_of: String
+attribute :enabled_protocols, kind_of: String
 attr_accessor :exists, :running

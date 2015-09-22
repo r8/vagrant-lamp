@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Recipe:: mod_auth_cas
 #
-# Copyright 2013, Opscode, Inc.
+# Copyright 2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,12 +20,7 @@
 include_recipe 'apache2::default'
 
 if node['apache']['mod_auth_cas']['from_source']
-  package 'httpd-devel' do
-    package_name value_for_platform_family(
-      %w(rhel fedora suse) => 'httpd-devel',
-      'debian' => 'apache2-dev'
-    )
-  end
+  package node['apache']['devel_package']
 
   git '/tmp/mod_auth_cas' do
     repository 'git://github.com/Jasig/mod_auth_cas.git'

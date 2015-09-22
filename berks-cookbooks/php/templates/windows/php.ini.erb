@@ -1931,5 +1931,5 @@ extension=php_exif.dll
 include_path=".;<%= node['php']['conf_dir'].gsub('/', '\\') %>"
 
 <% @directives.each do |directive, value| -%>
-<%= "#{directive}=\"#{value}\"" %>
+<%= "#{directive}=#{value}" %>
 <% end -%>

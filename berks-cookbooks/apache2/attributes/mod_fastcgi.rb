@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Attributes:: mod_fastcgi
 #
-# Copyright 2013, Opscode, Inc.
+# Copyright 2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,3 +18,4 @@
 #
 
 default['apache']['mod_fastcgi']['download_url'] = 'http://www.fastcgi.com/dist/mod_fastcgi-current.tar.gz'
+default['apache']['mod_fastcgi']['install_method'] = 'package'

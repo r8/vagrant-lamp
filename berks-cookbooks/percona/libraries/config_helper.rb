@@ -43,7 +43,7 @@ module Percona
 
     private
 
-    def find_public_ip(node)
+    def self.find_public_ip(node)
       if node["cloud"] && node["cloud"]["public_ipv4"]
         node["cloud"]["public_ipv4"]
       else
@@ -51,7 +51,7 @@ module Percona
       end
     end
 
-    def find_private_ip(node)
+    def self.find_private_ip(node)
       if node["cloud"] && node["cloud"]["local_ipv4"]
         node["cloud"]["local_ipv4"]
       elsif node["cloud"] && node["cloud"]["private_ipv4"]
@@ -63,11 +63,11 @@ module Percona
       end
     end
 
-    def find_loopback_ip(node)
+    def self.find_loopback_ip(node)
       find_ip(node, :loopback)
     end
 
-    def find_ip(node, scope)
+    def self.find_ip(node, scope)
       node["network"]["interfaces"].each do |_, attrs|
         next unless attrs["addresses"]
         attrs["addresses"].each do |addr, data|

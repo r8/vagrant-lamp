@@ -2,6 +2,28 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.7.2 (2015-06-19)
+----------
+* Re-add missing runit_service actions start, stop, reload and status
+
+v1.7.0 (2015-06-18)
+----------
+* Modernize runit_service provider by rewriting pure Ruby as LWRP (#107)
+* Modernize integration tests by rewriting Minitest suites as ServerSpec (#107)
+* Fix regression in support for alternate sv binary on debian platforms (#92, #123)
+* Fix regression in default logger's config location (#117)
+* Tighten permissions on environment variable config files from 0644 to 0640 (#125)
+* Add `start_down` and `delete_downfile` attributes to support configuring services with default state of 'down' (#105)
+
+v1.6.0 (2015-04-06)
+--------------------
+* Fedora 21 support
+* Kitchen platform updates
+* use imeyer’s packagecloud repo for RHEL
+* fix converge_by usage
+* do_action helper to set updated_by_last_action
+* style fixes to provider
+
 v1.5.18 (2015-03-13)
 --------------------
 * Add helper methods to detect installation presence

@@ -21,17 +21,17 @@
 actions :add, :delete, :start, :stop, :restart, :config
 default_action :add
 
-attribute :site_name, :kind_of => String, :name_attribute => true
-attribute :site_id, :kind_of => Integer
-attribute :port, :kind_of => Integer, :default => 80
-attribute :path, :kind_of => String
-attribute :protocol, :kind_of => Symbol, :default => :http, :equal_to => [:http, :https]
-attribute :host_header, :kind_of => String, :default => nil
-attribute :bindings, :kind_of => String, :default => nil
-attribute :application_pool, :kind_of => String, :default => nil
-attribute :options, :kind_of => String, :default => ''
-attribute :log_directory, :kind_of => String, :default => "#{node['iis']['pubroot']}\\logs\\LogFiles"
-attribute :log_period, :kind_of => Symbol, :default => :Daily, :equal_to => [:Daily, :Hourly, :MaxSize, :Monthly, :Weekly]
-attribute :log_truncsize, :kind_of => Integer, :default => 1048576 
+attribute :site_name, kind_of: String, name_attribute: true
+attribute :site_id, kind_of: Integer
+attribute :port, kind_of: Integer, default: 80
+attribute :path, kind_of: String
+attribute :protocol, kind_of: Symbol, default: :http, equal_to: [:http, :https]
+attribute :host_header, kind_of: String, default: nil
+attribute :bindings, kind_of: String, default: nil
+attribute :application_pool, kind_of: String, default: nil
+attribute :options, kind_of: String, default: ''
+attribute :log_directory, kind_of: String, default: "#{node['iis']['pubroot']}\\logs\\LogFiles"
+attribute :log_period, kind_of: Symbol, default: :Daily, equal_to: [:Daily, :Hourly, :MaxSize, :Monthly, :Weekly]
+attribute :log_truncsize, kind_of: Integer, default: 1_048_576
 
 attr_accessor :exists, :running

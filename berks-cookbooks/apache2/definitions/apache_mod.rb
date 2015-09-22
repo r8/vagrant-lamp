@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Definition:: apache_mod
 #
-# Copyright 2008-20013, Opscode, Inc.
+# Copyright 2008-20013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 #
 
 define :apache_mod do
+  include_recipe 'apache2::default'
+
   template "#{node['apache']['dir']}/mods-available/#{params[:name]}.conf" do
     source "mods/#{params[:name]}.conf.erb"
     mode '0644'

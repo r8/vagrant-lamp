@@ -1896,5 +1896,5 @@ ldap.max_links = -1
 ; End:
 
 <% @directives.sort_by { |key, val| key }.each do |directive, value| -%>
-<%= "#{directive}=\"#{value}\"" %>
+<%= "#{directive}=#{value}" %>
 <% end -%>

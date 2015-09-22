@@ -2,11 +2,63 @@ git Cookbook CHANGELOG
 ======================
 This file is used to list changes made in each version of the git cookbook.
 
+v4.3.4 (2015-09-06)
+-------------------
+- Fixing package_id on OSX
+- Adding 2.5.1 data for Windows
+
+v4.3.3 (2015-07-27)
+-------------------
+- #76: Use checksum keyname instead of value in source recipe
+
+v4.3.2 (2015-07-27)
+-------------------
+- Fixing up Windows provider (issue #73)
+- Supporting changes to source_prefix in source provider (#62)
+
+v4.3.1 (2015-07-23)
+-------------------
+- Fixing up osx_dmg_source_url
+
+v4.3.0 (2015-07-20)
+-------------------
+- Removing references to node attributes from provider code
+- Name-spacing of client resource property names
+- Addition of windows recipe
+- Creation of package recipe
+
+v4.2.4 (2015-07-19)
+-------------------
+- Fixing source provider selection bug from 4.2.3
+
+v4.2.3 (2015-07-18)
+-------------------
+- mac_os_x provider mapping
+- various rubocops
+
+v4.2.2 (2015-04-23)
+-------------------
+- Fix up action in Chef::Resource::GitService
+- Adding matchers
+
+v4.2.1 (2015-04-17)
+-------------------
+- Fixing Chef 11 support.
+- Adding provider mapping file
+
+v4.2.0 (2015-04-15)
+-------------------
+- Converting recipes to resources.
+- Keeping recipe interface for backwards compat
+
+v4.1.0 (2014-12-23)
+-------------------
+- Fixing windows package checksums
+- Various test coverage additions
 
 v4.0.2 (2014-04-23)
 -------------------
 - [COOK-4482] - Add FreeBSD support for installing git client
-
 
 v4.0.0 (2014-03-18)
 -------------------
@@ -57,16 +109,16 @@ v2.8.0
 v2.7.0
 ------
 ### Bug
-- **[COOK-3624](https://tickets.opscode.com/browse/COOK-3624)** - Don't restart `xinetd` on each Chef client run
-- **[COOK-3482](https://tickets.opscode.com/browse/COOK-3482)** - Force git to add itself to the current process' PATH
+- **[COOK-3624](https://tickets.chef.io/browse/COOK-3624)** - Don't restart `xinetd` on each Chef client run
+- **[COOK-3482](https://tickets.chef.io/browse/COOK-3482)** - Force git to add itself to the current process' PATH
 
 ### New Feature
-- **[COOK-3223](https://tickets.opscode.com/browse/COOK-3223)** - Support Omnios and SmartOS package installs
+- **[COOK-3223](https://tickets.chef.io/browse/COOK-3223)** - Support Omnios and SmartOS package installs
 
 v2.6.0
 ------
 ### Improvement
-- **[COOK-3193](https://tickets.opscode.com/browse/COOK-3193)** - Add proper debian packages
+- **[COOK-3193](https://tickets.chef.io/browse/COOK-3193)** - Add proper debian packages
 
 v2.5.2
 ------

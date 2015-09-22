@@ -1,0 +1,40 @@
+# Use Travis's cointainer based infrastructure
+sudo: false
+addons:
+  apt:
+    sources:
+      - chef-stable-precise
+    packages:
+      - chefdk
+
+# Don't `bundle install`
+install: echo "skip bundle install"
+
+branches:
+  only:
+    - master
+
+# Ensure we make ChefDK's Ruby the default
+before_script:
+  - eval "$(/opt/chefdk/bin/chef shell-init bash)"
+  # We have to install chef-sugar for ChefSpec
+  - /opt/chefdk/embedded/bin/chef gem install chef-sugar
+script:
+  - /opt/chefdk/embedded/bin/chef --version
+  - /opt/chefdk/embedded/bin/rubocop --version
+  - /opt/chefdk/embedded/bin/rubocop
+  - /opt/chefdk/embedded/bin/foodcritic --version
+  - /opt/chefdk/embedded/bin/foodcritic . --exclude spec
+  - /opt/chefdk/embedded/bin/rspec spec
+
+notifications:
+  hipchat:
+    on_change: true
+    on_failure: true
+    on_success: false
+    on_pull_requests: false
+    rooms:
+      # Build Statuses
+      - secure: fk4NTplcjE097Oan2HgZc+Lxx8X9k2QDolwBKZMDNrreFImBgw6HJBwHUv6Hfay2xh7Y720iNFeTTN3Ep0/M4YgmBrwhry3jSMN8TX7SAOGPCC8zIB0ELGGAyQKxDjwwsA18KTbuDkV5yboiUzvY86G5bWT8vfWEd1ljTEnIazQ=
+      # Release Engineering
+      - secure: X35KY6kImjVyYiT9gOlRJd26MKh5KQFwxcQm3fF9Y+pnB1v7uB3w6+jzoxhvPN5O2US3xGQsaJOSAB1uhZh+FZOKfZ/ewyXVUcTXrUTC9Mjofd3n33xD68qoI22mntEQilugvC+OPhq9uWyX0OlRhnnT+J56Vq7feSI4ez9e9Og=
