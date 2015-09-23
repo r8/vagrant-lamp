@@ -3,7 +3,7 @@ override['mysql']['port'] = '3306'
 override['mysql']['socket'] = '/var/run/mysqld/mysqld.sock'
 override['mysql']['initial_root_password'] = 'vagrant'
 
-override['percona']['apt_keyserver'] = 'keyserver.ubuntu.com'
+override['percona']['apt']['keyserver'] = 'hkp://keyserver.ubuntu.com:80'
 
 override['nodejs']['install_method'] = 'binary'
 override['nodejs']['version'] = '0.12.0'
