@@ -271,28 +271,28 @@ but you can specify one if your platform support it.
 mysql_service[instance-1] do
   port '1234'
   data_dir '/mnt/lottadisk'
-  provider Chef::Provider::MysqlService::Sysvinit
+  provider Chef::Provider::MysqlServiceSysvinit
   action [:create, :start]
 end
 ```
 
-- `Chef::Provider::MysqlService` - Configures everything needed t run
+- `Chef::Provider::MysqlServiceBase` - Configures everything needed t run
 a MySQL service except the platform service facility. This provider
 should never be used directly. The `:start`, `:stop`, `:restart`, and
 `:reload` actions are stubs meant to be overridden by the providers
 below.
 
-- `Chef::Provider::MysqlService::Smf` - Starts a `mysql_service` using
+- `Chef::Provider::MysqlServiceSmf` - Starts a `mysql_service` using
 the Service Management Facility, used by Solaris and IllumOS. Manages
 the FMRI and method script.
 
-- `Chef::Provider::MysqlService::Systemd` - Starts a `mysql_service`
+- `Chef::Provider::MysqlServiceSystemd` - Starts a `mysql_service`
 using SystemD. Manages the unit file and activation state
 
-- `Chef::Provider::MysqlService::Sysvinit` - Starts a `mysql_service`
+- `Chef::Provider::MysqlServiceSysvinit` - Starts a `mysql_service`
 using SysVinit. Manages the init script and status.
 
-- `Chef::Provider::MysqlService::Upstart` - Starts a `mysql_service`
+- `Chef::Provider::MysqlServiceUpstart` - Starts a `mysql_service`
 using Upstart. Manages job definitions and status.
 
 ### mysql_config

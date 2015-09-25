@@ -1,17 +1,18 @@
 Windows Cookbook
 ================
+[![Build Status](https://travis-ci.org/chef-cookbooks/windows.svg?branch=master)](http://travis-ci.org/chef-cookbooks/windows)
+[![Cookbook Version](https://img.shields.io/cookbook/v/windows.svg)](https://supermarket.chef.io/cookbooks/windows)
+
 Provides a set of Windows-specific primitives (Chef resources) meant to aid in the creation of cookbooks/recipes targeting the Windows platform.
 
 
 Requirements
 -------------
-Version 1.3.0+ of this cookbook requires Chef 0.10.10+.
+Chef 11+ is required to run this cookbook
 
 
 ### Platforms
-* Windows XP
 * Windows Vista
-* Windows Server 2003 R2
 * Windows 7
 * Windows Server 2008 (R1, R2)
 * Windows 8, 8.1
@@ -228,6 +229,16 @@ Disable Telnet client/server
   windows_feature feature do
     action :remove
   end
+end
+```
+
+Add SMTP Feature with powershell provider 
+
+```ruby
+windows_feature "smtp-server" do
+  action :install
+  all true
+  provider :windows_feature_powershell
 end
 ```
 
@@ -642,10 +653,10 @@ Server 2008 due to API usage.
 - user: The user to run the task as. (defaults to 'SYSTEM')
 - password: The user's password. (requires user)
 - run_level: Run with limited or highest privileges.
-- frequency: Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle)
+- frequency: Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) \*:once requires start_time
 - frequency_modifier: Multiple for frequency. (15 minutes, 2 days)
 - start_day: Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
-- start_time: Specifies the start time to run the task. Optional string (HH:mm)
+- start_time: Specifies the start time to run the task. Optional string (HH:mm) 24 Hour time
 - interactive_enabled: (Allow task to run interactively or non-interactively.  Requires user and password.)
 - day: For monthly or weekly tasks, the day(s) on which the task runs.  (MON - SUN, *, 1 - 31)
 
@@ -864,7 +875,7 @@ License & Authors
 - Author:: Doug Ireton (<doug.ireton@nordstrom.com>)
 
 ```text
-Copyright 2011-2013, Chef Software, Inc.
+Copyright 2011-2015, Chef Software, Inc.
 Copyright 2010, VMware, Inc.
 Copyright 2011, Business Intelligence Associates, Inc
 Copyright 2012, Nordstrom, Inc.

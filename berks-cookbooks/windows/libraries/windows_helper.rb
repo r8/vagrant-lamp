@@ -63,13 +63,23 @@ module Windows
       @win_version ||= Windows::Version.new
     end
 
+    # Helper function to properly parse a URI
+    def as_uri(source)
+      begin
+        URI.parse(source)
+      rescue URI::InvalidURIError
+        Chef::Log.warn("#{source} was an invalid URI. Trying to escape invalid characters")
+        URI.parse(URI.escape(source))
+      end
+    end
+
     # if a file is local it returns a windows friendly path version
     # if a file is remote it caches it locally
     def cached_file(source, checksum=nil, windows_path=true)
       @installer_file_path ||= begin
 
-        if source =~ ::URI::ABS_URI && %w[ftp http https].include?(URI.parse(source).scheme)
-          uri = ::URI.parse(source)
+        if source =~ /^(file|ftp|http|https):\/\//
+          uri = as_uri(source)
           cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(::URI.unescape(uri.path))}"
           Chef::Log.debug("Caching a copy of file #{source} at #{cache_file_path}")
           r = Chef::Resource::RemoteFile.new(cache_file_path, run_context)

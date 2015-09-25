@@ -20,24 +20,13 @@
 # limitations under the License.
 #
 
-if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-  require 'windows/error'
-  require 'windows/registry'
-  require 'windows/process'
-  require 'windows/security'
-end
-
 #helpers for Windows API calls that require privilege adjustments
 class Chef
   class WindowsPrivileged
-    if RUBY_PLATFORM =~ /mswin|mingw32|windows/
-      include Windows::Error
-      include Windows::Registry
-      include Windows::Process
-      include Windows::Security
-    end
     #File -> Load Hive... in regedit.exe
     def reg_load_key(name, file)
+      load_deps
+
       run(SE_BACKUP_NAME, SE_RESTORE_NAME) do
         rc = RegLoadKey(HKEY_USERS, name.to_s, file)
         if rc == ERROR_SUCCESS
@@ -52,6 +41,8 @@ class Chef
 
     #File -> Unload Hive... in regedit.exe
     def reg_unload_key(name)
+      load_deps
+
       run(SE_BACKUP_NAME, SE_RESTORE_NAME) do
         rc = RegUnLoadKey(HKEY_USERS, name.to_s)
         if rc != ERROR_SUCCESS
@@ -61,6 +52,8 @@ class Chef
     end
 
     def run(*privileges)
+      load_deps
+
       token = [0].pack('L')
 
       unless OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY, token)
@@ -84,10 +77,27 @@ class Chef
     end
 
     def adjust_privilege(token, priv, attr=0)
+      load_deps
+
       luid = [0,0].pack('Ll')
       if LookupPrivilegeValue(nil, priv, luid)
         new_state = [1, luid.unpack('Ll'), attr].flatten.pack('LLlL')
         AdjustTokenPrivileges(token, 0, new_state, new_state.size, 0, 0)
+      end
+    end
+
+    private
+    def load_deps
+      if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+        require 'windows/error'
+        require 'windows/registry'
+        require 'windows/process'
+        require 'windows/security'
+
+        include Windows::Error
+        include Windows::Registry
+        include Windows::Process
+        include Windows::Security
       end
     end
   end
