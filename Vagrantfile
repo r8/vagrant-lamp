@@ -60,8 +60,8 @@ Vagrant.configure("2") do |config|
 
     # List of recipes to run
     chef.add_recipe "vagrant_main"
-    # chef.add_recipe "vagrant_main::nodejs"
-    # chef.add_recipe "vagrant_main::wordpress"
-    # chef.add_recipe "vagrant_main::magento"
+    chef.add_recipe "vagrant_main::nodejs"
+    chef.add_recipe "vagrant_main::wordpress"
+    chef.add_recipe "vagrant_main::magento"
   end
 end
