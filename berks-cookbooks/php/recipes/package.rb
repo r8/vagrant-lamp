@@ -1,10 +1,10 @@
 #
-# Author::  Seth Chisamore (<schisamo@opscode.com>)
-# Author::  Lucas Hansen (<lucash@opscode.com>)
+# Author::  Seth Chisamore (<schisamo@getchef.com>)
+# Author::  Lucas Hansen (<lucash@getchef.com>)
 # Cookbook Name:: php
 # Recipe:: package
 #
-# Copyright 2013, Opscode, Inc.
+# Copyright 2013-2014, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,11 +28,11 @@ if platform?('windows')
     source node['php']['windows']['msi_source']
     installer_type :msi
 
-    options %W[
-          /quiet
-          INSTALLDIR="#{install_dir}"
-          ADDLOCAL=#{node['php']['packages'].join(',')}
-    ].join(' ')
+    options %W(
+      /quiet
+      INSTALLDIR="#{install_dir}"
+      ADDLOCAL=#{node['php']['packages'].join(',')}
+    ).join(' ')
   end
 
   # WARNING: This is not the out-of-the-box go-pear.phar. It's been modified to patch this bug:
@@ -63,4 +63,4 @@ else
   end
 end
 
-include_recipe "php::ini"
+include_recipe 'php::ini'

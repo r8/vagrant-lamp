@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore <schisamo@opscode.com>
+# Author:: Seth Chisamore <schisamo@chef.io>
 # Cookbook Name:: chef_handler
 # Provider:: default
 #
-# Copyright:: 2011-2013, Opscode, Inc <legal@opscode.com>
+# Copyright:: 2011-2013, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,65 +18,56 @@
 # limitations under the License.
 #
 
+include ::ChefHandler::Helpers
+
 def whyrun_supported?
   true
 end
 
+# This action needs to find an rb file that presumably contains the indicated class in it and the
+# load that file.  It then instantiates that class by name and registers it as a handler.
 action :enable do
-  # use load instead of require to ensure the handler file
-  # is reloaded into memory each chef run. fixes COOK-620
-  handler = nil
-  converge_by("load #{@new_resource.source}") do
-    begin
-      Object.send(:remove_const, klass)
-      GC.start
-    rescue
-      Chef::Log.debug("#{@new_resource.class_name} has not been loaded.")
-    end
-    file_name = @new_resource.source
-    file_name << ".rb" unless file_name =~ /.*\.rb$/
-    load file_name
-    handler = klass.send(:new, *collect_args(@new_resource.arguments))
-  end
-  @new_resource.supports.each do |type, enable|
+  class_name = new_resource.class_name
+  new_resource.supports.each do |type, enable|
     if enable
-      # we have to re-enable the handler every chef run
-      # to ensure daemonized Chef always has the latest
-      # handler code.  TODO: add a :reload action
-      converge_by("enable #{@new_resource} as a #{type} handler") do
-        Chef::Log.info("Enabling #{@new_resource} as a #{type} handler")
-        Chef::Config.send("#{type.to_s}_handlers").delete_if { |v| v.class.to_s.include? @new_resource.class_name.split('::', 3).last }
-        Chef::Config.send("#{type.to_s}_handlers") << handler
+      converge_by("disable #{class_name} as a #{type} handler") do
+        unregister_handler(type, class_name)
+      end
+    end
+  end
+  
+  handler = nil
+  converge_by("load #{class_name} from #{new_resource.source}") do
+    require new_resource.source
+    _, klass = get_class(class_name)
+    handler = klass.send(:new, *collect_args(new_resource.arguments))
+  end
+
+  new_resource.supports.each do |type, enable|
+    if enable
+      converge_by("enable #{new_resource} as a #{type} handler") do
+        register_handler(type, handler)
       end
     end
   end
 end
 
 action :disable do
-  @new_resource.supports.each_key do |type|
-    if enabled?(type)
-      converge_by("disable #{@new_resource} as a #{type} handler") do
-        Chef::Log.info("Disabling #{@new_resource} as a #{type} handler")
-        Chef::Config.send("#{type.to_s}_handlers").delete_if { |v| v.class.to_s.include? @new_resource.class_name.split('::', 3).last }
-      end
+  new_resource.supports.each_key do |type|
+    converge_by("disable #{new_resource} as a #{type} handler") do
+      unregister_handler(type, new_resource.class_name)
     end
   end
 end
 
 def load_current_resource
-  @current_resource = Chef::Resource::ChefHandler.new(@new_resource.name)
-  @current_resource.class_name(@new_resource.class_name)
-  @current_resource.source(@new_resource.source)
+  @current_resource = Chef::Resource::ChefHandler.new(new_resource.name)
+  @current_resource.class_name(new_resource.class_name)
+  @current_resource.source(new_resource.source)
   @current_resource
 end
 
 private
-
-def enabled?(type)
-  Chef::Config.send("#{type.to_s}_handlers").select do |handler|
-    handler.class.to_s.include? @new_resource.class_name
-  end.size >= 1
-end
 
 def collect_args(resource_args = [])
   if resource_args.is_a? Array
@@ -86,12 +77,3 @@ def collect_args(resource_args = [])
   end
 end
 
-def klass
-  @klass ||= begin
-    # we need to search the ancestors only for the
-    # first/uppermost namespace of the class, so we need
-    # to enable the #const_get inherit paramenter only when
-    # we are searching in Kernel scope (see COOK-4117).
-    @new_resource.class_name.split('::').inject(Kernel) { |scope, const_name| scope.const_get(const_name, scope === Kernel) }
-  end
-end

@@ -4,7 +4,7 @@ Chef Sugar
 [![Build Status](http://img.shields.io/travis/sethvargo/chef-sugar.svg?style=flat-square)][travis]
 
 [gem]: https://rubygems.org/gems/chef-sugar
-[travis]: http://travis-ci.org/sethvargo/chef-suguar
+[travis]: http://travis-ci.org/sethvargo/chef-sugar
 
 Chef Sugar is a Gem & Chef Recipe that includes series of helpful sugar of the Chef core and other resources to make a cleaner, more lean recipe DSL, enforce DRY principles, and make writing Chef recipes an awesome experience!
 
@@ -80,6 +80,8 @@ API
 - `_32_bit?`
 - `intel?`
 - `sparc?`
+- `ppc64?`
+- `ppc64le?`
 
 #### Examples
 ```ruby

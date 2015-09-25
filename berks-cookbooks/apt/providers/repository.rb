@@ -2,7 +2,7 @@
 # Cookbook Name:: apt
 # Provider:: repository
 #
-# Copyright 2010-2011, Opscode, Inc.
+# Copyright 2010-2011, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,25 +24,35 @@ def whyrun_supported?
 end
 
 # install apt key from keyserver
-def install_key_from_keyserver(key, keyserver)
+def install_key_from_keyserver(key, keyserver, key_proxy)
   execute "install-key #{key}" do
-    if !node['apt']['key_proxy'].empty?
-      command "apt-key adv --keyserver-options http-proxy=#{node['apt']['key_proxy']} --keyserver hkp://#{keyserver}:80 --recv #{key}"
-    else
+    if keyserver.start_with?('hkp://')
       command "apt-key adv --keyserver #{keyserver} --recv #{key}"
+    elsif key_proxy.empty?
+      command "apt-key adv --keyserver hkp://#{keyserver}:80 --recv #{key}"
+    else
+      command "apt-key adv --keyserver-options http-proxy=#{key_proxy} --keyserver hkp://#{keyserver}:80 --recv #{key}"
     end
     action :run
     not_if do
-      extract_fingerprints_from_cmd('apt-key finger').any? do |fingerprint|
+      key_present = extract_fingerprints_from_cmd('apt-key finger').any? do |fingerprint|
         fingerprint.end_with?(key.upcase)
       end
+
+      key_present && key_is_valid('apt-key list', key.upcase)
+    end
+  end
+
+  ruby_block "validate-key #{key}" do
+    block do
+      fail "The key #{key} is no longer valid and cannot be used for an apt repository." unless key_is_valid('apt-key list', key.upcase)
     end
   end
 end
 
 # run command and extract gpg ids
 def extract_fingerprints_from_cmd(cmd)
-  so = Mixlib::ShellOut.new(cmd)
+  so = Mixlib::ShellOut.new(cmd, env: { 'LANG' => 'en_US', 'LANGUAGE' => 'en_US' })
   so.run_command
   so.stdout.split(/\n/).map do |t|
     if z = t.match(/^ +Key fingerprint = ([0-9A-F ]+)/)
@@ -51,9 +61,28 @@ def extract_fingerprints_from_cmd(cmd)
   end.compact
 end
 
+# determine whether apt thinks the key is still valid
+def key_is_valid(cmd, key)
+  valid = true
+
+  so = Mixlib::ShellOut.new(cmd, env: { 'LANG' => 'en_US', 'LANGUAGE' => 'en_US' })
+  so.run_command
+  # rubocop:disable Style/Next
+  so.stdout.split(/\n/).map do |t|
+    if t.match(%r{^\/#{key}.*\[expired: .*\]$})
+      Chef::Log.debug "Found expired key: #{t}"
+      valid = false
+      break
+    end
+  end
+
+  Chef::Log.debug "key #{key} validity: #{valid}"
+  valid
+end
+
 # install apt key from URI
 def install_key_from_uri(uri)
-  key_name = uri.split(/\//).last
+  key_name = uri.split(%r{\/}).last
   cached_keyfile = "#{Chef::Config[:file_cache_path]}/#{key_name}"
   if new_resource.key =~ /http/
     remote_file cached_keyfile do
@@ -67,6 +96,12 @@ def install_key_from_uri(uri)
       cookbook new_resource.cookbook
       mode 00644
       action :create
+    end
+
+    ruby_block "validate-key #{cached_keyfile}" do
+      block do
+        fail "The key #{cached_keyfile} is no longer valid and cannot be used for an apt repository." unless key_is_valid("gpg #{cached_keyfile}", '')
+      end
     end
   end
 
@@ -83,19 +118,19 @@ end
 
 # build repo file contents
 def build_repo(uri, distribution, components, trusted, arch, add_deb_src)
+  uri = '"' + uri + '"' unless uri.start_with?("\"", "'")
   components = components.join(' ') if components.respond_to?(:join)
   repo_options = []
   repo_options << "arch=#{arch}" if arch
   repo_options << 'trusted=yes' if trusted
-  repo_options = '[' + repo_options.join(' ') + ']' unless repo_options.empty?
-  repo_info = "#{uri} #{distribution} #{components}\n"
-  repo_info = "#{repo_options} #{repo_info}" unless repo_options.empty?
+  repo_opts = '[' + repo_options.join(' ') + ']' unless repo_options.empty?
+  repo_info = "#{repo_opts} #{uri} #{distribution} #{components}\n".lstrip
   repo =  "deb     #{repo_info}"
   repo << "deb-src #{repo_info}" if add_deb_src
   repo
 end
 
-def get_ppa_key(ppa_owner, ppa_repo)
+def get_ppa_key(ppa_owner, ppa_repo, key_proxy)
   # Launchpad has currently only one stable API which is marked as EOL April 2015.
   # The new api in devel still uses the same api call for +archive, so I made the version
   # configurable to provide some sort of workaround if api 1.0 ceases to exist.
@@ -104,7 +139,7 @@ def get_ppa_key(ppa_owner, ppa_repo)
   default_keyserver = 'keyserver.ubuntu.com'
 
   require 'open-uri'
-  api_query = sprintf("#{launchpad_ppa_api}/signing_key_fingerprint", ppa_owner, ppa_repo)
+  api_query = format("#{launchpad_ppa_api}/signing_key_fingerprint", ppa_owner, ppa_repo)
   begin
     key_id = open(api_query).read.delete('"')
   rescue OpenURI::HTTPError => e
@@ -115,12 +150,12 @@ def get_ppa_key(ppa_owner, ppa_repo)
     raise error
   end
 
-  install_key_from_keyserver(key_id, default_keyserver)
+  install_key_from_keyserver(key_id, default_keyserver, key_proxy)
 end
 
 # fetch ppa key, return full repo url
-def get_ppa_url(ppa)
-  repo_schema       = 'http://ppa.launchpad.net/%s/%s/ubuntu'
+def get_ppa_url(ppa, key_proxy)
+  repo_schema = 'http://ppa.launchpad.net/%s/%s/ubuntu'
 
   # ppa:user/repo logic ported from
   # http://bazaar.launchpad.net/~ubuntu-core-dev/software-properties/main/view/head:/softwareproperties/ppa.py#L86
@@ -131,15 +166,15 @@ def get_ppa_url(ppa)
   ppa_repo  = ppa_name.split('/')[1]
   ppa_repo  = 'ppa' if ppa_repo.nil?
 
-  get_ppa_key(ppa_owner, ppa_repo)
+  get_ppa_key(ppa_owner, ppa_repo, key_proxy)
 
-  sprintf(repo_schema, ppa_owner, ppa_repo)
+  format(repo_schema, ppa_owner, ppa_repo)
 end
 
 action :add do
   # add key
   if new_resource.keyserver && new_resource.key
-    install_key_from_keyserver(new_resource.key, new_resource.keyserver)
+    install_key_from_keyserver(new_resource.key, new_resource.keyserver, new_resource.key_proxy)
   elsif new_resource.key
     install_key_from_uri(new_resource.key)
   end
@@ -163,13 +198,13 @@ action :add do
   if new_resource.uri.start_with?('ppa:')
     # build ppa repo file
     repository = build_repo(
-      get_ppa_url(new_resource.uri),
+      get_ppa_url(new_resource.uri, new_resource.key_proxy),
       new_resource.distribution,
       'main',
       new_resource.trusted,
       new_resource.arch,
       new_resource.deb_src
-      )
+    )
   else
     # build repo file
     repository = build_repo(
@@ -179,7 +214,7 @@ action :add do
       new_resource.trusted,
       new_resource.arch,
       new_resource.deb_src
-      )
+    )
   end
 
   file "/etc/apt/sources.list.d/#{new_resource.name}.list" do
@@ -194,7 +229,7 @@ action :add do
 end
 
 action :remove do
-  if ::File.exists?("/etc/apt/sources.list.d/#{new_resource.name}.list")
+  if ::File.exist?("/etc/apt/sources.list.d/#{new_resource.name}.list")
     Chef::Log.info "Removing #{new_resource.name} repository from /etc/apt/sources.list.d/"
     file "/etc/apt/sources.list.d/#{new_resource.name}.list" do
       action :delete

@@ -54,8 +54,10 @@ This cookbook includes an LWRP for managing a Composer project
 
 #### Actions
 - :install: Reads the composer.json file from the current directory, resolves the dependencies, and installs them into vendor - this is the default action
+- :require Create composer.json file using specified vendor and downloads vendor.
 - :update: Gets the latest versions of the dependencies and updates the composer.lock file
 - :dump_autoload: Updates the autoloader without having to go through an install or update (eg. because of new classes in a classmap package)
+- :remove Removes vendor from composer.json and uninstalls
 
 #### Attribute parameters
 - project_dir: The directory where your project's composer.json can be found
@@ -73,6 +75,14 @@ composer_project "/path/to/project" do
     action :install
 end
 
+#require project vendor
+composer_project "/path/to/project" do
+    dev false
+    quiet true
+    prefer_dist false
+    action :require 
+end
+
 #update project vendors
 composer_project "/path/to/project" do
     dev false
@@ -85,6 +95,12 @@ composer_project "/path/to/project" do
     dev false
     quiet true
     action :dump_autoload
+end
+
+#remove project vendor
+composer_project "/path/to/project" do
+    vendor 'repo/vendor'
+    action :remove
 end
 ```
 

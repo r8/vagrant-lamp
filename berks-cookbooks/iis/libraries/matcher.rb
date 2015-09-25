@@ -39,7 +39,7 @@ if defined?(ChefSpec)
     )
   end
 
-   [:config].each do |action|
+  [:config].each do |action|
     self.class.send(:define_method, "#{action}_iis_unlock", proc  do |section|
       ChefSpec::Matchers::ResourceMatcher.new(:iis_unlock, action, section)
     end
@@ -53,7 +53,7 @@ if defined?(ChefSpec)
     )
   end
 
-  define_method = (Gem.loaded_specs["chefspec"].version < Gem::Version.new('4.1.0')) ?
+  define_method = (Gem.loaded_specs['chefspec'].version < Gem::Version.new('4.1.0')) ?
     ChefSpec::Runner.method(:define_runner_method) :
     ChefSpec.method(:define_matcher)
 

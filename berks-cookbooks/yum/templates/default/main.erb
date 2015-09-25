@@ -65,6 +65,11 @@ commands=<%= @config.commands %>
 <% if @config.debuglevel %>
 debuglevel=<%= @config.debuglevel %>
 <% end %>
+<% if @config.deltarpm == true %>
+deltarpm=1
+<% elsif @config.deltarpm == false %>
+deltarpm=0
+<% end %>
 <% if @config.diskspacecheck %>
 diskspacecheck=<%= @config.diskspacecheck %>
 <% end %>
@@ -226,7 +231,7 @@ sslclientcert=<%= @config.sslclientcert %>
 sslclientkey=<%= @config.sslclientkey %>
 <% end %>
 <% unless @config.sslverify.nil? %>
-sslverify=<%= @config.sslverify %>
+sslverify=<%= ( @config.sslverify ) ? 'True' : 'False' %>
 <% end %>
 <% if @config.syslog_device %>
 syslog_device=<%= @config.syslog_device %>
@@ -244,7 +249,7 @@ throttle=<%= @config.throttle %>
 timeout=<%= @config.timeout %>
 <% end %>
 <% if @config.tolerant %>
-tolerant=<%= @config.tolerant %>
+tolerant=<%= ( @config.tolerant ) ? '1' : '0' %>
 <% end %>
 <% if @config.tsflags %>
 tsflags=<%= @config.tsflags %>

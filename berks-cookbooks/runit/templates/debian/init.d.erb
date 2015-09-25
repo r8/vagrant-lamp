@@ -13,8 +13,8 @@
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="runit-managed <%= @name %>"
 NAME=<%= @name %>
-RUNIT=/usr/bin/sv
-SCRIPTNAME=/etc/init.d/$NAME
+RUNIT=<%= @sv_bin %>
+SCRIPTNAME=<%= @init_dir %>$NAME
 
 # Exit if runit is not installed
 [ -x $RUNIT ] || exit 0

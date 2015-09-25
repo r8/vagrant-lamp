@@ -1,15 +1,26 @@
 yum-mysql-community Cookbook
 ============
+[![Build Status](https://travis-ci.org/chef-cookbooks/yum-mysql-community.svg?branch=master)](http://travis-ci.org/chef-cookbooks/yum-mysql-community)
+[![Cookbook Version](https://img.shields.io/cookbook/v/yum-mysql-community.svg)](https://supermarket.chef.io/cookbooks/yum-mysql-community)
 
 The yum-mysql-community cookbook takes over management of the default
-repositoryids shipped with epel-release. It allows attribute
+repository ids shipped with epel-release. It allows attribute
 manipulation of `mysql-connectors-community`, `mysql56-community`, and
 `mysql57-community-dmr`.
 
 Requirements
 ------------
-* Chef 11 or higher
-* yum cookbook version 3.0.0 or higher
+#### Platforms
+* RHEL/CentOS and derivatives
+* Fedora
+
+#### Chef
+* Chef 11+
+
+#### Cookbooks
+* yum version 3.0.0 or higher
+* yum-epel
+
 
 Attributes
 ----------
@@ -118,11 +129,11 @@ include_recipe 'mysql56-community'
 
 License & Authors
 -----------------
-- Author:: Sean OMeara (<sean@chef.io>)
 
-```text
-Copyright:: 2011-2015, Chef Software, Inc.
+**Author:** Cookbook Engineering Team (<cookbooks@chef.io>)
 
+**Copyright:** 2011-2015, Chef Software, Inc.
+```
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at

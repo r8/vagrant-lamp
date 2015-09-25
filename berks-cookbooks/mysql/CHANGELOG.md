@@ -1,7 +1,76 @@
 mysql Cookbook CHANGELOG
 ========================
 
-v6.0.15 (2015-03-13)
+v6.1.1 (2015-09-24)
+--------------------
+- Completing ChefSpec matchers
+
+v6.1.0 (2015-07-17)
+--------------------
+- Adding tunables for tmp_dir, error_log, and pid_file
+- Adding mysqld_options hash interface for main my.cnf template
+
+v6.0.31 (2015-07-13)
+--------------------
+- Reverting create_stop_system_service checks
+
+v6.0.30 (2015-07-13)
+--------------------
+- Ubuntu 15.04 support
+- Check for scripts and unit files during create_stop_system_service
+
+v6.0.29 (2015-07-12)
+--------------------
+- Patch to allow blank root password
+- Adding package information for Suse 12.0
+
+v6.0.28 (2015-07-10)
+--------------------
+- Fixes for 12.4.x
+
+v6.0.27 (2015-07-09)
+--------------------
+- Allowing integer value for port number
+
+v6.0.26 (2015-07-07)
+--------------------
+- Reverting breaking changes introduced in 6.0.25
+
+v6.0.25 (2015-07-06)
+--------------------
+- Fixes for 12.4.1
+
+v6.0.24 (2015-06-27)
+--------------------
+- #341 - Changing default GRANT for root from '%' to 'localhost' and '127.0.0.1'
+
+v6.0.23 (2015-06-21)
+--------------------
+- #354 Better handling of long MySQL startup times
+
+v6.0.22 (2015-05-07)
+--------------------
+- Debian 8 (Jessie) support
+
+v6.0.21 (2015-04-08)
+--------------------
+- Fix to Upstart prestart script  when using custom socket
+- Adding --explicit_defaults_for_timestamp mysql_install_db_cmd for
+  5.6 and above
+
+v6.0.20 (2015-03-27)
+--------------------
+- #318 - Fixing Upstart pre-start script to handle custom socket paths
+
+v6.0.19 (2015-03-25)
+--------------------
+- Adding support for Amazon Linux 2015.03
+
+v6.0.18 (2015-03-24)
+--------------------
+- Adding support for 5.6 and 5.7 packages from dotdeb repos on Debian 7
+
+v6.0.17 (2015-03-13)
 --------------------
 - Updated for MySQL 5.7.6.
 - Handing removal of mysql_install_db and mysqld_safe

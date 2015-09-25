@@ -1,4 +1,4 @@
-<VirtualHost *:80>
+<VirtualHost *:<%= node['apache']['default_site_port'] %>>
   ServerAdmin <%= node['apache']['contact'] %>
 
   DocumentRoot <%= node['apache']['docroot_dir'] %>/

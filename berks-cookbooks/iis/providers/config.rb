@@ -27,7 +27,7 @@ include Opscode::IIS::Helper
 action :config do
   cmd = "#{appcmd(node)} set config #{new_resource.cfg_cmd}"
   Chef::Log.debug(cmd)
-  shell_out!(cmd, :returns => new_resource.returns)
-  Chef::Log.info("IIS Config command run")
+  shell_out!(cmd, returns: new_resource.returns)
+  Chef::Log.info('IIS Config command run')
   new_resource.updated_by_last_action(true)
 end

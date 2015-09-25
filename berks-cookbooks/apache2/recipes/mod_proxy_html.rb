@@ -3,6 +3,7 @@
 # Recipe:: mod_proxy_html
 #
 # Copyright 2013, OneHealth Solutions, Inc.
+# Copyright 2015, Alexander van Zoest
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,5 +17,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+if node['apache']['version'] != '2.4' && platform_family == 'debian'
+  package 'libapache2-mod-proxy-html'
+end
 
 apache_module 'proxy_html'

@@ -18,12 +18,12 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
+include_recipe 'iis'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
-  features = %w{Web-Mgmt-Compat Web-Metabase}
+  features = %w(Web-Mgmt-Compat Web-Metabase)
 else
-  features = %w{IIS-IIS6ManagementCompatibility IIS-Metabase}
+  features = %w(IIS-IIS6ManagementCompatibility IIS-Metabase)
 end
 
 features.each do |f|

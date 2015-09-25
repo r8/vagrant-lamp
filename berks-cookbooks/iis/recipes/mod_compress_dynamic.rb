@@ -18,8 +18,7 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
-
+include_recipe 'iis'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
   feature = 'Web-Dyn-Compression'

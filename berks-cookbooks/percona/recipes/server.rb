@@ -5,14 +5,21 @@
 
 include_recipe "percona::package_repo"
 
+version = node["percona"]["version"]
+
 # install packages
 case node["platform_family"]
 when "debian"
+  node.default["percona"]["server"]["package"] = "percona-server-server-#{version}" # rubocop:disable LineLength
+
   package node["percona"]["server"]["package"] do
-    action :install
     options "--force-yes"
+    action node["percona"]["server"]["package_action"].to_sym
   end
 when "rhel"
+  node.default["percona"]["server"]["package"] = "Percona-Server-server-#{version.tr(".", "")}" # rubocop:disable LineLength
+  node.default["percona"]["server"]["shared_pkg"] = "Percona-Server-shared-#{version.tr(".", "")}" # rubocop:disable LineLength
+
   # Need to remove this to avoid conflicts
   package "mysql-libs" do
     action :remove
@@ -23,17 +30,8 @@ when "rhel"
   include_recipe "percona::client"
 
   package node["percona"]["server"]["package"] do
-    action :install
+    action node["percona"]["server"]["package_action"].to_sym
   end
-end
-
-if node["percona"]["server"]["jemalloc"]
-  package_name = value_for_platform_family(
-    "debian" => "libjemalloc1",
-    "rhel" => "jemalloc"
-  )
-
-  package package_name
 end
 
 unless node["percona"]["skip_configure"]

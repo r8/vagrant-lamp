@@ -1,5 +1,5 @@
 default['yum']['mysql-connectors-community']['repositoryid'] = 'mysql-connectors-community'
-default['yum']['mysql-connectors-community']['gpgkey'] = 'https://raw.githubusercontent.com/someara/yum-mysql-community/master/files/default/mysql_pubkey.asc'
+default['yum']['mysql-connectors-community']['gpgkey'] = 'https://raw.githubusercontent.com/chef-cookbooks/yum-mysql-community/master/files/default/mysql_pubkey.asc'
 default['yum']['mysql-connectors-community']['description'] = 'MySQL Connectors Community'
 default['yum']['mysql-connectors-community']['failovermethod'] = 'priority'
 default['yum']['mysql-connectors-community']['gpgcheck'] = true
@@ -13,6 +13,8 @@ when 'rhel'
     when 2013
       default['yum']['mysql-connectors-community']['baseurl'] = 'http://repo.mysql.com/yum/mysql-connectors-community/el/6/$basearch/'
     when 2014
+      default['yum']['mysql-connectors-community']['baseurl'] = 'http://repo.mysql.com/yum/mysql-connectors-community/el/6/$basearch/'
+    when 2015
       default['yum']['mysql-connectors-community']['baseurl'] = 'http://repo.mysql.com/yum/mysql-connectors-community/el/6/$basearch/'
     end
   when 'redhat'

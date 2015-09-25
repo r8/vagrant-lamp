@@ -20,7 +20,7 @@
 
 case node['nodejs']['npm']['install_method']
 when 'embedded'
-  include_recipe 'nodejs::nodejs'
+  include_recipe 'nodejs::install'
 when 'source'
   include_recipe 'nodejs::npm_from_source'
 else

@@ -37,49 +37,14 @@ execute 'runit-hup-init' do
 end
 
 case node['platform_family']
-when 'rhel'
+when 'rhel', 'fedora'
 
-  if node['runit']['use_package_from_yum']
-    package 'runit'
-  else
-    include_recipe 'build-essential'
-    # `rpmdevtools` is in EPEL repo in EL <= 5
-    include_recipe 'yum-epel' if node['platform_version'].to_i == 5
+  packagecloud_repo 'imeyer/runit' unless node['runit']['prefer_local_yum']
+  package 'runit'
 
-    packages = %w{rpm-build rpmdevtools tar gzip}
-    packages.each do |p|
-      package p
-    end
-
-    if node['platform_version'].to_i >= 6
-      package 'glibc-static'
-    else
-      package 'buildsys-macros'
-    end
-
-    # This is the rpm spec and associated files to build a package of
-    # runit from source; the package will be installed.
-    cookbook_file "#{Chef::Config[:file_cache_path]}/runit-2.1.1.tar.gz" do
-      source 'runit-2.1.1.tar.gz'
-      not_if { runit_installed? }
-      notifies :run, 'bash[rhel_build_install]', :immediately
-    end
-
-    # This bash resource does the rpm install because we need to
-    # dynamically detect where the rpm output directory is from the
-    # rpm config directive '%{_rpmdir}'
-    bash 'rhel_build_install' do
-      user 'root'
-      cwd Chef::Config[:file_cache_path]
-      code <<-EOH
-        tar xzf runit-2.1.1.tar.gz
-        cd runit-2.1.1
-        ./build.sh
-        rpm_root_dir=`rpm --eval '%{_rpmdir}'`
-        rpm -ivh "${rpm_root_dir}/runit-2.1.1.rpm"
-      EOH
-      action :run
-      not_if { runit_installed? }
+  if node['platform_version'].to_i == 7
+    service 'runsvdir-start' do
+      action [:start, :enable]
     end
   end
 

@@ -2,6 +2,36 @@ windows Cookbook CHANGELOG
 =======================
 This file is used to list changes made in each version of the windows cookbook.
 
+v1.38.2
+--------------------
+- Lazy-load windows-pr gem library files. Chef 12.5 no longer includes the windows-pr gem. Earlier versions of this cookbook will not compile on Chef 12.5.
+
+v1.38.1 (2015-07-28)
+--------------------
+- Publishing without extended metadata
+
+v1.38.0 (2015-07-27)
+--------------------
+- Do not set new_resource.password to nil, Fixes #219, Fixes #220
+- Add `windows_certificate` resource #212
+- Add `windows_http_acl` resource #214
+
+v1.37.0 (2015-05-14)
+--------------------
+- fix `windows_package` `Chef.set_resource_priority_array` warning
+- update `windows_task` to support tasks in folders
+- fix `windows_task` delete action
+- replace `windows_task` name attribute with 'task_name'
+- add :end action to 'windows_task'
+- Tasks created with the `windows_task` resource default to the SYSTEM account
+- The force attribute for `windows_task` makes the :create action update the definition.
+- `windows_task` :create action will force an update of the task if the user or command differs from the currently configured setting.
+- add default provider for `windows_feature`
+- add a helper to make sure `WindowsRebootHandler` works in ChefSpec
+- added a source and issues url to the metadata for Supermarket
+- updated the Gemfile and .kitchen.yml to reflect the latest test-kitchen windows guest support
+- started tests using the kitchen-pester verifier
+
 v1.36.6 (2014-12-18)
 --------------------
 - reverting all chef_gem compile_time work

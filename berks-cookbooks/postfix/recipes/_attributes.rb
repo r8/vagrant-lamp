@@ -40,15 +40,15 @@ if node['postfix']['main']['smtp_sasl_auth_enable'] == 'yes'
 end
 
 if node['postfix']['use_alias_maps']
-   node.default['postfix']['main']['alias_maps'] = ["hash:#{node['postfix']['aliases_db']}"]
+  node.default['postfix']['main']['alias_maps'] = ["hash:#{node['postfix']['aliases_db']}"]
 end
 
 if node['postfix']['use_transport_maps']
-   node.default['postfix']['main']['transport_maps'] = ["hash:#{node['postfix']['transport_db']}"]
+  node.default['postfix']['main']['transport_maps'] = ["hash:#{node['postfix']['transport_db']}"]
 end
 
 if node['postfix']['use_access_maps']
-   node.default['postfix']['main']['access_maps'] = ["hash:#{node['postfix']['access_db']}"]
+  node.default['postfix']['main']['access_maps'] = ["hash:#{node['postfix']['access_db']}"]
 end
 
 if node['postfix']['use_virtual_aliases']

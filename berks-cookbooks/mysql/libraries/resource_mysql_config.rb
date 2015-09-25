@@ -3,6 +3,8 @@ require 'chef/resource/lwrp_base'
 class Chef
   class Resource
     class MysqlConfig < Chef::Resource::LWRPBase
+      provides :mysql_config
+
       self.resource_name = :mysql_config
       actions :create, :delete
       default_action :create

@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore <schisamo@opscode.com>
+# Author:: Seth Chisamore <schisamo@getchef.com>
 # Cookbook Name:: php
 # Provider:: pear_channel
 #
-# Copyright:: 2011, Opscode, Inc <legal@opscode.com>
+# Copyright:: 2011, Opscode, Inc <legal@getchef.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -84,10 +84,8 @@ end
 private
 
 def exists?
-  begin
-    shell_out!("#{node['php']['pear']} channel-info #{@current_resource.channel_name}")
-    true
-  rescue Mixlib::ShellOut::ShellCommandFailed
-    false
-  end
+  shell_out!("#{node['php']['pear']} channel-info #{@current_resource.channel_name}")
+  true
+rescue Mixlib::ShellOut::ShellCommandFailed
+  false
 end

@@ -30,8 +30,9 @@
 # Variables
 ####
 
-STARTTIMEOUT=30
-STOPTIMEOUT=15
+STARTTIMEOUT=900
+STOPTIMEOUT=900
+PID_DELAY=60
 
 ####
 # Helper functions
@@ -131,6 +132,7 @@ print_stop_failure() {
 start_command() {
     # Attempt to start <%= @mysql_name %>
     echo "Starting MySQL instance <%= @mysql_name %>"
+
     local scl_name="<%= @scl_name %>"
 
     if [ -z $scl_name ]; then
@@ -176,21 +178,32 @@ start() {
         if running; then
             break
         fi
+
+        let CURRENT_DELAY=${STARTTIMEOUT}-${TIMEOUT}
+        if [ $CURRENT_DELAY -gt $PID_DELAY ] \
+          && ! pid_exists; then
+            break
+        fi
+
         sleep 1
 	      let TIMEOUT=${TIMEOUT}-1
     done
 
-    # Handle timeout
-	  if [ $TIMEOUT -eq 0 ]; then
+    if running; then
+        # successbaby.gif
+        print_start_success
+        return 0
+    elif ! pid_exists; then
+        # Handle startup failure
+        print_start_failure
+        return 3
+	  elif [ $TIMEOUT -eq 0 ]; then
+        # Handle timeout
         print_start_failure
         # clean up
         kill $start_pid 2>/dev/null
 	      return 1
 	  fi
-
-    # successbaby.gif
-    print_start_success
-    return 0
 }
 
 # Reload <%= @mysql_name %>

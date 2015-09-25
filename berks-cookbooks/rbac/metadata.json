@@ -10,22 +10,33 @@
     "smartos": ">= 0.0.0"
   },
   "dependencies": {
+
   },
   "recommendations": {
+
   },
   "suggestions": {
+
   },
   "conflicting": {
+
   },
   "providing": {
+
   },
   "replacing": {
+
   },
   "attributes": {
+
   },
   "groupings": {
+
   },
   "recipes": {
+
   },
-  "version": "1.0.2"
+  "version": "1.0.3",
+  "source_url": "",
+  "issues_url": ""
 }

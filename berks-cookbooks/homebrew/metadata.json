@@ -1,0 +1,33 @@
+{
+  "name": "homebrew",
+  "version": "1.13.0",
+  "description": "Install Homebrew, and use it as the OS X package provider on Chef versions =< 11",
+  "long_description": "",
+  "maintainer": "Chef Software, Inc.",
+  "maintainer_email": "cookbooks@chef.io",
+  "license": "Apache 2.0",
+  "platforms": {
+    "mac_os_x": ">= 0.0.0",
+    "mac_os_x_server": ">= 0.0.0"
+  },
+  "dependencies": {
+    "build-essential": ">= 2.1.2"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+    "homebrew": "Install Homebrew"
+  }
+}

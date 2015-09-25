@@ -40,5 +40,7 @@ def locate_default_provider
     :windows_feature_dism
   elsif ::File.exists?(locate_sysnative_cmd('servermanagercmd.exe'))
     :windows_feature_servermanagercmd
+  else
+    :windows_feature_powershell
   end
 end

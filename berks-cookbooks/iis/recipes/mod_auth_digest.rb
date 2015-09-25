@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
+include_recipe 'iis'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
   feature = 'Web-Digest-Auth'
@@ -31,6 +31,6 @@ windows_feature feature do
 end
 
 iis_section 'unlocks digest authentication control in web.config' do
-  section "system.webServer/security/authentication/digestAuthentication"
+  section 'system.webServer/security/authentication/digestAuthentication'
   action :unlock
 end

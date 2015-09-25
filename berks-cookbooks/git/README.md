@@ -1,45 +1,122 @@
-Description
-===========
+Git Cookbook
+============
 
-Installs git and optionally sets up a git server as a daemon under runit.
+Installs git_client from package or source.
+Optionally sets up a git service under xinetd.
+
+Scope
+-----
+This cookbook is concerned with the Git SCM utility. It does not
+address ecosystem tooling or related projects.
 
 Requirements
-============
-## Ohai and Chef:
+------------
+- Chef 11 or higher
+- Ruby 1.9 or higher (preferably from the Chef full-stack installer)
+- Network accessible package repositories or a web server hosting source tarballs.
 
-* Ohai: 6.14.0+
+Platform Support
+----------------
+The following platforms have been tested with Test Kitchen:
 
-This cookbook makes use of `node['platform_family']` to simplify platform
-selection logic. This attribute was introduced in Ohai v0.6.12.
+```
+|--------------+-------|
+| centos-5     | X     |
+|--------------+-------|
+| centos-6     | X     |
+|--------------+-------|
+| centos-7     | X     |
+|--------------+-------|
+| fedora-21    | X     |
+|--------------+-------|
+| debian-7.0   | X     |
+|--------------+-------|
+| ubuntu-12.04 | X     |
+|--------------+-------|
+| ubuntu-14.04 | X     |
+|--------------+-------|
+| ubuntu-15.04 | X     |
+|--------------+-------|
+```
 
-## Platform:
+Cookbook Dependencies
+---------------------
+- depends 'build-essential' - For compiling from source
+- depends 'dmg' - For OSX Support
+- depends 'windows' - For Windows support
+- depends 'yum-epel' - For older RHEL platform_family support
 
-The following platform families are supported:
+Usage
+-----
+- Add `git::default`, `git::source`, of `git::windows` to your run_list
+OR
+- Add ```depends 'git', '~> 4.3'``` to your cookbook's metadata.rb
+- include_recipe one of the recipes from your cookbook
+OR
+- Use the git_client resource directly, the same way you'd use core
+  Chef resources (file, template, directory, package, etc).
 
-* Debian
-* Arch
-* RHEL
-* Fedora
-* FreeBSD (client only)
-* Mac OS X (10.6.0+)
-* Windows
+Resources Overview
+------------------
+- `git_client`: Manages a Git client installation on a machine. Acts
+  as a singleton when using the (default) package provider. Source
+  provider available as well.
 
-## Cookbooks:
+- `git_service`: Sets up a Git service via xinetd. WARNING: This is
+  insecure and will probably be removed in the future
 
-* runit (for `git::server`)
-* build-essential (for `git::source`)
-* dmg (for OS X installation)
-* yum (for RHEL 5 installation)
+### git_client
 
-### Windows Dependencies
-The [`windows_package`](https://github.com/opscode-cookbooks/windows#windows_package) resource from the Windows cookbook is required to
-install the git package on Windows.
+The `git_client` resource manages the installation of a Git client on
+a machine.
 
-## Attributes
+#### Example
+```
+git_client 'default' do
+  action :install
+end
+```
 
-### default
-The following attributes are platform-specific.
+#### Properties
+Currently, there are distinct sets of resource properties, used by the
+providers for source, package, osx, and windows. 
 
+# used by linux package providers
+- `package_name` - Package name to install on Linux machines. Defaults to a calculated value based on platform.
+- `package_version` - Defaults to nil.
+- `package_action` - Defaults to `:install`
+
+# used by source providers
+- `source_prefix` - Defaults to '/usr/local'
+- `source_url` - Defaults to a calculated URL based on source_version
+- `source_version` - Defaults to 1.9.5
+- `source_use_pcre` - configure option for build. Defaults to false
+- `source_checksum` - Defaults to a known value for the 1.9.5 source tarball
+
+# used by OSX package providers
+- `osx_dmg_app_name` - Defaults to 'git-1.9.5-intel-universal-snow-leopard'
+- `osx_dmg_package_id` - Defaults to 'GitOSX.Installer.git195.git.pkg'
+- `osx_dmg_volumes_dir` - Defaults to 'Git 1.9.5 Snow Leopard Intel Universal'
+- `osx_dmg_url` - Defaults to Sourceforge
+- `osx_dmg_checksum` - Defaults to the value for 1.9.5
+
+# used by the Windows package providers
+- `windows_display_name` - Windows display name
+- `windows_package_url` - Defaults to the Internet
+- `windows_package_checksum` - Defaults to the value for 1.9.5
+
+Recipes
+-------
+This cookbook ships with ready to use, attribute driven recipes that utilize the
+`git_client` and `git_service` resources. As of cookbook 4.x, they utilize the same
+attributes layout scheme from the 3.x. Due to some overlap, it is currently
+impossible to simultaneously install the Git client as a package and
+from source by using the "manipulate a the node attributes and run a
+recipe" technique. If you need both, you'll need to utilize the
+git_client resource in a recipe.
+
+Attributes
+----------
 #### Windows
 
 * `node['git']['version']` - git version to install
@@ -58,50 +135,14 @@ The following attributes are platform-specific.
 * `node['git']['version']` - git version to install
 * `node['git']['url']` - URL to git tarball
 * `node['git']['checksum']` - tarball SHA256 checksum
-
-Recipes
-=======
-
-## default
-
-Installs base git packages based on platform.
-
-## server
-
-Sets up a git daemon to provide a server.
-
-## source
-
-Installs git from source.
-
-## windows
-
-Installs git client on Windows
-
-Usage
-=====
-
-
-This cookbook primarily installs git core packages. It can also be
-used to serve git repositories.
-
-To install git client (all supported platforms):
-
-    include_recipe 'git'
-
-To install git server:
-
-    include_recipe "git::server"
-
-This creates the directory specified by git/server/base_path (default is /srv/git)
-and starts a git daemon, exporting all repositories found. Repositories need to be
-added manually, but will be available once they are created.
+* `node['git']['use_pcre']` - if true, builds git with PCRE enabled
 
 License and Author
 ==================
 
-- Author:: Joshua Timberman (<joshua@opscode.com>)
-- Copyright:: 2009-2014, Chef Software, Inc.
+- Author:: Joshua Timberman (<joshua@chef.io>)
+- Author:: Sean OMeara (<sean@chef.io>)
+- Copyright:: 2009-2015, Chef Software, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

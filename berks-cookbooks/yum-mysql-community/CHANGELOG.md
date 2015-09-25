@@ -2,6 +2,32 @@ yum-mysql-community Cookbook CHANGELOG
 ======================
 This file is used to list changes made in each version of the yum-mysql-community cookbook.
 
+v0.1.18 (2015-09-21)
+--------------------
+- Added Travis CI config for lint and unit testing
+- Added Chef standard Rubocop file and resolved all warnings
+- Added Chef standard chefignore and .gitignore files
+- Add supported platforms to the metadata
+- Added source_url and issues_url to the metadata
+- Added long_description to the metadata
+- Updated and expanded development dependencies in the Gemfile
+- Added contributing, testing, and maintainers docs
+- Added platform requirements to the readme
+- Added Travis and cookbook version badges to the readme
+- Update Chefspec to 4.X format
+
+v0.1.17 (2015-04-06)
+--------------------
+- Updating pubkey link from someara to chef-client github orgs
+
+v0.1.16 (2015-03-25)
+--------------------
+- Adding support Amazon Linux 2015.03 to all channels
+
+v0.1.15 (2015-03-25)
+--------------------
+- Added support for amazon linux 2015.03
+
 v0.1.14 (2015-03-12)
 --------------------
 - The content of 0.1.13 is questionable: didn't have changelog entry, may have had merged attribute change, but let's be clear and say at least this version 0.1.14 is the right thing.

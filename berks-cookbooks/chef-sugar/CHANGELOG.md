@@ -2,6 +2,14 @@ Chef Sugar Changelog
 =========================
 This file is used to list changes made in each version of the chef-sugar cookbook and gem.
 
+v3.0.2 (2015-03-26)
+-------------------
+### Improvements
+- Add helpers for `ppc64` and `ppc64le` architecture
+
+### Bug Fixes
+- Adjustments to error message
+
 v3.0.1 (2015-03-20)
 -------------------
 ### Breaking Changes

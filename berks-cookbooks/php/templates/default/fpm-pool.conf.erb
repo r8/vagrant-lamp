@@ -1,0 +1,15 @@
+[<%= @fpm_pool_name %>]
+user = <%= @fpm_pool_user %>
+group = <%= @fpm_pool_group %>
+listen = <%= @fpm_pool_listen %>
+listen.owner = <%= @fpm_pool_user %>
+listen.group = <%= @fpm_pool_group %>
+pm = <%= @fpm_pool_manager %>
+pm.max_children = <%= @fpm_pool_max_children %>
+pm.start_servers = <%= @fpm_pool_start_servers %>
+pm.min_spare_servers = <%= @fpm_pool_min_spare_servers %>
+pm.max_spare_servers = <%= @fpm_pool_max_spare_servers %>
+chdir = <%= @fpm_pool_chdir %>
+<% @fpm_pool_additional_config.each do |key, value| %>
+<%= key %> = <%= value %>
+<% end %>

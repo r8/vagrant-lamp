@@ -21,12 +21,12 @@
 actions :add, :delete, :config
 default_action :add
 
-attribute :application_name, :kind_of => String, :name_attribute => true
-attribute :path, :kind_of => String
-attribute :physical_path, :kind_of => String
-attribute :username, :kind_of => String, :default => nil
-attribute :password, :kind_of => String, :default => nil
-attribute :logon_method, :kind_of => Symbol, :default => :ClearText, :equal_to => [:Interactive, :Batch, :Network, :ClearText]
-attribute :allow_sub_dir_config, :kind_of => [TrueClass, FalseClass], :default => true
+attribute :application_name, kind_of: String, name_attribute: true
+attribute :path, kind_of: String
+attribute :physical_path, kind_of: String
+attribute :username, kind_of: String, default: nil
+attribute :password, kind_of: String, default: nil
+attribute :logon_method, kind_of: Symbol, default: :ClearText, equal_to: [:Interactive, :Batch, :Network, :ClearText]
+attribute :allow_sub_dir_config, kind_of: [TrueClass, FalseClass], default: true
 
 attr_accessor :exists

@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Attributes:: mod_ssl
 #
-# Copyright 2012-2013, Opscode, Inc.
+# Copyright 2012-2013, Chef Software, Inc.
 # Copyright 2014, Viverae, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 # limitations under the License.
 #
 
+default['apache']['mod_ssl']['port'] = 443
 default['apache']['mod_ssl']['protocol'] = 'All -SSLv2 -SSLv3'
 default['apache']['mod_ssl']['cipher_suite'] = 'EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:RC4!aNULL!eNULL!LOW!3DES!MD5!EXP!PSK!SRP!DSS'
 default['apache']['mod_ssl']['honor_cipher_order']     = 'On'
@@ -33,6 +34,7 @@ default['apache']['mod_ssl']['stapling_cache'] = 'shmcb:/var/run/ocsp(128000)'
 default['apache']['mod_ssl']['pass_phrase_dialog'] = 'builtin'
 default['apache']['mod_ssl']['mutex'] = 'file:/var/run/apache2/ssl_mutex'
 default['apache']['mod_ssl']['directives'] = {}
+default['apache']['mod_ssl']['pkg_name'] = 'mod_ssl'
 
 case node['platform_family']
 when 'debian'
@@ -46,6 +48,12 @@ when 'freebsd'
   default['apache']['mod_ssl']['session_cache']  = 'shmcb:/var/run/ssl_scache(512000)'
   default['apache']['mod_ssl']['mutex'] = 'file:/var/run/ssl_mutex'
 when 'rhel', 'fedora', 'suse'
+  case node['platform']
+  when 'amazon'
+    if node['apache']['version'] == '2.4'
+      default['apache']['mod_ssl']['pkg_name'] = 'mod24_ssl'
+    end
+  end
   default['apache']['mod_ssl']['session_cache']  = 'shmcb:/var/cache/mod_ssl/scache(512000)'
   default['apache']['mod_ssl']['mutex'] = 'default'
 end

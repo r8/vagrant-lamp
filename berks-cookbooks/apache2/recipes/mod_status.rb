@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Recipe:: mod_status
 #
-# Copyright 2008-2012, Opscode, Inc.
+# Copyright 2008-2012, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

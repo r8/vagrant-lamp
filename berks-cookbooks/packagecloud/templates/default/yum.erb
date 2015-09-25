@@ -1,0 +1,15 @@
+[<%= @name %>]
+name=<%= @description %>
+baseurl=<%= @base_url %>
+repo_gpgcheck=<%= @repo_gpgcheck %>
+<% if @priority -%>
+priority=<%=@priority %>
+<% end -%>
+gpgcheck=0
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-<%= @gpg_filename %>
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+<% if @metadata_expire %>
+metadata_expire=<%= @metadata_expire %>
+<% end %>

@@ -18,12 +18,12 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
+include_recipe 'iis'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
-  features = %w{Web-Mgmt-Console Web-Mgmt-Service}
+  features = %w(Web-Mgmt-Console Web-Mgmt-Service)
 else
-  features = %w{IIS-ManagementConsole IIS-ManagementService}
+  features = %w(IIS-ManagementConsole IIS-ManagementService)
 end
 
 features.each do |feature|

@@ -2,7 +2,7 @@
 # Cookbook Name:: build-essential
 # Recipe:: solaris2
 #
-# Copyright 2013, Opscode, Inc.
+# Copyright 2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,19 +17,32 @@
 # limitations under the License.
 #
 
-potentially_at_compile_time do
-  package 'autoconf'
-  package 'automake'
-  package 'bison'
-  package 'coreutils'
-  package 'flex'
-  package 'gcc4core'
-  package 'gcc4g++'
-  package 'gcc4objc'
-  package 'gcc3core'
-  package 'gcc3g++'
-  package 'ggrep'
-  package 'gmake'
-  package 'gtar'
-  package 'pkgconfig'
+case node['platform_version'].to_f
+when 5.10
+  # You should install the following packages from the Solaris 10 DVD:
+  #
+  #   SUNWbison
+  #   SUNWgcc
+  #   SUNWggrp
+  #   SUNWgmake
+  #   SUNWgtar
+  #
+when 5.11
+  potentially_at_compile_time do
+    package 'autoconf'
+    package 'automake'
+    package 'bison'
+    package 'gnu-coreutils'
+    package 'flex'
+    package 'gcc'
+    package 'gcc-3'
+    package 'gnu-grep'
+    package 'gnu-make'
+    package 'gnu-patch'
+    package 'gnu-tar'
+    package 'pkg-config'
+    package 'ucb'
+  end
+else
+  raise "Sorry, we don't support Solaris version #{node['platform_version']} at this juncture."
 end

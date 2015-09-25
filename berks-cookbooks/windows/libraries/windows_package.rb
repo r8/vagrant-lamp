@@ -193,7 +193,9 @@ end
 class Chef
   class Resource
     class WindowsCookbookPackage < Chef::Resource::LWRPBase
-      if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12')
+      if Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12.4.0')
+        provides :windows_package, os: "windows", override: true
+      elsif Gem::Version.new(Chef::VERSION) >= Gem::Version.new('12')
         provides :windows_package, os: "windows"
       end
       actions :install, :remove
@@ -219,6 +221,18 @@ class Chef
 end
 
 if Gem::Version.new(Chef::VERSION) < Gem::Version.new('12')
+  # this wires up the cookbook version of the windows_package resource as Chef::Resource::WindowsPackage,
+  # which is kinda hella janky
   Chef::Resource.send(:remove_const, :WindowsPackage) if defined? Chef::Resource::WindowsPackage
   Chef::Resource.const_set("WindowsPackage", Chef::Resource::WindowsCookbookPackage)
+else
+  if Chef.respond_to?(:set_resource_priority_array)
+    # this wires up the dynamic resource resolver to favor the cookbook version of windows_package over
+    # the internal version (but the internal Chef::Resource::WindowsPackage is still the internal version
+    # and a wrapper cookbook can override this e.g. for users that want to use the windows cookbook but
+    # want the internal windows_package resource)
+    Chef.set_resource_priority_array(:windows_package, [ Chef::Resource::WindowsCookbookPackage ], platform: "windows")
+  end
 end
+
+

@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "chef/ubuntu-14.04"
+  config.vm.box = "bento/ubuntu-14.04"
 
   if Vagrant.has_plugin? 'vagrant-omnibus'
     # Set Chef version for Omnibus
@@ -18,6 +18,12 @@ Vagrant.configure("2") do |config|
     raise Vagrant::Errors::VagrantError.new,
       "vagrant-omnibus missing, please install the plugin:\n" +
       "vagrant plugin install vagrant-omnibus"
+  end
+
+  # Disable vagrant-berkshelf because it overrides chef cookbooks path
+  # See https://github.com/berkshelf/vagrant-berkshelf/issues/274
+  if Vagrant.has_plugin? 'vagrant-berkshelf'
+    config.berkshelf.enabled = false
   end
 
   # Create a forwarded port mapping which allows access to a specific port
@@ -49,7 +55,7 @@ Vagrant.configure("2") do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   config.vm.provision :chef_zero do |chef|
-    chef.cookbooks_path = ["berks-cookbooks", "cookbooks"] 
+    chef.cookbooks_path = ["berks-cookbooks", "cookbooks"]
     chef.data_bags_path = "data_bags"
 
     # List of recipes to run

@@ -18,12 +18,12 @@
 # limitations under the License.
 #
 
-include_recipe "iis"
+include_recipe 'iis'
 
 if Opscode::IIS::Helper.older_than_windows2008r2?
-  features = %w{Web-ISAPI-Filter Web-ISAPI-Ext}
+  features = %w(Web-ISAPI-Filter Web-ISAPI-Ext)
 else
-  features = %w{IIS-ISAPIFilter IIS-ISAPIExtensions}
+  features = %w(IIS-ISAPIFilter IIS-ISAPIExtensions)
 end
 
 features.each do |feature|

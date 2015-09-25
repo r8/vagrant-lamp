@@ -1,0 +1,38 @@
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-5.11
+    run_list:
+    - recipe[yum-epel]
+  - name: centos-6.6
+    run_list:
+    - recipe[yum-epel]
+  - name: centos-7.0
+  - name: fedora-21
+  - name: ubuntu-10.04
+    run_list:
+    - recipe[apt]
+  - name: ubuntu-12.04
+    run_list:
+    - recipe[apt]
+  - name: ubuntu-14.04
+    run_list:
+    - recipe[apt]
+  - name: debian-7.8
+    run_list:
+    - recipe[apt]
+
+suites:
+- name: default
+  run_list:  
+  - recipe[runit_test]
+  attributes: {}
+
+- name: service
+  run_list:
+  - recipe[runit_test::service]
+  attributes: {}

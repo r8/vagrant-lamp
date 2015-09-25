@@ -1221,5 +1221,5 @@ soap.wsdl_cache_ttl=86400
 ; End:
 
 <% @directives.sort_by { |key, val| key }.each do |directive, value| -%>
-<%= "#{directive}=\"#{value}\"" %>
+<%= "#{directive}=#{value}" %>
 <% end -%>

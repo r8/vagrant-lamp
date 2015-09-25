@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Recipe:: mod_cgi
 #
-# Copyright 2008-2013, Opscode, Inc.
+# Copyright 2008-2013, Chef Software, Inc.
 # Copyright 2014, Viverae, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

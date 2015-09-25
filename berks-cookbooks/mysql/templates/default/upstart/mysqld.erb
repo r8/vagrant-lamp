@@ -16,6 +16,7 @@ kill timeout 300
 
 pre-start script
 [ -d /run/<%= @mysql_name %> ] || install -m 755 -o <%= @run_user %> -g <%= @run_group %> -d /run/<%= @mysql_name %>
+[ -d <%= @socket_dir %> ] || install -m 755 -o <%= @run_user %> -g <%= @run_group %> -d <%= @socket_dir %>
 end script
 
 exec /usr/sbin/mysqld --defaults-file=<%= @defaults_file %>

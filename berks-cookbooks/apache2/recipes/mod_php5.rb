@@ -2,7 +2,7 @@
 # Cookbook Name:: apache2
 # Recipe:: mod_php5
 #
-# Copyright 2008-2013, Opscode, Inc.
+# Copyright 2008-2013, Chef Software, Inc.
 # Copyright 2014, OneHealth Solutions, Inc.
 # Copyright 2014, Viverae, Inc.
 #
@@ -68,5 +68,5 @@ end
 
 apache_module 'php5' do
   conf true
-  filename 'libphp5.so'
+  filename node['apache']['mod_php5']['so_filename']
 end

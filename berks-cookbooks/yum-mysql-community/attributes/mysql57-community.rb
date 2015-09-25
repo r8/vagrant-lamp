@@ -1,5 +1,5 @@
 default['yum']['mysql57-community']['repositoryid'] = 'mysql57-community'
-default['yum']['mysql57-community']['gpgkey'] = 'https://raw.githubusercontent.com/someara/yum-mysql-community/master/files/default/mysql_pubkey.asc'
+default['yum']['mysql57-community']['gpgkey'] = 'https://raw.githubusercontent.com/chef-cookbooks/yum-mysql-community/master/files/default/mysql_pubkey.asc'
 default['yum']['mysql57-community']['description'] = 'MySQL 5.7 Community Server'
 default['yum']['mysql57-community']['failovermethod'] = 'priority'
 default['yum']['mysql57-community']['gpgcheck'] = true
@@ -13,6 +13,8 @@ when 'rhel'
     when 2013
       default['yum']['mysql57-community']['baseurl'] = 'http://repo.mysql.com/yum/mysql-5.7-community/el/6/$basearch/'
     when 2014
+      default['yum']['mysql57-community']['baseurl'] = 'http://repo.mysql.com/yum/mysql-5.7-community/el/6/$basearch/'
+    when 2015
       default['yum']['mysql57-community']['baseurl'] = 'http://repo.mysql.com/yum/mysql-5.7-community/el/6/$basearch/'
     end
   when 'redhat'

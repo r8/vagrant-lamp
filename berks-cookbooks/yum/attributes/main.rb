@@ -36,6 +36,7 @@ default['yum']['main']['color_update_installed'] = nil #  /.*/
 default['yum']['main']['color_update_local'] = nil #  /.*/
 default['yum']['main']['color_update_remote'] = nil #  /.*/
 default['yum']['main']['commands'] = nil #  /.*/
+default['yum']['main']['deltarpm'] = nil # [TrueClass, FalseClass]
 default['yum']['main']['debuglevel'] = nil # /^\d+$/
 default['yum']['main']['diskspacecheck'] = nil # [TrueClass, FalseClass]
 default['yum']['main']['enable_group_conditionals'] = nil # [TrueClass, FalseClass]

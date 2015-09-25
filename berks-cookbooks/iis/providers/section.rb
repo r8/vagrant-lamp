@@ -26,28 +26,28 @@ include REXML
 include Opscode::IIS::Helper
 
 action :lock do
-  @current_resource.exists = is_new_value?(doc.root, "CONFIG/@overrideMode", "Deny")
+  @current_resource.exists = new_value?(doc.root, 'CONFIG/@overrideMode', 'Deny')
 
-  unless @current_resource.exists
-    cmd = "#{appcmd(node)} lock config -section:\"#{new_resource.section}\""
+  if !@current_resource.exists
+    cmd = "#{appcmd(node)} lock config -section:\"#{new_resource.section}\" -commit:apphost"
     Chef::Log.debug(cmd)
-    shell_out!(cmd, :returns => new_resource.returns)
+    shell_out!(cmd, returns: new_resource.returns)
     new_resource.updated_by_last_action(true)
-    Chef::Log.info("IIS Config command run")
+    Chef::Log.info('IIS Config command run')
   else
     Chef::Log.debug("#{new_resource.section} already locked - nothing to do")
   end
 end
 
 action :unlock do
-  @current_resource.exists = is_new_value?(doc.root, "CONFIG/@overrideMode", "Allow")
+  @current_resource.exists = new_value?(doc.root, 'CONFIG/@overrideMode', 'Allow')
 
-  unless @current_resource.exists
-    cmd = "#{appcmd(node)} unlock config -section:\"#{new_resource.section}\""
+  if !@current_resource.exists
+    cmd = "#{appcmd(node)} unlock config -section:\"#{new_resource.section}\" -commit:apphost"
     Chef::Log.debug(cmd)
-    shell_out!(cmd, :returns => new_resource.returns)
+    shell_out!(cmd, returns: new_resource.returns)
     new_resource.updated_by_last_action(true)
-    Chef::Log.info("IIS Config command run")
+    Chef::Log.info('IIS Config command run')
   else
     Chef::Log.debug("#{new_resource.section} already unlocked - nothing to do")
   end
@@ -63,9 +63,9 @@ def doc
   Chef::Log.debug(cmd_current_values)
   cmd_current_values = shell_out(cmd_current_values)
   if cmd_current_values.stderr.empty?
-      xml = cmd_current_values.stdout
-      return Document.new(xml)
+    xml = cmd_current_values.stdout
+    return Document.new(xml)
   end
 
-  cmd_current_values.error!  
+  cmd_current_values.error!
 end

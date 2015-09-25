@@ -54,6 +54,12 @@ Unattended-Upgrade::Remove-Unused-Dependencies "<%= node['apt']['unattended_upgr
 // the file /var/run/reboot-required is found after the upgrade 
 Unattended-Upgrade::Automatic-Reboot "<%= node['apt']['unattended_upgrades']['automatic_reboot'] ? 'true' : 'false' %>";
 
+// If automatic reboot is enabled and needed, reboot at the specific
+// time instead of immediately
+//  Default: "now"
+<% if node['apt']['unattended_upgrades']['automatic_reboot'] -%>
+Unattended-Upgrade::Automatic-Reboot-Time "<%= node['apt']['unattended_upgrades']['automatic_reboot_time'] %>";
+<% end %>
 
 // Use apt bandwidth limit feature, this example limits the download
 // speed to 70kb/sec
