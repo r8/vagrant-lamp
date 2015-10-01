@@ -29,6 +29,7 @@ Go to the repository folder and launch the box
     $ cd [repo]
     $ vagrant up
 
+
 What's inside:
 --------------
 
@@ -62,6 +63,8 @@ Installed software:
 
 Notes
 -----
+### Accessing via your local web browser
+The default host is local.dev, in order to get it to work on your system you will probably need to edit your hosts file (/private/etc/hosts in Macs, c:\Windows\System32\Drivers\etc\hosts in Windows for example). Then to access the installed assets such as PHPMyAdmin you'll need to go through the configured ports, which by default is 8080, so the way to access that would be local.dev:8080/phpmyadmin.
 
 ### Apache virtual hosts
 
