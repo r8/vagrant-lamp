@@ -64,7 +64,7 @@ Installed software:
 Notes
 -----
 ### Accessing via your local web browser
-The default host is local.dev, in order to get it to work on your system you will probably need to edit your hosts file (/private/etc/hosts in Macs, c:\Windows\System32\Drivers\etc\hosts in Windows for example). Then to access the installed assets such as PHPMyAdmin you'll need to go through the configured ports, which by default is 8080, so the way to access that would be local.dev:8080/phpmyadmin.
+The default host is local.dev, in order to get it to work on your system you will probably need to edit your hosts file (/private/etc/hosts in Macs, c:\Windows\System32\Drivers\etc\hosts in Windows for example) to map 192.168.33.10 to local.dev. Then to access the installed assets you can go to local.dev. For example phpmyadmin is at local.dev/phpmyadmin and a file in public/local.dev/MYSITE can be accessed at local.dev/MYSITE. 
 
 ### Apache virtual hosts
 
