@@ -52,11 +52,12 @@ Vagrant.configure("2") do |config|
   end
 
   # Enable provisioning with chef zero, specifying a cookbooks path, roles
-  # path, and data_bags path (all relative to this Vagrantfile), and adding
+  # path, nodes path and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   config.vm.provision :chef_zero do |chef|
     chef.cookbooks_path = ["berks-cookbooks", "cookbooks"]
     chef.data_bags_path = "data_bags"
+    chef.nodes_path = "nodes"
 
     # List of recipes to run
     chef.add_recipe "vagrant_main"

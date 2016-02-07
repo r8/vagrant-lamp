@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.0.3] - 2016-02-07
+
+### Fixed
+- Add `chef.nodes_path` for Chef Zero. Fix breaking change introduced with Vagrant 1.8.0
+
+### Changed
+- Update README.md with `hosts` file information
+
 ## [1.0.2] - 2015-09-25
 
 ### Fixed
