@@ -63,8 +63,6 @@ Installed software:
 
 Notes
 -----
-### Accessing via your local web browser
-The default host is local.dev, in order to get it to work on your system you will probably need to edit your hosts file (/private/etc/hosts in Macs, c:\Windows\System32\Drivers\etc\hosts in Windows for example) to map 192.168.33.10 to local.dev. Then to access the installed assets you can go to local.dev. For example phpmyadmin is at local.dev/phpmyadmin and a file in public/local.dev/MYSITE can be accessed at local.dev/MYSITE. 
 
 ### Apache virtual hosts
 
@@ -73,9 +71,18 @@ directory. The docroot of the new virtual host will be a directory within the
 `public/` folder matching the `host` you specified. Alternately you may specify
 a docroot explicitly by adding a `docroot` key in the json file.
 
+Default preconfigured host is `local.dev`.
+
+### Accessing your hosts via your local web browser
+
+In order to access vagrant hosts via your local browser you will need to edit your hosts file (`/private/etc/hosts` in Macs, `c:\Windows\System32\Drivers\etc\hosts` in Windows, `/etc/hosts` in Linux).
+All hosts should be mapped to `192.168.33.10`:
+
+    192.168.33.10 local.dev someyourotherhost.dev
+
 ### MySQL
 
-The guests local 3306 port is available on the host at port 33066. It is also available on every domain. Logging in can be done with username=root, password=vagrant.
+The guests local 3306 port is available on the host at port 33066. It is available on every domain. Logging in can be done with username=root, password=vagrant.
 
 ### phpMyAdmin
 
@@ -87,8 +94,8 @@ phpMyAdmin is available on every domain. For example:
 
 XDebug is configured to connect back to your host machine on port 9000 when
 starting a debug session from a browser running on your host. A debug session is
-started by appending GET variable XDEBUG_SESSION_START to the URL (if you use an
-integrated debugger like Eclipse PDT, it will do this for you).
+started by either by appending GET variable XDEBUG_SESSION_START to the URL or setting XDEBUG cookie (if you use an
+integrated debugger like Eclipse PDT it will do this for you).
 
 XDebug is also configured to generate cachegrind profile output on demand by
 adding GET variable XDEBUG_PROFILE to your URL. For example:
@@ -115,7 +122,7 @@ happens to serve webgrind.
 
 ### MailHog
 
-ll emails sent via local mail transport are intercepted by [MailHog](http://github.com/mailhog/MailHog). So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailHog, which is running on port 8025 and also available on every domain:
+All emails sent via local mail transport are intercepted by [MailHog](http://github.com/mailhog/MailHog). So normally no email would be delivered outside of the virtual machine. Instead you can check messages using web frontend for MailHog, which is running on port 8025 and also available on every domain:
 
     http://local.dev:8025
 
