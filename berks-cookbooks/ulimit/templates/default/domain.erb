@@ -1,0 +1,9 @@
+<% 
+  node.run_state[:ulimit][@domain].each do |item, entries|
+    entries.each do |type, value|
+-%>
+<%= @domain %> <%= type %> <%= item %> <%= value %>
+<%
+    end
+  end
+-%>

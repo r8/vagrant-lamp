@@ -1,9 +1,9 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Recipe:: mod_proxy_balancer
 #
-# Copyright 2008-2013, Chef Software, Inc.
-# Copyright 2014, OneHealth Solutions, Inc.
+# Copyright:: 2008-2017, Chef Software, Inc.
+# Copyright:: 2014, OneHealth Solutions, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@
 # limitations under the License.
 #
 
-if !platform_family?('freebsd') && node['apache']['version'] == '2.4'
-  include_recipe 'apache2::mod_slotmem_shm'
-end
+include_recipe 'apache2::mod_slotmem_shm' unless platform_family?('freebsd')
 
 apache_module 'proxy_balancer' do
   conf true

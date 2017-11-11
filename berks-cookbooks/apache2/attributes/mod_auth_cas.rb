@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Attributes:: mod_auth_cas
 #
-# Copyright 2013, Chef Software, Inc.
+# Copyright:: 2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,4 +18,4 @@
 #
 
 default['apache']['mod_auth_cas']['from_source']     = false
-default['apache']['mod_auth_cas']['source_revision'] = 'v1.0.8.1'
+default['apache']['mod_auth_cas']['source_revision'] = 'v1.0.9.1'

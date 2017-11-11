@@ -65,7 +65,7 @@ when 'debian', 'gentoo'
     action :install
     response_file 'runit.seed' if platform?('ubuntu', 'debian')
     notifies value_for_platform(
-      'debian' => { '4.0' => :run, 'default' => :nothing  },
+      'debian' => { '4.0' => :run, 'default' => :nothing },
       'ubuntu' => {
         'default' => :nothing,
         '9.04' => :run,

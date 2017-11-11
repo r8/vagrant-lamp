@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: homebrew
+# Cookbook:: homebrew
 # Recipes:: cask
 #
-# Copyright 2014, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2014-2017, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,24 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-Chef::Resource.send(:include, Homebrew::Mixin)
 
 homebrew_tap 'caskroom/cask'
 
-package 'brew-cask'
-
-execute 'update homebrew cask from github' do
-  user node['homebrew']['owner'] || homebrew_owner
-  command '/usr/local/bin/brew upgrade brew-cask && /usr/local/bin/brew cask cleanup || true'
-  only_if { node['homebrew']['auto-update'] }
-end
-
-directory '/opt/homebrew-cask' do
-  owner node['homebrew']['owner'] || homebrew_owner
-  mode 00775
-end
-
-directory '/opt/homebrew-cask/Caskroom' do
-  owner node['homebrew']['owner'] || homebrew_owner
-  mode 00775
+directory '/Library/Caches/Homebrew/Casks' do
+  owner Homebrew.owner
+  mode '775'
+  only_if { ::Dir.exist?('/Library/Caches/Homebrew') }
 end

@@ -1,9 +1,8 @@
-# encoding: utf-8
 # Author:: Joshua Timberman(<joshua@chef.io>)
-# Cookbook Name:: postfix
+# Cookbook:: postfix
 # Recipe:: default
 #
-# Copyright 2009-2014, Chef Software, Inc.
+# Copyright:: 2009-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,31 +19,18 @@
 
 include_recipe 'postfix::_common'
 
-if node['postfix']['main']['smtp_sasl_auth_enable'] == 'yes'
-  include_recipe 'postfix::sasl_auth'
-end
+include_recipe 'postfix::sasl_auth' if node['postfix']['main']['smtp_sasl_auth_enable'] == 'yes'
 
-if node['postfix']['use_alias_maps']
-  include_recipe 'postfix::aliases'
-end
+include_recipe 'postfix::aliases' if node['postfix']['use_alias_maps']
 
-if node['postfix']['use_transport_maps']
-  include_recipe 'postfix::transports'
-end
+include_recipe 'postfix::transports' if node['postfix']['use_transport_maps']
 
-if node['postfix']['use_access_maps']
-  include_recipe 'postfix::access'
-end
+include_recipe 'postfix::access' if node['postfix']['use_access_maps']
 
-if node['postfix']['use_virtual_aliases']
-  include_recipe 'postfix::virtual_aliases'
-end
+include_recipe 'postfix::virtual_aliases' if node['postfix']['use_virtual_aliases']
 
-if node['postfix']['use_virtual_aliases_domains']
-  include_recipe 'postfix::virtual_aliases_domains'
-end
+include_recipe 'postfix::virtual_aliases_domains' if node['postfix']['use_virtual_aliases_domains']
 
-if node['postfix']['use_relay_restrictions_maps']
-  include_recipe 'postfix::relay_restrictions'
-end
+include_recipe 'postfix::relay_restrictions' if node['postfix']['use_relay_restrictions_maps']
 
+include_recipe 'postfix::maps' if node['postfix']['maps']

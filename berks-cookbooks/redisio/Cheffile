@@ -1,0 +1,5 @@
+site 'http://community.opscode.com/api/v1'
+
+cookbook 'ulimit',                :git => 'git@github.com:bmhatfield/chef-ulimit', :ref => 'v0.3.1'
+cookbook 'build-essential',       :git => 'git@github.com:opscode-cookbooks/build-essential', :ref => 'v1.4.2'
+

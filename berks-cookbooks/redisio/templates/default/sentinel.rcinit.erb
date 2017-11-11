@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# PROVIDE: sentinel_<%=@name%>
+# REQUIRE: LOGIN
+# BEFORE:  securelevel
+# KEYWORD: shutdown
+
+# Add the following line to /etc/rc.conf to enable `sentinel':
+#
+#redis_<%= @name %>_enable="YES"
+#
+
+. /etc/rc.subr
+
+name="redis_<%= @name %>"
+rcvar="${name}_enable"
+
+command="<%= File.join(@bin_path, 'redis-sentinel') %>"
+pidfile="<%= @piddir %>/<%=@name%>.pid"
+
+# read configuration and set defaults
+load_rc_config "$name"
+: ${sentinel_enable="NO"}
+: ${sentinel_user="<%= @user %>"}
+: ${sentinel_config="<%= @configdir %>/<%= @name %>.conf"}
+
+command_args="${sentinel_config} --daemonize yes --pidfile ${pidfile}"
+required_files="${sentinel_config}"
+start_precmd="sentinel_checks"
+restart_precmd="sentinel_checks"
+
+sentinel_checks()
+{
+    if [ x`id -u ${sentinel_user}` != x`stat -f %u ${sentinel_config}` ]; then
+	err 1 "${sentinel_config} must be owned by user ${sentinel_user}"
+    fi
+}
+
+run_rc_command "$1"

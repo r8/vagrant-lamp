@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: git
+# Cookbook:: git
 # Recipe:: source
 #
-# Copyright 2012, Brian Flad, Fletcher Nichol
+# Copyright:: 2012-2016, Brian Flad, Fletcher Nichol
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ git_client 'default' do
   provider Chef::Provider::GitClient::Source
   source_checksum node['git']['checksum']
   source_prefix node['git']['prefix']
-  source_url node['git']['url']
+  source_url format(node['git']['url'], version: node['git']['version'])
   source_use_pcre node['git']['use_pcre']
   source_version node['git']['version']
   action :install

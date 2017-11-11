@@ -2,7 +2,7 @@
 # Cookbook Name:: chef-vault
 # Attributes:: default
 #
-# Author: Joshua Timberman <joshua@getchef.com>
+# Author: Joshua Timberman <joshua@chef.io>
 # Copyright (c) 2013, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-default['chef-vault']['version'] = '~> 2.2'
+default['chef-vault']['version'] = '~> 2.6'
 default['chef-vault']['databag_fallback'] = true
 default['chef-vault']['gem_source'] = nil
+default['chef-vault']['gem_options'] = nil

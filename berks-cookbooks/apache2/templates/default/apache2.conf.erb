@@ -8,11 +8,7 @@ ServerRoot "<%= node['apache']['dir'] %>"
 #
 # The accept serialization lock file MUST BE STORED ON A LOCAL DISK.
 #
-<% if node['apache']['version'] == '2.2' -%>
-LockFile <%= node['apache']['lock_dir'] %>/accept.lock
-<% elsif node['apache']['version'] == '2.4' -%>
 Mutex file:<%= node['apache']['lock_dir'] %> default
-<% end -%>
 
 #
 # PidFile: The file in which the server should record its process
@@ -49,7 +45,6 @@ User <%= node['apache']['user'] %>
 Group <%= node['apache']['group'] %>
 #</IfModule>
 
-<% if node['apache']['version'] == '2.4' -%>
 # Sets the default security model of the Apache2 HTTPD server. It does
 # not allow access to the root filesystem outside of /usr/share and <%= node['apache']['docroot_dir'] %>.
 # If your system is serving content from a sub-directory in /srv you must allow
@@ -77,7 +72,6 @@ Group <%= node['apache']['group'] %>
         AllowOverride None
         Require all granted
 </Directory>
-<% end -%>
 
 #
 # AccessFileName: The name of the file to look for in each directory
@@ -93,32 +87,14 @@ AccessFileName <%= node['apache']['access_file_name'] %>
 #
 <% access_file_name_prefix = node['apache']['access_file_name'][0..2] if !node['apache']['access_file_name'].empty?
    if access_file_name_prefix != '.ht'
-    file_name_prefix = '(' + access_file_name_prefix + '|.ht)'
+    file_name_prefix = '(' + access_file_name_prefix + '|\.ht)'
    else
-    file_name_prefix = '.ht'
+    file_name_prefix = '\.ht'
    end
 %>
 <Files ~ "^<%= file_name_prefix %>">
-    <% if node['apache']['version'] == '2.2' -%>
-    Order allow,deny
-    Deny from all
-    <% elsif node['apache']['version'] == '2.4' -%>
     Require all denied
-    <% end -%>
 </Files>
-
-<% if node['apache']['version'] == '2.2' -%>
-#
-# DefaultType is the default MIME type the server will use for a document
-# if it cannot otherwise determine one, such as from filename extensions.
-# If your server contains mostly text or HTML documents, "text/plain" is
-# a good value.  If most of your content is binary, such as applications
-# or images, you may want to use "application/octet-stream" instead to
-# keep browsers from trying to display binary files as though they are
-# text.
-#
-DefaultType text/plain
-<% end -%>
 
 #
 # HostnameLookups: Log the names of clients or just their IP addresses
@@ -147,19 +123,14 @@ ErrorLog <%= node['apache']['log_dir'] %>/<%= node['apache']['error_log'] %>
 # Possible values include: debug, info, notice, warn, error, crit,
 # alert, emerg.
 #
-LogLevel warn
+LogLevel <%= node['apache']['log_level'] %>
 
 # COOK-1021: Dummy LoadModule directive to aid module installations
 #LoadModule dummy_module modules/mod_dummy.so
 
 # Include module configuration:
-<% if node['apache']['version'] == '2.2' -%>
-Include <%= node['apache']['dir'] %>/mods-enabled/*.load
-Include <%= node['apache']['dir'] %>/mods-enabled/*.conf
-<% elsif node['apache']['version'] == '2.4' -%>
 IncludeOptional <%= node['apache']['dir'] %>/mods-enabled/*.load
 IncludeOptional <%= node['apache']['dir'] %>/mods-enabled/*.conf
-<% end -%>
 
 <% if %w[freebsd].include?(node['platform_family']) -%>
 <IfDefine NOHTTPACCEPT>
@@ -181,80 +152,9 @@ LogFormat "%h %l %u %t \"%r\" %>s %b" common
 LogFormat "%{Referer}i -> %U" referer
 LogFormat "%{User-agent}i" agent
 #
-<% if node['apache']['version'] == '2.2' -%>
-# Customizable error responses come in three flavors:
-# 1) plain text 2) local redirects 3) external redirects
-#
-# Some examples:
-#ErrorDocument 500 "The server made a boo boo."
-#ErrorDocument 404 /missing.html
-#ErrorDocument 404 "/cgi-bin/missing_handler.pl"
-#ErrorDocument 402 http://www.example.com/subscription_info.html
-#
 
-#
-# Putting this all together, we can internationalize error responses.
-#
-# We use Alias to redirect any /error/HTTP_<error>.html.var response to
-# our collection of by-error message multi-language collections.  We use
-# includes to substitute the appropriate text.
-#
-# You can modify the messages' appearance without changing any of the
-# default HTTP_<error>.html.var files by adding the line:
-#
-#   Alias /error/include/ "/your/include/path/"
-#
-# which allows you to create your own set of files by starting with the
-# /usr/share/apache2/error/include/ files and copying them to /your/include/path/,
-# even on a per-VirtualHost basis.  The default include files will display
-# your Apache version number and your ServerAdmin email address regardless
-# of the setting of ServerSignature.
-#
-# The internationalized error documents require mod_alias, mod_include
-# and mod_negotiation.  To activate them, uncomment the following 30 lines.
-
-#    Alias /error/ "/usr/share/apache2/error/"
-#
-#    <Directory "/usr/share/apache2/error">
-#        AllowOverride None
-#        Options IncludesNoExec
-#        AddOutputFilter Includes html
-#        AddHandler type-map var
-#        Order allow,deny
-#        Allow from all
-#        LanguagePriority en cs de es fr it nl sv pt-br ro
-#        ForceLanguagePriority Prefer Fallback
-#    </Directory>
-#
-#    ErrorDocument 400 /error/HTTP_BAD_REQUEST.html.var
-#    ErrorDocument 401 /error/HTTP_UNAUTHORIZED.html.var
-#    ErrorDocument 403 /error/HTTP_FORBIDDEN.html.var
-#    ErrorDocument 404 /error/HTTP_NOT_FOUND.html.var
-#    ErrorDocument 405 /error/HTTP_METHOD_NOT_ALLOWED.html.var
-#    ErrorDocument 408 /error/HTTP_REQUEST_TIME_OUT.html.var
-#    ErrorDocument 410 /error/HTTP_GONE.html.var
-#    ErrorDocument 411 /error/HTTP_LENGTH_REQUIRED.html.var
-#    ErrorDocument 412 /error/HTTP_PRECONDITION_FAILED.html.var
-#    ErrorDocument 413 /error/HTTP_REQUEST_ENTITY_TOO_LARGE.html.var
-#    ErrorDocument 414 /error/HTTP_REQUEST_URI_TOO_LARGE.html.var
-#    ErrorDocument 415 /error/HTTP_UNSUPPORTED_MEDIA_TYPE.html.var
-#    ErrorDocument 500 /error/HTTP_INTERNAL_SERVER_ERROR.html.var
-#    ErrorDocument 501 /error/HTTP_NOT_IMPLEMENTED.html.var
-#    ErrorDocument 502 /error/HTTP_BAD_GATEWAY.html.var
-#    ErrorDocument 503 /error/HTTP_SERVICE_UNAVAILABLE.html.var
-#    ErrorDocument 506 /error/HTTP_VARIANT_ALSO_VARIES.html.var
-<% end -%>
-
-<% if node['apache']['version'] == '2.4' -%>
 # Include generic snippets of statements
 IncludeOptional <%= node['apache']['dir'] %>/conf-enabled/*.conf
 
 # Include the virtual host configurations:
 IncludeOptional <%= node['apache']['dir'] %>/sites-enabled/*.conf
-<% else -%>
-# Include generic snippets of statements
-Include <%= node['apache']['dir'] %>/conf-enabled/*.conf
-
-# Include the virtual host configurations:
-Include <%= node['apache']['dir'] %>/sites-enabled/*.conf
-<% end -%>

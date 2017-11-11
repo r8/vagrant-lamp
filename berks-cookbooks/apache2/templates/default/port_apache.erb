@@ -1,3 +1,3 @@
-<% node['apache']['listen_ports'].each do |port| -%>
+<% node['apache']['listen'].values.map(&:to_a).flatten.uniq do |port| -%>
 -A FWR -p tcp -m tcp --dport <%= port %> -j ACCEPT
 <% end %>

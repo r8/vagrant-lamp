@@ -1,9 +1,9 @@
 #
 # Author::  David Kinzer (<dtkinzer@gmail.com>)
-# Cookbook Name:: php
+# Cookbook:: php
 # Recipe:: recompile
 #
-# Copyright 2014, David Kinzer
+# Copyright:: 2014-2017, David Kinzer
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ end
 bash 'un-pack php' do
   cwd Chef::Config[:file_cache_path]
   code "tar -zxf php-#{version}.tar.gz"
-  creates "#{node['php']['url']}/php-#{version}"
+  creates "#{Chef::Config[:file_cache_path]}/php-#{version}"
 end
 
 bash 're-build php' do
@@ -46,6 +46,6 @@ bash 're-build php' do
   code <<-EOF
   (make clean)
   (#{ext_dir_prefix} ./configure #{configure_options})
-  (make && make install)
+  (make -j #{node['cpu']['total']} && make install)
   EOF
 end

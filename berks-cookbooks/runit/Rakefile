@@ -9,7 +9,7 @@ require 'rspec/core/rake_task'
 task default: [:spec]
 
 RSpec::Core::RakeTask.new(:spec) do |t|
-  t.pattern = './spec{,/*/**}/*_spec.rb'
+  t.pattern = './test/unit{,/*/**}/*_spec.rb'
 end
 
 FoodCritic::Rake::LintTask.new do |t|

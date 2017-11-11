@@ -1,9 +1,10 @@
 #
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: auto_run
 #
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2011-2017, Business Intelligence Associates, Inc.
+# Copyright:: 2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,13 +19,28 @@
 # limitations under the License.
 #
 
-def initialize(name,run_context=nil)
-  super
-  @action = :create
+property :program, String
+property :name, String, name_property: true
+property :args, String
+
+action :create do
+  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+    values [{
+      name: new_resource.name,
+      type: :string,
+      data: "\"#{new_resource.program}\" #{new_resource.args}",
+    }]
+    action :create
+  end
 end
 
-actions :create, :remove
-
-attribute :program, :kind_of => String
-attribute :name, :kind_of => String, :name_attribute => true
-attribute :args, :kind_of => String, :default => ''
+action :remove do
+  registry_key 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' do
+    values [{
+      name: new_resource.name,
+      type: :string,
+      data: '',
+    }]
+    action :delete
+  end
+end

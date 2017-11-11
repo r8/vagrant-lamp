@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Recipe:: mod_xsendfile
 #
-# Copyright 2011-2013, CustomInk, LLC.
+# Copyright:: 2011-2013, CustomInk, LLC.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,15 +24,15 @@ when 'suse'
   end
 when 'debian'
   package 'libapache2-mod-xsendfile'
-when 'rhel', 'fedora'
+when 'rhel', 'fedora', 'amazon'
   package 'mod_xsendfile' do
     notifies :run, 'execute[generate-module-list]', :immediately
   end
 end
 
 file "#{node['apache']['dir']}/conf.d/xsendfile.conf" do
-  action :delete
-  backup false
+  content '# conf is under mods-available/xsendfile.conf - apache2 cookbook\n'
+  only_if { ::Dir.exist?("#{node['apache']['dir']}/conf.d") }
 end
 
 apache_module 'xsendfile'

@@ -1,22 +1,12 @@
-case node['nodejs']['engine']
-when 'node'
-  case node['platform_family']
-  when 'debian'
-    default['nodejs']['install_repo'] = true
-
-    default['nodejs']['repo']      = 'https://deb.nodesource.com/node'
-    default['nodejs']['keyserver'] = 'keyserver.ubuntu.com'
-    default['nodejs']['key']       = '1655a0ab68576280'
-  when 'rhel'
-    default['nodejs']['install_repo'] = true
-  end
-when 'iojs'
-  case node['platform_family']
-  when 'debian'
-    default['nodejs']['install_repo'] = true
-
-    default['nodejs']['repo']      = 'https://deb.nodesource.com/iojs_2.x'
-    default['nodejs']['keyserver'] = 'keyserver.ubuntu.com'
-    default['nodejs']['key']       = '1655a0ab68576280'
-  end
+case node['platform_family']
+when 'debian'
+  default['nodejs']['install_repo'] = true
+  default['nodejs']['repo']         = 'https://deb.nodesource.com/node_6.x'
+  default['nodejs']['keyserver']    = 'keyserver.ubuntu.com'
+  default['nodejs']['key']          = '1655a0ab68576280'
+when 'rhel', 'amazon'
+  default['nodejs']['install_repo'] = true
+  release_ver = platform?('amazon') ? 6 : node['platform_version'].to_i
+  default['nodejs']['repo']         = "https://rpm.nodesource.com/pub_6.x/el/#{release_ver}/$basearch"
+  default['nodejs']['key']          = 'https://rpm.nodesource.com/pub/el/NODESOURCE-GPG-SIGNING-KEY-EL'
 end

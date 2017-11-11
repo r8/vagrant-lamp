@@ -22,6 +22,23 @@
 class Chef
   class Provider
     class RunitService < Chef::Provider::LWRPBase
+      unless defined?(VALID_SIGNALS)
+        # Mapping of valid signals with optional friendly name
+        VALID_SIGNALS = Mash.new(
+          :down => nil,
+          :hup => nil,
+          :int => nil,
+          :term => nil,
+          :kill => nil,
+          :quit => nil,
+          :up => nil,
+          :once => nil,
+          :cont => nil,
+          1 => :usr1,
+          2 => :usr2
+        )
+      end
+
       use_inline_resources if defined?(use_inline_resources)
 
       def whyrun_supported?
@@ -71,19 +88,29 @@ class Chef
               action :create
             end
 
+            directory new_resource.log_dir do
+              owner new_resource.owner
+              group new_resource.group
+              mode '00755'
+              recursive true
+              action :create
+            end
+
+            template "#{sv_dir_name}/log/config" do
+              owner new_resource.owner
+              group new_resource.group
+              mode '00644'
+              cookbook 'runit'
+              source 'log-config.erb'
+              variables(config: new_resource)
+              action :create
+            end
+
+            link "#{new_resource.log_dir}/config" do
+              to "#{sv_dir_name}/log/config"
+            end
+
             if new_resource.default_logger
-              directory "/var/log/#{new_resource.service_name}" do
-                owner new_resource.owner
-                group new_resource.group
-                mode '00755'
-                recursive true
-                action :create
-              end
-
-              link "/var/log/#{new_resource.service_name}/config" do
-                to "#{sv_dir_name}/log/config"
-              end
-
               file "#{sv_dir_name}/log/run" do
                 content default_logger_content
                 owner new_resource.owner
@@ -103,15 +130,6 @@ class Chef
               end
             end
 
-            template "#{sv_dir_name}/log/config" do
-              owner new_resource.owner
-              group new_resource.group
-              mode '00644'
-              cookbook 'runit'
-              source 'log-config.erb'
-              variables(config: new_resource)
-              action :create
-            end
           end
 
           # environment stuff
@@ -132,9 +150,10 @@ class Chef
             end
           end
 
-          ruby_block 'zap extra env files' do
+          ruby_block "zap extra env files for #{new_resource.name} service" do
             block { zap_extra_env_files }
             only_if { extra_env_files? }
+            not_if { new_resource.env.empty? }
             action :run
           end
 
@@ -238,36 +257,31 @@ class Chef
         # FIXME: remove action_create in next major version
         action_create
 
+        directory new_resource.service_dir
+
         link "#{service_dir_name}" do
           to sv_dir_name
           action :create
         end
 
-        # FIXME: replace me
-        # ruby_block 'wait_for_service' do
-        #   block wait_for_service
-        # end
+        ruby_block "wait for #{new_resource.service_name} service socket" do
+          block do
+            wait_for_service
+          end
+          action :run
+        end
       end
 
       # signals
-      [:down, :hup, :int, :term, :kill, :quit].each do |signal|
-        action signal do
-          runit_send_signal(signal)
+      VALID_SIGNALS.each do |signal, signal_name|
+        action(signal_name || signal) do
+          if running?
+            Chef::Log.info "#{new_resource} signalled (#{(signal_name || signal).to_s.upcase})"
+            runit_send_signal(signal, signal_name)
+          else
+            Chef::Log.debug "#{new_resource} not running - nothing to do"
+          end
         end
-      end
-
-      [:up, :once, :cont].each do |signal|
-        action signal do
-          runit_send_signal(signal)
-        end
-      end
-
-      action :usr1 do
-        runit_send_signal(1, :usr1)
-      end
-
-      action :usr2 do
-        runit_send_signal(2, :usr2)
       end
 
       action :nothing do
@@ -278,21 +292,35 @@ class Chef
       end
 
       action :start do
-        start_service
+        if running?
+          Chef::Log.debug "#{new_resource} already running - nothing to do"
+        else
+          start_service
+          Chef::Log.info "#{new_resource} started"
+        end
       end
 
       action :stop do
-        stop_service
+        if running?
+          stop_service
+          Chef::Log.info "#{new_resource} stopped"
+        else
+          Chef::Log.debug "#{new_resource} already stopped - nothing to do"
+        end
       end
 
       action :reload do
-        reload_service
+        if running?
+          reload_service
+          Chef::Log.info "#{new_resource} reloaded"
+        else
+          Chef::Log.debug "#{new_resource} not running - nothing to do"
+        end
       end
 
       action :status do
         running?
       end
-
     end
   end
 end

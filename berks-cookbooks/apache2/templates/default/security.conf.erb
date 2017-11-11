@@ -1,16 +1,3 @@
-#
-# Disable access to the entire file system except for the directories that
-# are explicitly allowed later.
-#
-# This currently breaks the configurations that come with some web application
-# Debian packages. It will be made the default for the release after lenny.
-#
-#<Directory />
-#	AllowOverride None
-#	Order Deny,Allow
-#	Deny from all
-#</Directory>
-
 # Changing the following options will not really affect the security of the
 # server, but might make attacks slightly more difficult in some cases.
 

@@ -10,34 +10,24 @@
   <Directory <%= node['apache']['docroot_dir'] %>/>
     Options Indexes FollowSymLinks MultiViews
     AllowOverride None
-    <% if node['apache']['version'] == '2.4' -%>
     Require all granted
     # This directive allows us to have apache2's default start page
     # in /apache2-default/, but still have / go to the right place
     #RedirectMatch ^/$ /apache2-default/
-    <% elsif node['apache']['version'] == '2.2' -%>
-    Order allow,deny
-    Allow from all
-    <% end -%>
   </Directory>
 
   ScriptAlias /cgi-bin/ <%= node['apache']['cgibin_dir'] %>/
   <Directory "<%= node['apache']['cgibin_dir'] %>">
     AllowOverride None
     Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-    <% if node['apache']['version'] == '2.4' -%>
     Require all granted
-    <% elsif node['apache']['version'] == '2.2' -%>
-    Order allow,deny
-    Allow from all
-    <% end -%>
   </Directory>
 
   ErrorLog <%= node['apache']['log_dir'] %>/<%= node['apache']['error_log'] %>
 
   # Possible values include: debug, info, notice, warn, error, crit,
   # alert, emerg.
-  LogLevel warn
+  LogLevel <%= node['apache']['log_level'] %>
 
   CustomLog <%= node['apache']['log_dir'] %>/<%= node['apache']['access_log'] %> combined
   ServerSignature On
@@ -46,17 +36,11 @@
   <Directory "/usr/share/doc/">
     Options Indexes MultiViews FollowSymLinks
     AllowOverride None
-    <% if node['apache']['version'] == '2.2' -%>
-    Order deny,allow
-    Deny from all
-    Allow from 127.0.0.0/255.0.0.0 ::1/128
-    <% elsif node['apache']['version'] == '2.4' -%>
     Require ip 127.0.0.0/255.0.0.0
     Require ip ::1/128
-    <% end -%>
   </Directory>
 
-  <% if %w{ rhel fedora }.include?(node['platform_family']) -%>
+  <% if %w{ rhel fedora amazon }.include?(node['platform_family']) -%>
   #
   # This configuration file enables the default "Welcome"
   # page if there is no default index page present for

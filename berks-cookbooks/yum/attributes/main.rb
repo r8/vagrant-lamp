@@ -1,24 +1,28 @@
 # http://linux.die.net/man/5/yum.conf
-case node['platform_version'].to_i
-when 5
-  default['yum']['main']['cachedir'] = '/var/cache/yum'
-else
-  default['yum']['main']['cachedir'] = '/var/cache/yum/$basearch/$releasever'
-end
+default['yum']['main']['cachedir'] = case node['platform_version'].to_i
+                                     when 5
+                                       '/var/cache/yum'
+                                     else
+                                       '/var/cache/yum/$basearch/$releasever'
+                                     end
 
-case node['platform']
-when 'amazon'
-  default['yum']['main']['distroverpkg'] = 'system-release'
-when 'scientific'
-  default['yum']['main']['distroverpkg'] = 'sl-release'
-when 'redhat'
-  default['yum']['main']['distroverpkg'] = nil
-else
-  default['yum']['main']['distroverpkg'] = "#{node['platform']}-release"
-end
-
+default['yum']['main']['distroverpkg'] = case node['platform']
+                                         when 'amazon'
+                                           'system-release'
+                                         when 'scientific'
+                                           'sl-release'
+                                         when 'redhat'
+                                           nil
+                                         else
+                                           "#{node['platform']}-release"
+                                         end
+# default["yum"]["main"]["releasever"] = nil #  /.*/
+default['yum']['main']['releasever'] = case node['platform']
+                                       when 'amazon'
+                                         'latest'
+                                       end
 default['yum']['main']['alwaysprompt'] = nil # [TrueClass, FalseClass]
-default['yum']['main']['assumeyes'] = nil  # [TrueClass, FalseClass]
+default['yum']['main']['assumeyes'] = nil # [TrueClass, FalseClass]
 default['yum']['main']['bandwidth'] = nil # /^\d+$/
 default['yum']['main']['bugtracker_url'] = nil # /.*/
 default['yum']['main']['clean_requirements_on_remove'] = nil # [TrueClass, FalseClass]
@@ -56,14 +60,14 @@ default['yum']['main']['installroot'] = nil # /.*/
 default['yum']['main']['keepalive'] = nil # [TrueClass, FalseClass]
 default['yum']['main']['keepcache'] = false # [TrueClass, FalseClass]
 default['yum']['main']['kernelpkgnames'] = nil # /.*/
-default['yum']['main']['localpkg_gpgcheck'] = nil # [TrueClass,# FalseClass]
+default['yum']['main']['localpkg_gpgcheck'] = false # [TrueClass,# FalseClass]
 default['yum']['main']['logfile'] = '/var/log/yum.log' # /.*/
 default['yum']['main']['max_retries'] = nil # /^\d+$/
 default['yum']['main']['mdpolicy'] = nil # %w{ packages all none }
 default['yum']['main']['metadata_expire'] = nil # /^\d+$/
 default['yum']['main']['mirrorlist_expire'] = nil # /^\d+$/
 default['yum']['main']['multilib_policy'] = nil # %w{ all best }
-default['yum']['main']['obsoletes'] = nil  # [TrueClass, FalseClass]
+default['yum']['main']['obsoletes'] = nil # [TrueClass, FalseClass]
 default['yum']['main']['overwrite_groups'] = nil # [TrueClass, FalseClass]
 default['yum']['main']['password'] = nil #  /.*/
 default['yum']['main']['path'] = '/etc/yum.conf' #  /.*/
@@ -78,7 +82,6 @@ default['yum']['main']['proxy_password'] = nil #  /.*/
 default['yum']['main']['proxy_username'] = nil #  /.*/
 default['yum']['main']['password'] = nil #  /.*/
 default['yum']['main']['recent'] = nil # /^\d+$/
-default['yum']['main']['releasever'] = nil #  /.*/
 default['yum']['main']['repo_gpgcheck'] = nil # [TrueClass, FalseClass]
 default['yum']['main']['reposdir'] = nil #  /.*/
 default['yum']['main']['reset_nice'] = nil # [TrueClass, FalseClass]

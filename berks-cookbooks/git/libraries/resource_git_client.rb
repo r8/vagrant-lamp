@@ -22,17 +22,17 @@ class Chef
       attribute :package_action, kind_of: Symbol, default: :install
 
       # used by OSX package providers
-      attribute :osx_dmg_app_name, kind_of: String, default: 'git-1.9.5-intel-universal-snow-leopard'
-      attribute :osx_dmg_package_id, kind_of: String, default: 'GitOSX.Installer.git195.git.pkg'
-      attribute :osx_dmg_volumes_dir, kind_of: String, default: 'Git 1.9.5 Snow Leopard Intel Universal'
-      attribute :osx_dmg_url, kind_of: String, default: 'http://sourceforge.net/projects/git-osx-installer/files/git-1.9.5-intel-universal-snow-leopard.dmg/download'
-      attribute :osx_dmg_checksum, kind_of: String, default: '61b8a9fda547725f6f0996c3d39a62ec3334e4c28a458574bc2aea356ebe94a1' # 1.9.5
+      attribute :osx_dmg_app_name, kind_of: String, default: 'git-2.7.1-intel-universal-mavericks'
+      attribute :osx_dmg_package_id, kind_of: String, default: 'GitOSX.Installer.git271.git.pkg'
+      attribute :osx_dmg_volumes_dir, kind_of: String, default: 'Git 2.7.1 Mavericks Intel Universal'
+      attribute :osx_dmg_url, kind_of: String, default: 'http://sourceforge.net/projects/git-osx-installer/files/git-2.7.1-intel-universal-mavericks.dmg/download'
+      attribute :osx_dmg_checksum, kind_of: String, default: '260b32e8877eb72d07807b26163aeec42e2d98c350f32051ab1ff0cc33626440' # 2.7.1
 
       # used by Windows providers
       attribute :windows_display_name, kind_of: String, default: nil
       attribute :windows_package_url,  kind_of: String, default: nil
-      attribute :windows_package_checksum,  kind_of: String, default: nil
-      attribute :windows_package_version,  kind_of: String, default: nil
+      attribute :windows_package_checksum, kind_of: String, default: nil
+      attribute :windows_package_version, kind_of: String, default: nil
     end
   end
 end

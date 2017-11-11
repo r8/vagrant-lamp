@@ -1,11 +1,11 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Library:: windows_privileged
 #
-# Copyright:: 2010, VMware, Inc.
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2010-2017, VMware, Inc.
+# Copyright:: 2011-2017, Business Intelligence Associates, Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@
 # limitations under the License.
 #
 
-#helpers for Windows API calls that require privilege adjustments
+# helpers for Windows API calls that require privilege adjustments
 class Chef
   class WindowsPrivileged
-    #File -> Load Hive... in regedit.exe
+    # File -> Load Hive... in regedit.exe
     def reg_load_key(name, file)
       load_deps
 
@@ -39,15 +39,13 @@ class Chef
       end
     end
 
-    #File -> Unload Hive... in regedit.exe
+    # File -> Unload Hive... in regedit.exe
     def reg_unload_key(name)
       load_deps
 
       run(SE_BACKUP_NAME, SE_RESTORE_NAME) do
         rc = RegUnLoadKey(HKEY_USERS, name.to_s)
-        if rc != ERROR_SUCCESS
-          raise get_last_error(rc)
-        end
+        raise get_last_error(rc) if rc != ERROR_SUCCESS
       end
     end
 
@@ -56,7 +54,7 @@ class Chef
 
       token = [0].pack('L')
 
-      unless OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY, token)
+      unless OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, token)
         raise get_last_error
       end
       token = token.unpack('L')[0]
@@ -69,17 +67,17 @@ class Chef
 
       begin
         yield
-      ensure #disable privs
+      ensure # disable privs
         privileges.each do |name|
           adjust_privilege(token, name, 0)
         end
       end
     end
 
-    def adjust_privilege(token, priv, attr=0)
+    def adjust_privilege(token, priv, attr = 0)
       load_deps
 
-      luid = [0,0].pack('Ll')
+      luid = [0, 0].pack('Ll')
       if LookupPrivilegeValue(nil, priv, luid)
         new_state = [1, luid.unpack('Ll'), attr].flatten.pack('LLlL')
         AdjustTokenPrivileges(token, 0, new_state, new_state.size, 0, 0)
@@ -87,6 +85,7 @@ class Chef
     end
 
     private
+
     def load_deps
       if RUBY_PLATFORM =~ /mswin|mingw32|windows/
         require 'windows/error'

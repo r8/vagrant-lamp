@@ -5,35 +5,24 @@ class Chef
         include Chef::DSL::IncludeRecipe
 
         action :install do
-          return "#{node['platform']} is not supported by the #{cookbook_name}::#{recipe_name} recipe" if node['platform'] == 'windows'
+          raise "#{node['platform']} is not supported by the git_client source resource" unless platform_family?('rhel', 'suse', 'fedora', 'debian', 'amazon')
 
           include_recipe 'build-essential'
-          include_recipe 'yum-epel' if node['platform_family'] == 'rhel' && node['platform_version'].to_i < 6
 
           # move this to attributes.
           case node['platform_family']
-          when 'fedora'
-            pkgs = %w(openssl-devel libcurl-devel expat-devel perl-ExtUtils-MakeMaker)
-          when 'rhel'
-            case node['platform_version'].to_i
-            when 5
-              pkgs = %w(expat-devel gettext-devel curl-devel openssl-devel zlib-devel)
-              pkgs += %w{ pcre-devel } if new_resource.source_use_pcre
-            when 6, 7
-              pkgs = %w(expat-devel gettext-devel libcurl-devel openssl-devel perl-ExtUtils-MakeMaker zlib-devel)
-              pkgs += %w{ pcre-devel } if new_resource.source_use_pcre
-            else
-              pkgs = %w(expat-devel gettext-devel curl-devel openssl-devel perl-ExtUtils-MakeMaker zlib-devel) if node['platform'] == 'amazon'
-              pkgs += %w{ pcre-devel } if new_resource.source_use_pcre
-            end
+          when 'rhel', 'fedora', 'amazon'
+            pkgs = %w(tar expat-devel gettext-devel libcurl-devel openssl-devel perl-ExtUtils-MakeMaker zlib-devel)
+            pkgs += %w( pcre-devel ) if new_resource.source_use_pcre
           when 'debian'
             pkgs = %w(libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev)
-            pkgs += %w{ libpcre3-dev } if new_resource.source_use_pcre
+            pkgs += %w( libpcre3-dev ) if new_resource.source_use_pcre
+          when 'suse'
+            pkgs = %w(tar libcurl-devel libexpat-devel gettext-tools zlib-devel libopenssl-devel)
+            pkgs += %w( libpcre2-devel ) if new_resource.source_use_pcre
           end
 
-          pkgs.each do |pkg|
-            package pkg
-          end
+          package pkgs
 
           # reduce line-noise-eyness
           remote_file "#{Chef::Config['file_cache_path']}/git-#{new_resource.source_version}.tar.gz" do
@@ -46,8 +35,8 @@ class Chef
           # reduce line-noise-eyness
           execute "Extracting and Building Git #{new_resource.source_version} from Source" do
             cwd Chef::Config['file_cache_path']
-            additional_make_params = ""
-            additional_make_params += "USE_LIBPCRE=1" if new_resource.source_use_pcre
+            additional_make_params = ''
+            additional_make_params += 'USE_LIBPCRE=1' if new_resource.source_use_pcre
             command <<-COMMAND
     (mkdir git-#{new_resource.source_version} && tar -zxf git-#{new_resource.source_version}.tar.gz -C git-#{new_resource.source_version} --strip-components 1)
     (cd git-#{new_resource.source_version} && make prefix=#{new_resource.source_prefix} #{additional_make_params} install)

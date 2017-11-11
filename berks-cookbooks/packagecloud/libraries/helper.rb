@@ -8,7 +8,8 @@ module PackageCloud
 
       req.basic_auth uri.user, uri.password if uri.user
 
-      http = Net::HTTP.new(uri.hostname, uri.port)
+      proxy = node['packagecloud'].values_at('proxy_host', 'proxy_port')
+      http = Net::HTTP.new(uri.hostname, uri.port, *(proxy if proxy.first))
       http.use_ssl = true
 
       resp = http.start { |h| h.request(req) }
@@ -27,7 +28,8 @@ module PackageCloud
 
       req.basic_auth uri.user, uri.password if uri.user
 
-      http = Net::HTTP.new(uri.hostname, uri.port)
+      proxy = node['packagecloud'].values_at('proxy_host', 'proxy_port')
+      http = Net::HTTP.new(uri.hostname, uri.port, *(proxy if proxy.first))
       http.use_ssl = true
 
       resp = http.start { |h|  h.request(req) }

@@ -1,9 +1,9 @@
 #
-# Cookbook Name:: openssl
+# Cookbook:: openssl
 # Library:: random_password
 # Author:: Seth Vargo <sethvargo@gmail.com>
 #
-# Copyright 2015, Seth Vargo
+# Copyright:: 2015-2017, Seth Vargo
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ module OpenSSLCookbook
     end
 
     class InvalidPasswordMode < StandardError
-      def initialize(given, acceptable)
+      def initialize(given, _acceptable = nil)
         super <<-EOH
 The given password mode '#{given}' is not valid. Valid password modes are :hex,
 :base64, and :random_bytes!
@@ -73,7 +73,7 @@ EOH
                when :random_bytes
                  length
                else
-                 fail InvalidPasswordMode.new(mode)
+                 raise InvalidPasswordMode.new(mode)
                end
 
       SecureRandom.send(mode, length).force_encoding(encoding)

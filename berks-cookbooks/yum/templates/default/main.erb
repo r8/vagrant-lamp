@@ -134,7 +134,9 @@ keepcache=0
 kernelpkgnames=<%= @config.kernelpkgnames %>
 <% end %>
 <% if @config.localpkg_gpgcheck %>
-localpkg_gpgcheck=<%= @config.localpkg_gpgcheck %>
+localpkg_gpgcheck=1
+<% else %>
+localpkg_gpgcheck=0
 <% end %>
 <% if @config.logfile %>
 logfile=<%= @config.logfile %>
@@ -231,7 +233,7 @@ sslclientcert=<%= @config.sslclientcert %>
 sslclientkey=<%= @config.sslclientkey %>
 <% end %>
 <% unless @config.sslverify.nil? %>
-sslverify=<%= ( @config.sslverify ) ? 'True' : 'False' %>
+sslverify=<%= ( @config.sslverify ) ? 'true' : 'false' %>
 <% end %>
 <% if @config.syslog_device %>
 syslog_device=<%= @config.syslog_device %>

@@ -20,27 +20,19 @@
 
 Chef::Recipe.send(:include, NodeJs::Helper)
 
-node.force_override['nodejs']['install_method'] = 'source' # ~FC019
-
 include_recipe 'build-essential'
 
 case node['platform_family']
-when 'rhel', 'fedora'
-  package 'openssl-devel'
+when 'rhel', 'fedora', 'amazon'
+  package 'openssl-devel', 'tar'
 when 'debian'
   package 'libssl-dev'
 end
 
 version = "v#{node['nodejs']['version']}/"
-prefix = node['nodejs']['prefix_url'][node['nodejs']['engine']]
-
-if node['nodejs']['engine'] == 'iojs'
-  filename = "iojs-v#{node['nodejs']['version']}.tar.gz"
-  archive_name = 'iojs-source'
-else
-  filename = "node-v#{node['nodejs']['version']}.tar.gz"
-  archive_name = 'nodejs-source'
-end
+prefix = node['nodejs']['prefix_url']['node']
+filename = "node-v#{node['nodejs']['version']}.tar.gz"
+archive_name = 'nodejs-source'
 
 nodejs_src_url = node['nodejs']['source']['url'] || ::URI.join(prefix, version, filename).to_s
 

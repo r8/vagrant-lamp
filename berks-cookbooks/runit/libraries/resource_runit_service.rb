@@ -65,6 +65,7 @@ class Chef
         @sv_templates = true
         @sv_timeout = nil
         @sv_verbose = false
+        @log_dir = ::File.join('/var/log/', @service_name)
         @log_size = nil
         @log_num = nil
         @log_min = nil
@@ -124,12 +125,15 @@ class Chef
       end
 
       def options(arg = nil)
-        @env.empty? ? opts = @options : opts = @options.merge!(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
+        default_opts = @env.empty? ? @options : @options.merge(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
+
+        merged_opts = arg.respond_to?(:merge) ? default_opts.merge(arg) : default_opts
+
         set_or_return(
           :options,
-          arg,
+          merged_opts,
           kind_of: [Hash],
-          default: opts
+          default: default_opts
         )
       end
 
@@ -155,11 +159,11 @@ class Chef
       end
 
       def start_down(arg = nil)
-        set_or_return(:start_down, arg, :kind_of => [TrueClass, FalseClass])
+        set_or_return(:start_down, arg, kind_of: [TrueClass, FalseClass])
       end
 
       def delete_downfile(arg = nil)
-        set_or_return(:delete_downfile, arg, :kind_of => [TrueClass, FalseClass])
+        set_or_return(:delete_downfile, arg, kind_of: [TrueClass, FalseClass])
       end
 
       def owner(arg = nil)
@@ -213,6 +217,10 @@ class Chef
 
       def sv_templates(arg = nil)
         set_or_return(:sv_templates, arg, kind_of: [TrueClass, FalseClass])
+      end
+
+      def log_dir(arg = nil)
+        set_or_return(:log_dir, arg, kind_of: [String])
       end
 
       def log_size(arg = nil)

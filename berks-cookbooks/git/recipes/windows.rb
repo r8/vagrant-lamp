@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: git
+# Cookbook:: git
 # Recipe:: windows
 #
-# Copyright 2008-2014, Chef Software, Inc.
+# Copyright:: 2008-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 # limitations under the License.
 
 git_client 'default' do
-  windows_display_name node['windows']['display_name']
-  windows_package_url node['windows']['url']
-  windows_package_checksum node['windows']['checksum']
+  windows_display_name node['git']['display_name']
+  windows_package_url format(node['git']['url'], version: node['git']['version'], architecture: node['git']['architecture'])
+  windows_package_checksum node['git']['checksum']
   action :install
 end

@@ -1,9 +1,10 @@
 #
 # Author:: Paul Morton (<pmorton@biaprotect.com>)
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: path
 #
-# Copyright:: 2011, Business Intelligence Associates, Inc
+# Copyright:: 2011-2017, Business Intelligence Associates, Inc
+# Copyright:: 2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,11 +19,36 @@
 # limitations under the License.
 #
 
-def initialize(name,run_context=nil)
-  super
-  @action = :add
+property :path, String, name_property: true
+
+include Windows::Helper
+
+action :add do
+  env 'path' do
+    action :modify
+    delim ::File::PATH_SEPARATOR
+    value new_resource.path.tr('/', '\\')
+    notifies :run, "ruby_block[fix ruby ENV['PATH']]", :immediately
+  end
+
+  # The windows Env provider does not correctly expand variables in
+  # the PATH environment variable. Ruby expects these to be expanded.
+  # This is a temporary fix for that.
+  #
+  # Follow at https://github.com/chef/chef/pull/1876
+  #
+  ruby_block "fix ruby ENV['PATH']" do
+    block do
+      ENV['PATH'] = expand_env_vars(ENV['PATH'])
+    end
+    action :nothing
+  end
 end
 
-actions :add, :remove
-
-attribute :path, :kind_of => String, :name_attribute => true
+action :remove do
+  env 'path' do
+    action :delete
+    delim ::File::PATH_SEPARATOR
+    value new_resource.path.tr('/', '\\')
+  end
+end

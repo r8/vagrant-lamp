@@ -1,10 +1,10 @@
 #
 # Author:: Joshua Timberman (<jtimberman@chef.io>)
 # Author:: Graeme Mathieson (<mathie@woss.name>)
-# Cookbook Name:: homebrew
-# Recipes:: default
+# Cookbook:: homebrew
+# Recipe:: default
 #
-# Copyright 2011-2013, Chef Software, Inc.
+# Copyright:: 2011-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,22 +19,27 @@
 # limitations under the License.
 #
 
-Chef::Resource.send(:include, Homebrew::Mixin)
-Chef::Recipe.send(:include, Homebrew::Mixin)
+unless Homebrew.exist?
+  homebrew_go = "#{Chef::Config[:file_cache_path]}/homebrew_go"
 
-homebrew_go = "#{Chef::Config[:file_cache_path]}/homebrew_go"
+  remote_file homebrew_go do
+    source node['homebrew']['installer']['url']
+    checksum node['homebrew']['installer']['checksum'] unless node['homebrew']['installer']['checksum'].nil?
+    mode '755'
+  end
 
-Chef::Log.debug("Homebrew owner is '#{homebrew_owner}'")
-
-remote_file homebrew_go do
-  source 'https://raw.githubusercontent.com/Homebrew/install/master/install'
-  mode 00755
+  execute 'install homebrew' do
+    command homebrew_go
+    environment lazy { { 'HOME' => ::Dir.home(Homebrew.owner), 'USER' => Homebrew.owner } }
+    user Homebrew.owner
+  end
 end
 
-execute 'install homebrew' do
-  command homebrew_go
-  user node['homebrew']['owner'] || homebrew_owner
-  not_if { ::File.exist? '/usr/local/bin/brew' }
+execute 'set analytics' do
+  environment lazy { { 'HOME' => ::Dir.home(Homebrew.owner), 'USER' => Homebrew.owner } }
+  user Homebrew.owner
+  command "/usr/local/bin/brew analytics #{node['homebrew']['enable-analytics'] ? 'on' : 'off'}"
+  only_if { shell_out('/usr/local/bin/brew analytics state', user: Homebrew.owner).stdout.include?('enabled') != node['homebrew']['enable-analytics'] }
 end
 
 if node['homebrew']['auto-update']
@@ -43,7 +48,8 @@ if node['homebrew']['auto-update']
   end
 
   execute 'update homebrew from github' do
-    user homebrew_owner
+    environment lazy { { 'HOME' => ::Dir.home(Homebrew.owner), 'USER' => Homebrew.owner } }
+    user Homebrew.owner
     command '/usr/local/bin/brew update || true'
   end
 end

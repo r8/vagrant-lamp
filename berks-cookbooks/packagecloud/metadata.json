@@ -1,1 +1,48 @@
-{"name":"packagecloud","version":"0.1.0","description":"Installs/Configures packagecloud.io repositories.","long_description":"Installs/Configures packagecloud.io repositories.","maintainer":"Joe Damato","maintainer_email":"joe@packagecloud.io","license":"Apache 2.0","platforms":{},"dependencies":{},"recommendations":{},"suggestions":{},"conflicting":{},"providing":{},"replacing":{},"attributes":{},"groupings":{},"recipes":{}}
+{
+  "name": "packagecloud",
+  "description": "Installs/Configures packagecloud.io repositories.",
+  "long_description": "Installs/Configures packagecloud.io repositories.",
+  "maintainer": "Joe Damato",
+  "maintainer_email": "joe@packagecloud.io",
+  "license": "Apache 2.0",
+  "platforms": {
+
+  },
+  "dependencies": {
+
+  },
+  "recommendations": {
+
+  },
+  "suggestions": {
+
+  },
+  "conflicting": {
+
+  },
+  "providing": {
+
+  },
+  "replacing": {
+
+  },
+  "attributes": {
+
+  },
+  "groupings": {
+
+  },
+  "recipes": {
+
+  },
+  "version": "0.3.0",
+  "source_url": "https://github.com/computology/packagecloud-cookbook",
+  "issues_url": "https://github.com/computology/packagecloud-cookbook/issues",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ]
+}

@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Recipe:: mod_logio
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright:: 2008-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 # limitations under the License.
 #
 
-if platform_family?('rhel', 'fedora', 'suse', 'arch', 'freebsd')
+if platform_family?('rhel', 'fedora', 'suse', 'arch', 'freebsd', 'amazon')
   apache_module 'logio'
 else
-  include_recipe 'apache2::default'
+  Chef::Log.warn("mod_logio cannot be installed on the #{node['platform']} platform")
 end

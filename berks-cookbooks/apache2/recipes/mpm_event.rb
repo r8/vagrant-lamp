@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Recipe:: mpm_event
 #
-# Copyright 2013, OneHealth Solutions, Inc.
+# Copyright:: 2013, OneHealth Solutions, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,11 +17,20 @@
 # limitations under the License.
 #
 
-# apache_module('mpm_itk') { enable false }
-apache_module('mpm_prefork') { enable false }
-apache_module('mpm_worker') { enable false }
+# OpenSuse distributes packages with workers compiled into the httpd bin
+if platform_family?('suse')
+  package %w(apache2-prefork apache2-worker) do
+    action :remove
+  end
 
-apache_module 'mpm_event' do
-  conf true
-  restart true
+  package 'apache2-event'
+else
+  # apache_module('mpm_itk') { enable false }
+  apache_module('mpm_prefork') { enable false }
+  apache_module('mpm_worker') { enable false }
+
+  apache_module 'mpm_event' do
+    conf true
+    restart true
+  end
 end

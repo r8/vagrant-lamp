@@ -7,8 +7,8 @@ default-character-set          = <%= @config.charset %>
 <% if @config.port %>
 port                           = <%= @config.port %>
 <% end %>
-<% if @socket_file %>
-socket                         = <%= @socket_file %>
+<% if @config.socket_file %>
+socket                         = <%= @config.socket_file %>
 <% end %>
 
 [mysql]
@@ -20,11 +20,11 @@ default-character-set          = <%= @config.charset %>
 <% if @config.run_user %>
 user                           = <%= @config.run_user %>
 <% end %>
-<% if @pid_file %>
-pid-file                       = <%= @pid_file %>
+<% if @config.pid_file %>
+pid-file                       = <%= @config.pid_file %>
 <% end %>
-<% if @socket_file %>
-socket                         = <%= @socket_file %>
+<% if @config.socket_file %>
+socket                         = <%= @config.socket_file %>
 <% end %>
 <% if @config.bind_address %>
 bind-address                   = <%= @config.bind_address %>
@@ -32,26 +32,26 @@ bind-address                   = <%= @config.bind_address %>
 <% if @config.port %>
 port                           = <%= @config.port %>
 <% end %>
-<% if @data_dir %>
-datadir                        = <%= @data_dir %>
+<% if @config.data_dir %>
+datadir                        = <%= @config.data_dir %>
 <% end %>
-<% if @tmp_dir %>
-tmpdir                         = <%= @tmp_dir %>
+<% if @config.tmp_dir %>
+tmpdir                         = <%= @config.tmp_dir %>
 <% end %>
 <% @config.mysqld_options.each do |option,value| %>
 <%= option %>                  = <%= value %>
 <% end %>
-<% if @lc_messages_dir %>
-lc-messages-dir                = <%= @lc_messages_dir %>
+<% if @config.lc_messages_dir %>
+lc-messages-dir                = <%= @config.lc_messages_dir %>
 <% end %>
-<% if @error_log %>
-log-error                      = <%= @error_log %>
+<% if @config.error_log %>
+log-error                      = <%= @config.error_log %>
 <% end %>
-<% if @include_dir %>
-!includedir <%= @include_dir %>
+<% if @config.include_dir %>
+!includedir <%= @config.include_dir %>
 <% end %>
 
 [mysqld_safe]
-<% if @socket_file %>
-socket                         = <%= @socket_file %>
+<% if @config.socket_file %>
+socket                         = <%= @config.socket_file %>
 <% end %>

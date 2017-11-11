@@ -1,0 +1,79 @@
+---
+driver_plugin: vagrant
+driver_config:
+  require_chef_omnibus: true
+
+platforms:
+- name: ubuntu-12.04
+  driver_config:
+    box: opscode-ubuntu-12.04
+    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box
+  run_list:
+    - recipe[packagecloud_test::precise_deps]
+    - recipe[packagecloud_test::deb]
+    - recipe[packagecloud_test::rubygems_private]
+
+- name: ubuntu-14.04
+  driver_config:
+    box: opscode-ubuntu-14.04
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box
+  run_list:
+    - recipe[packagecloud_test::trusty_deps]
+    - recipe[packagecloud_test::deb]
+    - recipe[packagecloud_test::rubygems]
+
+- name: ubuntu-16.04
+  driver_config:
+    box: opscode-ubuntu-16.04
+    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-16.04_chef-provisionerless.box
+  run_list:
+    - recipe[packagecloud_test::trusty_deps]
+    - recipe[packagecloud_test::deb]
+    - recipe[packagecloud_test::rubygems_private]
+
+- name: centos-without-epel-5.10
+  driver_config:
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-5.10_chef-provisionerless.box
+  run_list:
+    - recipe[packagecloud_test::rpm]
+    - recipe[packagecloud_test::rubygems]
+
+- name: centos-with-epel-5.10
+  driver_config:
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-5.10_chef-provisionerless.box
+  run_list:
+    - recipe[packagecloud_test::epel5]
+    - recipe[packagecloud_test::rpm]
+    - recipe[packagecloud_test::rubygems_private]
+
+- name: centos-6.5
+  run_list:
+    - recipe[packagecloud_test::rpm]
+    - recipe[packagecloud_test::rubygems]
+
+- name: centos-7.0
+  run_list:
+    - recipe[packagecloud_test::rpm]
+    - recipe[packagecloud_test::rubygems_private]
+
+- name: amazon-2014.09
+  driver_plugin: ec2
+  driver_config:
+    image_id: ami-b5a7ea85
+    username: ec2-user
+    aws_access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+    aws_secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+    aws_ssh_key_id: <%= ENV['AWS_KEYPAIR_NAME'] %>
+    ssh_key: <%= ENV['AWS_SSH_KEY_PATH'] %>
+    availability_zone: us-west-2a
+    region: us-west-2
+    flavor_id: t2.micro
+    security_group_ids: sg-598e583c
+  run_list:
+    - recipe[packagecloud_test::rpm]
+    - recipe[packagecloud_test::rubygems]
+
+suites:
+- name: default
+  run_list:
+  attributes: {}

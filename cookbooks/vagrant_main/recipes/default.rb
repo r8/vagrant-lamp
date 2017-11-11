@@ -6,21 +6,17 @@ include_recipe "apache2::mod_rewrite"
 include_recipe "apache2::mod_ssl"
 include_recipe "percona::toolkit"
 include_recipe "php"
-include_recipe "php::module_mysql"
-include_recipe "php::module_apc"
-include_recipe "php::module_curl"
-include_recipe "apache2::mod_php5"
+include_recipe "apache2::mod_php"
 include_recipe "composer"
 include_recipe "phing"
 include_recipe "mailhog"
 include_recipe "postfix"
-
-# Initialize php extensions list
-php_extensions = []
+include_recipe "redisio"
+include_recipe "redisio::enable"
 
 # Install packages
-%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links }.each do |a_package|
-  package a_package
+%w{ debconf vim screen tmux mc subversion curl make g++ libsqlite3-dev graphviz libxml2-utils lynx links }.each do |name|
+  package name
 end
 
 # Generate selfsigned ssl
@@ -32,12 +28,26 @@ end
 mysql_service 'default' do
   port node['mysql']['port']
   version node['mysql']['version']
-  socket node['mysql']['socket']
   initial_root_password node['mysql']['initial_root_password']
   action [:create, :start]
 end
 mysql_client 'default' do
   action :create
+end
+
+mysql_config 'default' do
+  source 'innodb.conf.erb'
+  notifies :restart, 'mysql_service[default]'
+  action :create
+end
+
+directory '/var/run/mysqld' do
+  action :delete
+  only_if { Dir.exist? '/var/run/mysqld' }
+end
+
+link '/var/run/mysqld' do
+  to '/var/run/mysql-default'
 end
 
 # Initialize sites data bag
@@ -82,32 +92,16 @@ bash "debconf_for_phpmyadmin" do
 end
 package "phpmyadmin"
 
-# Install Xdebug
-php_pear "xdebug" do
-  # Specify that xdebug.so must be loaded as a zend extension
-  zend_extensions ["xdebug.so"]
-  directives(
-      :remote_enable => 1,
-      :remote_connect_back => 1,
-      :remote_port => 9000,
-      :remote_handler => "dbgp",
-      :profiler_enable => 0,
-      :profiler_enable_trigger => 1
-  )
-  action :install
-  notifies :restart, resources("service[apache2]"), :delayed
+php_packages = if node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 16.04
+  %w{ php-xsl php-mysql php-curl php-xdebug }
+else
+  %w{ php5-xsl php5-mysql php5-curl php5-xdebug }
 end
-template "#{node['php']['ext_conf_dir']}/xdebug.ini" do
-  # Overwrite xdebug.ini
-  # (Temporary workaround for https://github.com/opscode-cookbooks/php/issues/108)
-  source "xdebug.ini.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  action :create
-  notifies :restart, resources("service[apache2]"), :delayed
+
+# Install php extensions
+php_packages.each do |name|
+  package name
 end
-php_extensions.push "xdebug"
 
 # Install Webgrind
 git "/var/www/webgrind" do
@@ -127,20 +121,10 @@ template "/var/www/webgrind/config.php" do
   action :create
 end
 
-# Install php-xsl
-package "php5-xsl" do
-  action :install
-end
-
-# Enable installed php extensions
-case node['platform']
-  when 'ubuntu'
-    if node['platform_version'].to_f >= 14.04
-      php_extensions.each do |extension|
-        execute 'enable_php_extension' do
-          command "php5enmod #{extension}"
-        end
-      end
-    end
-  else
+# Temp workaround for https://github.com/sous-chefs/apache2/issues/480
+if node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 16.04
+  link '/etc/apache2/mods-enabled/php7.conf' do
+    to '/etc/apache2/mods-available/php.conf'
+    notifies :restart, resources("service[apache2]"), :delayed
+  end
 end

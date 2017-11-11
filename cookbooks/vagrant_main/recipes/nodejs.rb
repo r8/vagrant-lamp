@@ -8,6 +8,6 @@ execute 'npm-set-prefix' do
 end
 
 # Install npm modules
-%w{ coffee-script grunt-cli bower yo less csslint }.each do |a_package|
+%w{ grunt-cli bower less csslint }.each do |a_package|
   nodejs_npm a_package
 end

@@ -1,0 +1,78 @@
+driver:
+  name: dokken
+  privileged: true # because Docker and SystemD/Upstart
+  chef_version: 12.19.36
+  # chef_version: current
+
+transport:
+  name: dokken
+
+provisioner:
+  name: dokken
+  require_chef_omnibus: 12.19.36
+
+# TODO: uncomment after converting to inspec
+# verifier:
+#   name: inspec
+
+platforms:
+- name: centos-6
+  driver:
+    image: centos:6
+    platform: rhel
+    pid_one_command: /sbin/init
+    intermediate_instructions:
+      - RUN yum -y install which initscripts net-tools wget sudo
+  run_list:
+    - recipe[yum-epel::default]
+    - recipe[yum-remi::default]
+
+- name: centos-7
+  driver:
+    image: centos:7
+    platform: rhel
+    pid_one_command: /usr/lib/systemd/systemd
+    intermediate_instructions:
+      - RUN yum -y install lsof which systemd-sysv initscripts wget net-tools sudo
+  run_list:
+    - recipe[yum-epel::default]
+    - recipe[yum-remi::default]
+
+- name: debian-7
+  driver:
+    image: debian:7
+    pid_one_command: /sbin/init
+    intermediate_instructions:
+      - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get install -y apt-transport-https lsb-release procps net-tools sudo
+
+- name: debian-8
+  driver:
+    image: debian:8
+    pid_one_command: /bin/systemd
+    intermediate_instructions:
+      - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get install -y apt-transport-https lsb-release procps net-tools sudo
+
+- name: fedora-latest
+  driver:
+    image: fedora:latest
+    pid_one_command: /usr/lib/systemd/systemd
+    intermediate_instructions:
+      - RUN dnf -y install yum which systemd-sysv initscripts wget net-tools sudo
+
+- name: ubuntu-14.04
+  driver:
+    image: ubuntu-upstart:14.04
+    pid_one_command: /sbin/init
+    intermediate_instructions:
+      - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get install -y apt-transport-https lsb-release procps net-tools sudo
+
+- name: ubuntu-16.04
+  driver:
+    image: ubuntu:16.04
+    pid_one_command: /bin/systemd
+    intermediate_instructions:
+      - RUN /usr/bin/apt-get update
+      - RUN /usr/bin/apt-get install -y apt-transport-https lsb-release procps net-tools sudo

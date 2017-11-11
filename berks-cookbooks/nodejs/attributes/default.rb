@@ -18,25 +18,24 @@
 #
 
 case node['platform_family']
-when 'smartos', 'rhel', 'debian', 'fedora', 'mac_os_x'
+when 'smartos', 'rhel', 'debian', 'fedora', 'mac_os_x', 'suse', 'amazon'
   default['nodejs']['install_method'] = 'package'
 else
   default['nodejs']['install_method'] = 'source'
 end
 
-default['nodejs']['engine'] = 'node' # or iojs
+default['nodejs']['version'] = '6.10.2'
 
-default['nodejs']['version'] = '0.10.26'
-
-default['nodejs']['prefix_url']['node'] = 'http://nodejs.org/dist/'
-default['nodejs']['prefix_url']['iojs'] = 'http://iojs.org/dist/'
+default['nodejs']['prefix_url']['node'] = 'https://nodejs.org/dist/'
 
 default['nodejs']['source']['url']      = nil # Auto generated
-default['nodejs']['source']['checksum'] = 'ef5e4ea6f2689ed7f781355012b942a2347e0299da0804a58de8e6281c4b1daa'
+default['nodejs']['source']['checksum'] = '9b897dd6604d50ae5fff25fd14b1c4035462d0598735799e0cfb4f17cb6e0d19'
 
 default['nodejs']['binary']['url'] = nil # Auto generated
-default['nodejs']['binary']['checksum']['linux_x64'] = '305bf2983c65edea6dd2c9f3669b956251af03523d31cf0a0471504fd5920aac'
-default['nodejs']['binary']['checksum']['linux_x86'] = '8fa2d952556c8b5aa37c077e2735c972c522510facaa4df76d4244be88f4dc0f'
-default['nodejs']['binary']['checksum']['linux_arm-pi'] = '52a0f6ed9c0be1ea5f79de6527c481c1b803edbea6413a4fdc65a45ad401565d'
+default['nodejs']['binary']['checksum']['linux_x64'] = '35accd2d9ccac747eff0f236e2843bc2198ba7765e2340441d6230861bae4e1b'
+default['nodejs']['binary']['checksum']['linux_x86'] = '6721221fab4e3b3a1be6573900b9e368c7a74ac1c1c3ae982e49c5583e8962e3'
+default['nodejs']['binary']['checksum']['linux_arm64'] = '97de0340b6dbf38e3d995df880a94c58d403c3054676d8fc9192b83a3735f0b8'
 
 default['nodejs']['make_threads'] = node['cpu'] ? node['cpu']['total'].to_i : 2
+
+default['nodejs']['manage_node'] = true

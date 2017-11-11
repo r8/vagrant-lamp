@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Recipe:: mod_fastcgi
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright:: 2008-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,37 +17,33 @@
 # limitations under the License.
 #
 
-if platform_family?('debian')
-  if node['apache']['mod_fastcgi']['install_method'] == 'source'
+if node['apache']['mod_fastcgi']['install_method'] == 'package'
+  package node['apache']['mod_fastcgi']['package']
+else
+  if platform_family?('debian')
     package 'build-essential'
     package node['apache']['devel_package']
+  elsif platform_family?('rhel', 'fedora', 'amazon')
+    package %W(gcc make libtool #{node['apache']['devel_package']} apr-devel apr)
   else
-    package 'libapache2-mod-fastcgi'
+    Chef::Log.warn("mod_fastcgi cannot be installed from source on the #{node['platform']} platform")
   end
-elsif platform_family?('rhel')
-  %W(gcc make libtool #{node['apache']['devel_package']} apr-devel apr).each do |package|
-    yum_package package do
-      action :upgrade
-    end
-  end
-end
 
-if platform_family?('rhel') || (platform_family?('debian') && node['apache']['mod_fastcgi']['install_method'] == 'source')
-  src_filepath  = "#{Chef::Config['file_cache_path']}/fastcgi.tar.gz"
+  src_filepath = "#{Chef::Config['file_cache_path']}/fastcgi.tar.gz"
   remote_file 'download fastcgi source' do
     source node['apache']['mod_fastcgi']['download_url']
     path src_filepath
     backup false
   end
 
-  if platform_family?('debian')
-    top_dir = node['apache']['build_dir']
-  else
-    top_dir = node['apache']['lib_dir']
-  end
+  top_dir = if platform_family?('debian')
+              node['apache']['build_dir']
+            else
+              node['apache']['lib_dir']
+            end
   include_recipe 'apache2::default'
   bash 'compile fastcgi source' do
-    notifies :run, 'execute[generate-module-list]', :immediately if platform_family?('rhel')
+    notifies :run, 'execute[generate-module-list]', :immediately if platform_family?('rhel', 'fedora', 'amazon')
     not_if "test -f #{node['apache']['dir']}/mods-available/fastcgi.conf"
     cwd ::File.dirname(src_filepath)
     code <<-EOH

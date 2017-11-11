@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Definition:: apache_module
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright:: 2008-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-define :apache_module, :enable => true, :conf => false, :restart => false do
+define :apache_module, enable: true, conf: false, restart: false do
   include_recipe 'apache2::default'
 
   params[:filename]    = params[:filename] || "mod_#{params[:name]}.so"

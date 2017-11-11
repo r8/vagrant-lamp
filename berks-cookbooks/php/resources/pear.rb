@@ -1,9 +1,9 @@
 #
-# Author:: Seth Chisamore <schisamo@getchef.com>
-# Cookbook Name:: php
+# Author:: Seth Chisamore <schisamo@chef.io>
+# Cookbook:: php
 # Resource:: pear_package
 #
-# Copyright:: 2011-2014, Chef Software, Inc <legal@getchef.com>
+# Copyright:: 2011-2016, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #
 
 default_action :install
-actions :install, :upgrade, :remove, :purge
+actions :install, :upgrade, :remove, :purge, :reinstall
 
 state_attrs :channel,
             :directives,
@@ -29,10 +29,10 @@ state_attrs :channel,
             :version,
             :zend_extensions
 
-attribute :package_name, :kind_of => String, :name_attribute => true
-attribute :version, :default => nil
-attribute :channel, :kind_of => String
-attribute :options, :kind_of => String
-attribute :directives, :kind_of => Hash, :default => {}
-attribute :zend_extensions, :kind_of => Array, :default => []
-attribute :preferred_state, :default => 'stable'
+attribute :package_name, kind_of: String, name_attribute: true
+attribute :version, default: nil
+attribute :channel, kind_of: String
+attribute :options, kind_of: String
+attribute :directives, kind_of: Hash, default: {}
+attribute :zend_extensions, kind_of: Array, default: []
+attribute :preferred_state, default: 'stable'

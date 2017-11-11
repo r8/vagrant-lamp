@@ -3,6 +3,7 @@
 # Recipe:: default
 #
 # Copyright (c) 2015 Sergey Storchay, All Rights Reserved.
+# Modified 2016 Gleb Levitin, dkd Internet Service GmbH
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +24,7 @@
 # SOFTWARE.
 #
 
-include_recipe 'runit'
+include_recipe 'runit::default'
 
 arch = node['kernel']['machine'] =~ /x86_64/ ? 'amd64' : '386'
 
@@ -45,5 +46,33 @@ end
 
 # Setup runit service
 runit_service 'mailhog' do
+  options({
+    :smtp_ip => node['mailhog']['smtp']['ip'],
+    :smtp_port => node['mailhog']['smtp']['port'],
+    :smtp_outgoing => node['mailhog']['smtp']['outgoing'],
+    :ui_ip => node['mailhog']['ui']['ip'],
+    :ui_port => node['mailhog']['ui']['port'],
+    :api_ip => node['mailhog']['api']['ip'],
+    :api_port => node['mailhog']['api']['port'],
+    :cors_origin => node['mailhog']['cors-origin'],
+    :hostname => node['mailhog']['hostname'],
+    :storage => node['mailhog']['storage'],
+    :mongodb_ip => node['mailhog']['mongodb']['ip'],
+    :mongodb_port => node['mailhog']['mongodb']['port'],
+    :mongodb_db => node['mailhog']['mongodb']['db'],
+    :mongodb_collection => node['mailhog']['mongodb']['collection'],
+    :jim_enable => node['mailhog']['jim']['enable'],
+    :jim_accept => node['mailhog']['jim']['accept'],
+    :jim_disconnect => node['mailhog']['jim']['disconnect'],
+    :jim_linkspeed_affect => node['mailhog']['jim']['linkspeed']['affect'],
+    :jim_linkspeed_max => node['mailhog']['jim']['linkspeed']['max'],
+    :jim_linkspeed_min => node['mailhog']['jim']['linkspeed']['min'],
+    :jim_reject_auth => node['mailhog']['jim']['reject']['auth'],
+    :jim_reject_recipient => node['mailhog']['jim']['reject']['recipient'],
+    :jim_reject_sender => node['mailhog']['jim']['reject']['sender']
+  })
   default_logger true
+  owner node['mailhog']['service']['owner']
+  group node['mailhog']['service']['group']
+  action [:enable, :restart]
 end

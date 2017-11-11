@@ -18,6 +18,4 @@
 # limitations under the License.
 #
 
-node.default['nodejs']['engine'] = 'node'
-
-include_recipe 'nodejs::install'
+Chef::Log.fatal('The nodejs::nodejs recipe is no longer used. Use nodejs::install to install nodejs instead.')

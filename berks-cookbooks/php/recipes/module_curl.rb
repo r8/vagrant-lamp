@@ -1,10 +1,10 @@
 #
-# Author::  Joshua Timberman (<joshua@getchef.com>)
-# Author::  Seth Chisamore (<schisamo@getchef.com>)
-# Cookbook Name:: php
+# Author::  Joshua Timberman (<joshua@chef.io>)
+# Author::  Seth Chisamore (<schisamo@chef.io>)
+# Cookbook:: php
 # Recipe:: module_curl
 #
-# Copyright 2009-2014, Chef Software, Inc.
+# Copyright:: 2009-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,11 +19,7 @@
 # limitations under the License.
 #
 
-case node['platform_family']
-when 'rhel', 'fedora'
-  # centos php compiled with curl
-when 'debian'
-  package 'php5-curl' do
-    action :upgrade
-  end
+package node['php']['curl']['package'] do
+  action :install
+  only_if { platform_family?('debian') } # centos php compiled with curl
 end

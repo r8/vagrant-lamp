@@ -1,0 +1,65 @@
+AllCops:
+  DisplayCopNames: true
+  Exclude:
+    - '.bundle/**/*'
+  TargetRubyVersion: 2.3
+
+Lint/PercentStringArray:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/LineLength:
+  Description: 'Limit lines to 120 characters.'
+  StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#80-character-limits'
+  Enabled: true
+  Max: 120
+  Exclude:
+    - attributes/default.rb
+    - metadata.rb
+    - test/integration/**/*
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/LeadingCommentSpace:
+  Enabled: true
+  Exclude:
+    - resources/*
+
+Style/NestedParenthesizedCalls:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%w': '()'
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/SpaceAroundOperators:
+  Enabled: true
+  Exclude:
+    - attributes/default.rb
+
+Style/SymbolArray:
+  EnforcedStyle: brackets

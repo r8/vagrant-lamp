@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Recipe:: mod_auth_openid
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright:: 2008-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@
 #
 
 openid_dev_pkgs = value_for_platform_family(
-  'debian'        => %W(automake make g++ #{node['apache']['devel_package']} libopkele-dev libopkele3 libtool),
-  'suse'          => %W(automake make g++ #{node['apache']['devel_package']} libopkele-dev libopkele3 libtool),
-  %w(rhel fedora) => %W(gcc-c++ #{node['apache']['devel_package']} curl-devel libtidy libtidy-devel sqlite-devel pcre-devel openssl-devel make libtool),
-  'arch'          => %w(libopkele),
-  'freebsd'       => %w(libopkele pcre sqlite3)
+  %w(debian suse)        => %W(automake make g++ #{node['apache']['devel_package']} libopkele-dev libopkele3 libtool),
+  %w(rhel fedora amazon) => %W(gcc-c++ #{node['apache']['devel_package']} curl-devel libtidy libtidy-devel sqlite-devel pcre-devel openssl-devel make libtool),
+  'arch'                 => %w(libopkele),
+  'freebsd'              => %w(libopkele pcre sqlite3)
 )
 
 make_cmd = value_for_platform_family(
@@ -30,21 +29,17 @@ make_cmd = value_for_platform_family(
   'default' => 'make'
 )
 
-case node['platform_family']
-when 'arch'
+if platform?('arch')
   package 'tidyhtml'
 
   pacman_aur openid_dev_pkgs.first do
     action [:build, :install]
   end
 else
-  openid_dev_pkgs.each do |pkg|
-    package pkg
-  end
+  package openid_dev_pkgs
 end
 
-case node['platform_family']
-when 'rhel', 'fedora'
+if platform_family?('rhel', 'fedora', 'amazon')
   remote_file "#{Chef::Config['file_cache_path']}/libopkele-2.0.4.tar.gz" do
     source 'http://kin.klever.net/dist/libopkele-2.0.4.tar.gz'
     mode '0644'

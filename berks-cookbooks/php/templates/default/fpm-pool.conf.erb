@@ -2,8 +2,8 @@
 user = <%= @fpm_pool_user %>
 group = <%= @fpm_pool_group %>
 listen = <%= @fpm_pool_listen %>
-listen.owner = <%= @fpm_pool_user %>
-listen.group = <%= @fpm_pool_group %>
+listen.owner = <%= @fpm_pool_listen_user %>
+listen.group = <%= @fpm_pool_listen_group %>
 pm = <%= @fpm_pool_manager %>
 pm.max_children = <%= @fpm_pool_max_children %>
 pm.start_servers = <%= @fpm_pool_start_servers %>

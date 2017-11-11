@@ -39,3 +39,7 @@ AllCops:
 
 Style/GuardClause:
   Enabled: false
+
+# TODO: remove override for ModuleLength once RunitCookbook::Helpers has been refactored
+Metrics/ModuleLength:
+  Max: 150

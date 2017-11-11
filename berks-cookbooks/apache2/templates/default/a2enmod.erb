@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!<%= node['platform_family'] == 'freebsd' ? '/usr/local/bin/perl' : '/usr/bin/perl'%> -w
 #
 # a2enmod by Stefan Fritsch <sf@debian.org>
 # Licensed under Apache License 2.0

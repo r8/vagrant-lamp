@@ -2,7 +2,7 @@
 # Cookbook Name:: composer
 # Recipe:: install
 #
-# Copyright 2012-2014, Escape Studios
+# Copyright (c) 2016, David Joos
 #
 
 include_recipe node['composer']['php_recipe']
@@ -15,7 +15,7 @@ if node['platform'] == 'windows'
     ).join(' ')
   end
 
-  install_dir = "#{node['composer']['install_dir'].gsub('/', '\\')}\\bin"
+  install_dir = "#{node['composer']['install_dir'].tr('/', '\\')}\\bin"
 
   ENV['PATH'] += ";#{install_dir}"
   windows_path install_dir

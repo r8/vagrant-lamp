@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: homebrew
+# Cookbook:: homebrew
 # Recipes:: install_taps
 #
-# Copyright 2015, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2015-2017, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,5 +20,15 @@
 include_recipe 'homebrew'
 
 node['homebrew']['taps'].each do |tap|
-  homebrew_tap tap
+  if tap.is_a?(String)
+    homebrew_tap tap
+  elsif tap.is_a?(Hash)
+    raise unless tap.key?('tap')
+    homebrew_tap tap['tap'] do
+      url tap['url'] if tap.key?('url')
+      full tap['full'] if tap.key?('full')
+    end
+  else
+    raise
+  end
 end

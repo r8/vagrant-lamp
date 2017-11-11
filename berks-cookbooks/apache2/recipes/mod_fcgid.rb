@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: apache2
+# Cookbook:: apache2
 # Recipe:: mod_fcgid
 #
-# Copyright 2008-2013, Chef Software, Inc.
+# Copyright:: 2008-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,21 +19,14 @@
 
 if platform_family?('debian')
   package 'libapache2-mod-fcgid'
-elsif platform_family?('rhel', 'fedora')
+elsif platform_family?('rhel', 'fedora', 'amazon')
   package 'mod_fcgid' do
     notifies :run, 'execute[generate-module-list]', :immediately
   end
 
   file "#{node['apache']['dir']}/conf.d/fcgid.conf" do
-    action :delete
-    backup false
-  end
-
-  directory '/var/run/httpd/mod_fcgid' do
-    owner node['apache']['user']
-    group node['apache']['group']
-    recursive true
-    only_if { node['platform_version'].to_i >= 6 }
+    content '# conf is under mods-available/fcgid.conf - apache2 cookbook\n'
+    only_if { ::Dir.exist?("#{node['apache']['dir']}/conf.d") }
   end
 elsif platform_family?('suse')
   apache_lib_path = node['apache']['lib_dir']

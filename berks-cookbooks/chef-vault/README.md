@@ -1,15 +1,16 @@
-chef-vault Cookbook
-===================
+# chef-vault Cookbook
+
+[![Build Status](https://travis-ci.org/chef-cookbooks/chef-vault.svg?branch=master)](https://travis-ci.org/chef-cookbooks/chef-vault) [![Cookbook Version](https://img.shields.io/cookbook/v/chef-vault.svg)](https://supermarket.chef.io/cookbooks/chef-vault)
 
 This cookbook is responsible for installing the `chef-vault` gem and
 providing some helper methods to load encrypted data bags that are in
 The Vault. It also provides a resource that can be used to store
 secrets as a Chef Vault item in a recipe.
 
-Chef Vault is a library by Nordstrom's infrastructure operations team
-that helps manage encrypted data bags.
+Chef Vault is a library originally written by Nordstrom's infrastructure
+operations team that helps manage encrypted data bags.
 
-* https://github.com/Nordstrom/chef-vault
+* https://github.com/chef/chef-vault
 
 ## Requirements
 
@@ -23,7 +24,7 @@ The helper methods in this cookbook use the Chef Vault v2 API, so the
 default version will match `~> 2.2` to ensure a reasonably updated
 version of the gem is installed.
 
-## Helper Method
+## Helper Methods
 
 This cookbook provides a nice helper method for the Chef Recipe DSL so
 you can write:
@@ -40,6 +41,18 @@ metadata (a `vaultname_keys` data bag), then `chef_vault_item` will attempt to
 load the specified item as a regular Data Bag Item with
 `Chef::DataBagItem.load`. This is intended to be used only for testing, and
 not as a fall back to avoid issues loading encrypted items.
+
+This cookbook also provides a handy wrapper if you are storing multiple
+environment settings within your encrypted items. Using this following
+helper:
+```ruby
+item = chef_vault_item_for_environment('secrets', 'passwords')
+```
+
+Instead of (or any combination of such expression):
+```ruby
+item = chef_vault_item('secrets', 'passwords')[node.chef_environment]
+```
 
 ## Attributes
 
@@ -206,6 +219,7 @@ contribution process for Chef cookbooks.
 - Author: Joshua Timberman <joshua@chef.io>
 - Copyright (c) 2013 Opscode, Inc. <legal@opscode.com>
 - Copyright (c) 2014-2015 Chef Software, Inc. <legal@chef.io>
+- Copyright (c) 2014, 2015 Bloomberg Finance L.P.
 
 License:: Apache License, Version 2.0
 

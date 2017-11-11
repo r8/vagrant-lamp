@@ -41,13 +41,6 @@
   SSLSessionCache         <%= node['apache']['mod_ssl']['session_cache'] %>
   SSLSessionCacheTimeout  <%= node['apache']['mod_ssl']['session_cache_timeout'] %>
 
-<% if node['apache']['version'] != '2.4' -%>
-  #   Semaphore:
-  #   Configure the path to the mutual exclusion semaphore the
-  #   SSL engine uses internally for inter-process synchronization.
-  SSLMutex <%= node['apache']['mod_ssl']['mutex'] %>
-<% end -%>
-
   #   SSL Cipher Suite:
   #   List the ciphers that the client is permitted to negotiate.
   #   See the mod_ssl documentation for a complete list.
@@ -82,7 +75,6 @@
   SSLStrictSNIVHostCheck <%= node['apache']['mod_ssl']['strict_sni_vhost_check'] %>
 <% end %>
 
-<% if node['apache']['version'] == '2.4' -%>
   #   Enable compression on the SSL level
   #   Enabling compression causes security issues in most setups (the so called CRIME attack).
   #   Default: Off
@@ -100,7 +92,6 @@
   SSLStaplingReturnResponderErrors <%= node['apache']['mod_ssl']['stapling_return_responder_errors'] %>
   SSLStaplingCache        <%= node['apache']['mod_ssl']['stapling_cache'] %>
   <% end -%>
-<% end -%>
 
   <% node['apache']['mod_ssl']['directives'].sort_by { |key, val| key }.each do |directive, value| -%>
       <%= directive %> <%= value %>

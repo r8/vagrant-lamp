@@ -2,17 +2,19 @@
 # Cookbook Name:: composer
 # Recipe:: global_configs
 #
-# Copyright 2012-2014, Escape Studios
+# Copyright (c) 2016, David Joos
 #
 
 configs = node['composer']['global_configs']
 
 unless configs.nil?
   configs.each_pair do |user, user_configs|
-    directory "/home/#{user}/.composer" do
+    user_composer_dir = "#{Dir.home(user)}/.composer"
+
+    directory user_composer_dir do
       owner user
       group user
-      mode 0755
+      mode '0755'
       action :create
     end
 
@@ -23,7 +25,7 @@ unless configs.nil?
         value.each_pair do |value_k, value_v|
           execute "composer-config-for-#{user}" do
             command "composer config --global #{option}.#{value_k} #{value_v}"
-            environment 'COMPOSER_HOME' => Dir.home(user)
+            environment 'COMPOSER_HOME' => user_composer_dir
             user user
             group user
             action :run
@@ -32,7 +34,7 @@ unless configs.nil?
       else
         execute "composer-config-for-#{user}" do
           command "composer config --global #{option} #{value}"
-          environment 'COMPOSER_HOME' => Dir.home(user)
+          environment 'COMPOSER_HOME' => user_composer_dir
           user user
           group user
           action :run

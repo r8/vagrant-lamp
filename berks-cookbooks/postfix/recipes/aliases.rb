@@ -1,5 +1,4 @@
-# encoding: utf-8
-# Copyright:: Copyright 2012-2014, Chef Software, Inc.
+# Copyright:: 2012-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +19,7 @@ execute 'update-postfix-aliases' do
   command 'newaliases'
   environment PATH: "#{ENV['PATH']}:/opt/omni/bin:/opt/omni/sbin" if platform_family?('omnios')
   # On FreeBSD, /usr/sbin/newaliases is the sendmail command, and it's in the path before postfix's /usr/local/bin/newaliases
-  environment ({ 'PATH' => "/usr/local/bin:#{ENV['PATH']}" }) if platform_family?('freebsd')
+  environment('PATH' => "/usr/local/bin:#{ENV['PATH']}") if platform_family?('freebsd')
   action :nothing
 end
 

@@ -3,7 +3,7 @@
 # Provider:: repository
 #
 # Author:: Sean OMeara <someara@chef.io>
-# Copyright 2013, Chef
+# Copyright 2013-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,18 +23,29 @@
 # nested resources are compiled and converged in isolation from the
 # recipe that calls it.
 
-# Allow for Chef 10 support
-use_inline_resources if defined?(use_inline_resources)
+use_inline_resources
 
 def whyrun_supported?
   true
 end
 
-action :create  do
-  # Hack around the lack of "use_inline_resources" before Chef 11 by
-  # uniquely naming the execute[yum-makecache] resources. Set the
-  # notifies timing to :immediately for the same reasons. Remove both
-  # of these when dropping Chef 10 support.
+action :add do
+  Chef::Log.warn('The :add method in yum_repository has been deprecated in favor of :create. Please update your cookbook to use the :create action')
+  action_create
+end
+
+action :remove do
+  Chef::Log.warn('The :remove method in yum_repository has been deprecated in favor of :delete. Repository deletion in Chef 12.14+ with :remove will fail')
+  action_delete
+end
+
+action :create do
+  if new_resource.clean_headers
+    Chef::Log.warn <<-eos
+      Use of `clean_headers` in resource yum[#{new_resource.repositoryid}] is now deprecated and will be removed in a future release.
+      `clean_metadata` should be used instead
+    eos
+  end
 
   template "/etc/yum.repos.d/#{new_resource.repositoryid}.repo" do
     if new_resource.source.nil?
@@ -44,16 +55,17 @@ action :create  do
       source new_resource.source
     end
     mode new_resource.mode
-    variables(:config => new_resource)
+    sensitive new_resource.sensitive
+    variables(config: new_resource)
     if new_resource.make_cache
-      notifies :run, "execute[yum clean #{new_resource.repositoryid}]", :immediately
+      notifies :run, "execute[yum clean metadata #{new_resource.repositoryid}]", :immediately if new_resource.clean_metadata || new_resource.clean_headers
       notifies :run, "execute[yum-makecache-#{new_resource.repositoryid}]", :immediately
       notifies :create, "ruby_block[yum-cache-reload-#{new_resource.repositoryid}]", :immediately
     end
   end
 
-  execute "yum clean #{new_resource.repositoryid}" do
-    command "yum clean all --disablerepo=* --enablerepo=#{new_resource.repositoryid}"
+  execute "yum clean metadata #{new_resource.repositoryid}" do
+    command "yum clean metadata --disablerepo=* --enablerepo=#{new_resource.repositoryid}"
     action :nothing
   end
 
@@ -74,11 +86,11 @@ end
 action :delete do
   file "/etc/yum.repos.d/#{new_resource.repositoryid}.repo" do
     action :delete
-    notifies :run, "execute[yum clean #{new_resource.repositoryid}]", :immediately
+    notifies :run, "execute[yum clean all #{new_resource.repositoryid}]", :immediately
     notifies :create, "ruby_block[yum-cache-reload-#{new_resource.repositoryid}]", :immediately
   end
 
-  execute "yum clean #{new_resource.repositoryid}" do
+  execute "yum clean all #{new_resource.repositoryid}" do
     command "yum clean all --disablerepo=* --enablerepo=#{new_resource.repositoryid}"
     only_if "yum repolist | grep -P '^#{new_resource.repositoryid}([ \t]|$)'"
     action :nothing
@@ -101,6 +113,3 @@ action :makecache do
     action :run
   end
 end
-
-alias_method :action_add, :action_create
-alias_method :action_remove, :action_delete

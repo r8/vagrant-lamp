@@ -1,0 +1,18 @@
+GIT
+  remote: git@github.com:bmhatfield/chef-ulimit
+  ref: v0.3.1
+  sha: c5bbe05b23578f7780cecd8af49aade137fbb777
+  specs:
+    ulimit (0.3.1)
+
+GIT
+  remote: git@github.com:opscode-cookbooks/build-essential
+  ref: v1.4.2
+  sha: 7f4d351036f10e7b641e1df137390491d6111669
+  specs:
+    build-essential (1.4.2)
+
+DEPENDENCIES
+  build-essential (>= 0)
+  ulimit (>= 0)
+

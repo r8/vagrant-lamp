@@ -1,3 +1,24 @@
 #!/bin/sh
 exec 2>&1
-exec /usr/bin/env MailHog
+exec /usr/bin/env MailHog \
+  -smtp-bind-addr=<%= @options[:smtp_ip] %>:<%= @options[:smtp_port] %> \
+  -outgoing-smtp=<%= @options[:smtp_outgoing] %> \
+  -ui-bind-addr=<%= @options[:ui_ip] %>:<%= @options[:ui_port] %> \
+  -api-bind-addr=<%= @options[:api_ip] %>:<%= @options[:api_port] %> \
+  -cors-origin=<%= @options[:cors_origin] %> \
+  -hostname=<%= @options[:hostname] %> \
+  -storage=<%= @options[:storage] %> \
+  -mongo-uri=<%= @options[:mongodb_ip] %>:<%= @options[:mongodb_port] %> \
+  -mongo-db=<%= @options[:mongodb_db] %> \
+  -mongo-coll=<%= @options[:mongodb_collection] %> \
+<% if @options[:jim_enable] %>
+  -invite-jim \
+<% end %>
+  -jim-accept=<%= @options[:jim_accept] %> \
+  -jim-disconnect=<%= @options[:jim_disconnect] %> \
+  -jim-linkspeed-affect=<%= @options[:jim_linkspeed_affect] %> \
+  -jim-linkspeed-max=<%= @options[:jim_linkspeed_max] %> \
+  -jim-linkspeed-min=<%= @options[:jim_linkspeed_min] %> \
+  -jim-reject-auth=<%= @options[:jim_reject_auth] %> \
+  -jim-reject-recipient=<%= @options[:jim_reject_recipient] %> \
+  -jim-reject-sender=<%= @options[:jim_reject_sender] %>

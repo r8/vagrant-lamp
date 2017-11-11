@@ -22,12 +22,13 @@
 actions :install, :uninstall
 default_action :install
 
-attribute :package, :name_attribute => true
-attribute :version, :kind_of => String
-attribute :path, :kind_of => String
-attribute :url, :kind_of => String
-attribute :json, :kind_of => [String, TrueClass]
-attribute :options, :kind_of => Array, :default => []
+attribute :package, name_attribute: true
+attribute :version, kind_of: String
+attribute :path, kind_of: String
+attribute :url, kind_of: String
+attribute :json, kind_of: [String, TrueClass]
+attribute :npm_token, kind_of: String
+attribute :options, kind_of: Array, default: []
 
-attribute :user, :kind_of => String
-attribute :group, :kind_of => String
+attribute :user, kind_of: String
+attribute :group, kind_of: String

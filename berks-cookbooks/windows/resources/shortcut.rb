@@ -1,9 +1,9 @@
 #
 # Author:: Doug MacEachern <dougm@vmware.com>
-# Cookbook Name:: windows
+# Cookbook:: windows
 # Resource:: shortcut
 #
-# Copyright:: 2010, VMware, Inc.
+# Copyright:: 2010-2017, VMware, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,19 +18,36 @@
 # limitations under the License.
 #
 
-actions :create
+property :name, String
+property :target, String
+property :arguments, String
+property :description, String
+property :cwd, String
+property :iconlocation, String
 
-default_action :create
+load_current_value do |desired|
+  require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
-attribute :name, :kind_of => String
-attribute :target, :kind_of => String
-attribute :arguments, :kind_of => String
-attribute :description, :kind_of => String
-attribute :cwd, :kind_of => String
-attribute :iconlocation, :kind_of => String
+  link = WIN32OLE.new('WScript.Shell').CreateShortcut(desired.name)
+  name desired.name
+  target(link.TargetPath)
+  arguments(link.Arguments)
+  description(link.Description)
+  cwd(link.WorkingDirectory)
+  iconlocation(link.IconLocation)
+end
 
-# Covers 0.10.8 and earlier
-def initialize(*args)
-  super
-  @action = :create
+action :create do
+  converge_if_changed do
+    converge_by "creating shortcut #{new_resource.name}" do
+      link = WIN32OLE.new('WScript.Shell').CreateShortcut(new_resource.name)
+      link.TargetPath = new_resource.target unless new_resource.target.nil?
+      link.Arguments = new_resource.arguments unless new_resource.arguments.nil?
+      link.Description = new_resource.description unless new_resource.description.nil?
+      link.WorkingDirectory = new_resource.cwd unless new_resource.cwd.nil?
+      link.IconLocation = new_resource.iconlocation unless new_resource.iconlocation.nil?
+      # ignoring: WindowStyle, Hotkey
+      link.Save
+    end
+  end
 end

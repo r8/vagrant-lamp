@@ -21,11 +21,10 @@
 
 module RunitCookbook
   module Helpers
-
     # include Chef::Mixin::ShellOut if it is not already included in the calling class
     def self.included(klass)
-      unless(klass.ancestors.include?(Chef::Mixin::ShellOut))
-        klass.class_eval{ include Chef::Mixin::ShellOut }
+      unless klass.ancestors.include?(Chef::Mixin::ShellOut)
+        klass.class_eval { include Chef::Mixin::ShellOut }
       end
     end
 
@@ -66,7 +65,7 @@ module RunitCookbook
 
     def extra_env_files?
       files = []
-      Dir.glob("#{service_dir_name}/env/*").each do |f|
+      Dir.glob("#{sv_dir_name}/env/*").each do |f|
         files << File.basename(f)
       end
       return true if files.sort != new_resource.env.keys.sort
@@ -74,7 +73,7 @@ module RunitCookbook
     end
 
     def zap_extra_env_files
-      Dir.glob("#{service_dir_name}/env/*").each do |f|
+      Dir.glob("#{sv_dir_name}/env/*").each do |f|
         unless new_resource.env.key?(File.basename(f))
           File.unlink(f)
           Chef::Log.info("removing file #{f}")
@@ -153,7 +152,7 @@ module RunitCookbook
     def default_logger_content
       <<-EOS
 #!/bin/sh
-exec svlogd -tt /var/log/#{new_resource.service_name}
+exec svlogd -tt #{new_resource.log_dir}
       EOS
     end
 
@@ -183,7 +182,9 @@ exec svlogd -tt /var/log/#{new_resource.service_name}
     end
 
     def reload_log_service
-      shell_out!("#{new_resource.sv_bin} #{sv_args}force-reload #{service_dir_name}/log")
+      if log_running?
+        shell_out!("#{new_resource.sv_bin} #{sv_args}force-reload #{service_dir_name}/log")
+      end
     end
   end
 end
