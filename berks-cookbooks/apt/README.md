@@ -15,7 +15,7 @@ May work with or without modification on other Debian derivatives.
 
 ### Chef
 
-- Chef 12.9+
+- Chef 13.3+
 
 ### Cookbooks
 
@@ -149,55 +149,6 @@ To pull just security updates, set `origins_patterns` to something like `["origi
 
 There is an `interface_ipaddress` method that returns the IP address for a particular host and interface, used by the `cacher-client` recipe. To enable it on the server use the `['apt']['cacher_interface']` attribute.
 
-## Resources/Providers
-
-### apt_preference
-
-This resource provides an easy way to pin packages in /etc/apt/preferences.d. Although apt-pinning is quite helpful from time to time please note that Debian does not encourage its use without thorough consideration.
-
-Further information regarding apt-pinning is available via <https://wiki.debian.org/AptPreferences>.
-
-#### Actions
-
-- `:add`: creates a preferences file under /etc/apt/preferences.d
-- `:remove`: Removes the file, therefore unpin the package
-
-#### Attribute Parameters
-
-- package_name: name attribute. The name of the package
-- glob: Pin by glob() expression or regexp surrounded by /.
-- pin: The package version/repository to pin
-- pin_priority: The pinning priority aka "the highest package version wins" (required)
-
-#### Examples
-
-Pin libmysqlclient16 to version 5.1.49-3:
-
-```ruby
-apt_preference 'libmysqlclient16' do
-  pin          'version 5.1.49-3'
-  pin_priority '700'
-end
-```
-
-Unpin libmysqlclient16:
-
-```ruby
-apt_preference 'libmysqlclient16' do
-  action :remove
-end
-```
-
-Pin all packages from dotdeb.org:
-
-```ruby
-apt_preference 'dotdeb' do
-  glob         '*'
-  pin          'origin packages.dotdeb.org'
-  pin_priority '700'
-end
-```
-
 ## Usage
 
 Put `recipe[apt]` first in the run list. If you have other recipes that you want to use to configure how apt behaves, like new sources, notify the execute resource to run, e.g.:
@@ -213,6 +164,14 @@ The above will run during execution phase since it is a normal template resource
 Put `recipe[apt::cacher-ng]` in the run_list for a server to provide APT caching and add `recipe[apt::cacher-client]` on the rest of the Debian-based nodes to take advantage of the caching server.
 
 If you want to cleanup unused packages, there is also the `apt-get autoclean` and `apt-get autoremove` resources provided for automated cleanup.
+
+## Resources
+
+### apt_preference
+
+The apt_preference resource has been moved into chef-client in Chef 13.3.
+
+See <https://docs.chef.io/resource_apt_preference.html> for usage details
 
 ### apt_repository
 
@@ -231,7 +190,6 @@ See <https://docs.chef.io/resource_apt_update.html> for usage details
 This cookbook is maintained by Chef's Community Cookbook Engineering team. Our goal is to improve cookbook quality and to aid the community in contributing to cookbooks. To learn more about our team, process, and design goals see our [team documentation](https://github.com/chef-cookbooks/community_cookbook_documentation/blob/master/COOKBOOK_TEAM.MD). To learn more about contributing to cookbooks like this see our [contributing documentation](https://github.com/chef-cookbooks/community_cookbook_documentation/blob/master/CONTRIBUTING.MD), or if you have general questions about this cookbook come chat with us in #cookbok-engineering on the [Chef Community Slack](http://community-slack.chef.io/)
 
 ## License
-
 
 **Copyright:** 2009-2017, Chef Software, Inc.
 

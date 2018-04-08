@@ -36,6 +36,20 @@ module Windows
       STANDARD_SERVER     = 0x0D unless constants.include?(:STANDARD_SERVER)
       # Server Standard without Hyper-V Core
       STANDARD_SERVER_V   = 0x28 unless constants.include?(:STANDARD_SERVER_V)
+      # Small Business Server Premium Core
+      PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE = 0x3F unless constants.include?(:PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE)
+      # Server Solutions Premium Core
+      STANDARD_SERVER_SOLUTIONS = 0x35 unless constants.include?(:STANDARD_SERVER_SOLUTIONS)
+      # Storage Server Enterprise Core
+      STORAGE_ENTERPRISE_SERVER = 0x2E unless constants.include?(:STORAGE_ENTERPRISE_SERVER)
+      # Storage Server Express Core
+      STORAGE_EXPRESS_SERVER = 0x2B unless constants.include?(:STORAGE_EXPRESS_SERVER)
+      # Storage Server Standard Core
+      STORAGE_STANDARD_SERVER = 0x2C unless constants.include?(:STORAGE_STANDARD_SERVER)
+      # Storage Server Workgroup Core
+      STORAGE_WORKGROUP_SERVER = 0x2D unless constants.include?(:STORAGE_WORKGROUP_SERVER)
+      # Web Server Core
+      WEB_SERVER = 0x1D unless constants.include?(:WEB_SERVER)
     end
 
     # Module referencing product type contants
@@ -73,7 +87,7 @@ module Windows
     end
 
     def self.validate_platform(node)
-      raise 'Windows helper are only supported on windows platform!' if node['platform'] != 'windows'
+      raise 'Windows helper are only supported on windows platform!' unless node['platform'] == 'windows'
     end
   end
 end

@@ -2,8 +2,6 @@ class Chef
   class Provider
     class GitClient
       class Package < Chef::Provider::GitClient
-        include Chef::DSL::IncludeRecipe
-
         provides :git_client, os: 'linux'
 
         action :install do

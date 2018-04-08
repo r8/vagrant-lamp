@@ -1,9 +1,9 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
 # Cookbook:: windows
-# Provider:: feature_dism
+# Resource:: feature_dism
 #
-# Copyright:: 2011-2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,88 +18,185 @@
 # limitations under the License.
 #
 
-property :feature_name, [Array, String], name_property: true
+property :feature_name, [Array, String], coerce: proc { |x| to_lowercase_array(x) }, name_property: true
 property :source, String
 property :all, [true, false], default: false
 property :timeout, Integer, default: 600
 
-include Chef::Mixin::ShellOut
+def to_lowercase_array(x)
+  x = x.split(/\s*,\s*/) if x.is_a?(String) # split multiple forms of a comma separated list
+
+  # dism on windows < 2012 is case sensitive so only downcase when on 2012+
+  # @todo when we're really ready to remove support for Windows 2008 R2 this check can go away
+  node['platform_version'].to_f < 6.2 ? x : x.map(&:downcase)
+end
+
 include Windows::Helper
 
 action :install do
-  Chef::Log.warn("Requested feature #{new_resource.feature_name} is not available on this system.") unless available?
-  unless !available? || installed?
-    converge_by("install Windows feature #{new_resource.feature_name}") do
-      addsource = new_resource.source ? "/LimitAccess /Source:\"#{new_resource.source}\"" : ''
-      addall = new_resource.all ? '/All' : ''
-      shell_out!("#{dism} /online /enable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart #{addsource} #{addall}", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
-      # Reload ohai data
-      reload_ohai_features_plugin(new_resource.action, new_resource.feature_name)
+  reload_cached_dism_data unless node['dism_features_cache']
+  fail_if_unavailable # fail if the features don't exist
+  fail_if_removed # fail if the features are in removed state
+
+  Chef::Log.debug("Windows features needing installation: #{features_to_install.empty? ? 'none' : features_to_install.join(',')}")
+  unless features_to_install.empty?
+    message = "install Windows feature#{'s' if features_to_install.count > 1} #{features_to_install.join(',')}"
+    converge_by(message) do
+      install_command = "#{dism} /online /enable-feature #{features_to_install.map { |f| "/featurename:#{f}" }.join(' ')} /norestart"
+      install_command << " /LimitAccess /Source:\"#{new_resource.source}\"" if new_resource.source
+      install_command << ' /All' if new_resource.all
+
+      shell_out!(install_command, returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+
+      reload_cached_dism_data # Reload cached dism feature state
     end
   end
 end
 
 action :remove do
-  if installed?
-    converge_by("removing Windows feature #{new_resource.feature_name}") do
-      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
-      # Reload ohai data
-      reload_ohai_features_plugin(new_resource.action, new_resource.feature_name)
+  reload_cached_dism_data unless node['dism_features_cache']
+
+  Chef::Log.debug("Windows features needing removal: #{features_to_remove.empty? ? 'none' : features_to_remove.join(',')}")
+  unless features_to_remove.empty?
+    message = "remove Windows feature#{'s' if features_to_remove.count > 1} #{features_to_remove.join(',')}"
+
+    converge_by(message) do
+      shell_out!("#{dism} /online /disable-feature #{features_to_remove.map { |f| "/featurename:#{f}" }.join(' ')} /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+
+      reload_cached_dism_data # Reload cached dism feature state
     end
   end
 end
 
 action :delete do
-  raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on #{win_version.sku}" unless supports_feature_delete?
-  if available?
-    converge_by("deleting Windows feature #{new_resource.feature_name} from the image") do
-      shell_out!("#{dism} /online /disable-feature #{to_array(new_resource.feature_name).map { |feature| "/featurename:#{feature}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
-      # Reload ohai data
-      reload_ohai_features_plugin(new_resource.action, new_resource.feature_name)
+  raise_if_delete_unsupported
+
+  reload_cached_dism_data unless node['dism_features_cache']
+
+  fail_if_unavailable # fail if the features don't exist
+
+  Chef::Log.debug("Windows features needing deletion: #{features_to_delete.empty? ? 'none' : features_to_delete.join(',')}")
+  unless features_to_delete.empty?
+    message = "delete Windows feature#{'s' if features_to_delete.count > 1} #{features_to_delete.join(',')} from the image"
+    converge_by(message) do
+      shell_out!("#{dism} /online /disable-feature #{features_to_delete.map { |f| "/featurename:#{f}" }.join(' ')} /Remove /norestart", returns: [0, 42, 127, 3010], timeout: new_resource.timeout)
+
+      reload_cached_dism_data # Reload cached dism feature state
     end
   end
 end
 
 action_class do
-  def installed?
-    @installed ||= begin
-      install_ohai_plugin unless node['dism_features']
+  # @return [Array] features the user has requested to install which need installation
+  def features_to_install
+    @install ||= begin
+      # disabled features are always available to install
+      available_for_install = node['dism_features_cache']['disabled']
 
-      # Compare against ohai plugin instead of costly dism run
-      node['dism_features'].key?(new_resource.feature_name) && node['dism_features'][new_resource.feature_name] =~ /Enable/
+      # if the user passes a source then removed features are also available for installation
+      available_for_install.concat(node['dism_features_cache']['removed']) if new_resource.source
+
+      # the intersection of the features to install & disabled/removed(if passing source) features are what needs installing
+      new_resource.feature_name & available_for_install
     end
   end
 
-  def available?
-    @available ||= begin
-      install_ohai_plugin unless node['dism_features']
+  # @return [Array] features the user has requested to remove which need removing
+  def features_to_remove
+    # the intersection of the features to remove & enabled features are what needs removing
+    @remove ||= new_resource.feature_name & node['dism_features_cache']['enabled']
+  end
 
-      # Compare against ohai plugin instead of costly dism run
-      node['dism_features'].key?(new_resource.feature_name) && node['dism_features'][new_resource.feature_name] !~ /with payload removed/
+  # @return [Array] features the user has requested to delete which need deleting
+  def features_to_delete
+    # the intersection of the features to remove & enabled/disabled features are what needs removing
+    @remove ||= begin
+      all_available = node['dism_features_cache']['enabled'] +
+                      node['dism_features_cache']['disabled']
+      new_resource.feature_name & all_available
     end
   end
 
-  def reload_ohai_features_plugin(take_action, feature_name)
-    ohai "Reloading Dism_Features Plugin - Action #{take_action} of feature #{feature_name}" do
-      action :reload
-      plugin 'dism_features'
+  # if any features are not supported on this release of Windows or
+  # have been deleted raise with a friendly message. At one point in time
+  # we just warned, but this goes against the behavior of ever other package
+  # provider in Chef and it isn't clear what you'd want if you passed an array
+  # and some features were available and others were not.
+  # @return [void]
+  def fail_if_unavailable
+    all_available = node['dism_features_cache']['enabled'] +
+                    node['dism_features_cache']['disabled'] +
+                    node['dism_features_cache']['removed']
+
+    # the difference of desired features to install to all features is what's not available
+    unavailable = (new_resource.feature_name - all_available)
+    raise "The Windows feature#{'s' if unavailable.count > 1} #{unavailable.join(',')} #{unavailable.count > 1 ? 'are' : 'is'} not available on this version of Windows. Run 'dism /online /Get-Features' to see the list of available feature names." unless unavailable.empty?
+  end
+
+  # run dism.exe to get a list of all available features and their state
+  # and save that to the node at node.override level.
+  # We do this because getting a list of features in dism takes at least a second
+  # and this data will be persisted across multiple resource runs which gives us
+  # a much faster run when no features actually need to be installed / removed.
+  # @return [void]
+  def reload_cached_dism_data
+    Chef::Log.debug('Caching Windows features available via dism.exe.')
+    node.override['dism_features_cache'] = Mash.new
+    node.override['dism_features_cache']['enabled'] = []
+    node.override['dism_features_cache']['disabled'] = []
+    node.override['dism_features_cache']['removed'] = []
+
+    # Grab raw feature information from dism command line
+    raw_list_of_features = shell_out("#{dism} /Get-Features /Online /Format:Table /English").stdout
+
+    # Split stdout into an array by windows line ending
+    features_list = raw_list_of_features.split("\r\n")
+    features_list.each do |feature_details_raw|
+      case feature_details_raw
+      when /Payload Removed/ # matches 'Disabled with Payload Removed'
+        add_to_feature_mash('removed', feature_details_raw)
+      when /Enable/ # matches 'Enabled' and 'Enable Pending' aka after reboot
+        add_to_feature_mash('enabled', feature_details_raw)
+      when /Disable/ # matches 'Disabled' and 'Disable Pending' aka after reboot
+        add_to_feature_mash('disabled', feature_details_raw)
+      end
     end
+    Chef::Log.debug("The dism cache contains\n#{node['dism_features_cache']}")
   end
 
-  def install_ohai_plugin
-    Chef::Log.info("node['dism_features'] data missing. Installing the dism_features Ohai plugin")
+  # parse the feature string and add the values to the appropriate array
+  # in the
+  # strips trailing whitespace characters then split on n number of spaces
+  # + | +  n number of spaces
+  # @return [void]
+  def add_to_feature_mash(feature_type, feature_string)
+    feature_details = feature_string.strip.split(/\s+[|]\s+/).first
 
-    ohai_plugin 'dism_features' do
-      compile_time true
-      cookbook 'windows'
+    # dism on windows 2012+ isn't case sensitive so it's best to compare
+    # lowercase lists so the user input doesn't need to be case sensitive
+    # @todo when we're ready to remove windows 2008R2 the gating here can go away
+    feature_details.downcase! unless node['platform_version'].to_f < 6.2
+    node.override['dism_features_cache'][feature_type] << feature_details
+  end
+
+  # Fail if any of the packages are in a removed state
+  # @return [void]
+  def fail_if_removed
+    return if new_resource.source # if someone provides a source then all is well
+    if node['platform_version'].to_f > 6.2
+      return if registry_key_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing') && registry_value_exists?('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Servicing', name: 'LocalSourcePath') # if source is defined in the registry, still fine
     end
+    removed = new_resource.feature_name & node['dism_features_cache']['removed']
+    raise "The Windows feature#{'s' if removed.count > 1} #{removed.join(',')} #{removed.count > 1 ? 'are' : 'is'} have been removed from the host and cannot be installed." unless removed.empty?
   end
 
-  def supports_feature_delete?
-    win_version.major_version >= 6 && win_version.minor_version >= 2
+  # Fail unless we're on windows 8+ / 2012+ where deleting a feature is supported
+  # @return [void]
+  def raise_if_delete_unsupported
+    raise Chef::Exceptions::UnsupportedAction, "#{self} :delete action not support on Windows releases before Windows 8/2012. Cannot continue!" unless node['platform_version'].to_f >= 6.2
   end
 
-  # account for File System Redirector
+  # find dism accounting for File System Redirector
   # http://msdn.microsoft.com/en-us/library/aa384187(v=vs.85).aspx
   def dism
     @dism ||= begin

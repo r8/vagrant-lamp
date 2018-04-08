@@ -1,6 +1,8 @@
 case node['platform_family']
 when 'debian'
-  package 'apt-transport-https'
+  package 'nodejs-apt-transport-https' do
+    package_name 'apt-transport-https'
+  end
 
   apt_repository 'node.js' do
     uri node['nodejs']['repo']

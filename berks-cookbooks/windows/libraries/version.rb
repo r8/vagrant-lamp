@@ -3,7 +3,7 @@
 # Cookbook:: windows
 # Library:: version
 #
-# Copyright:: 2011-2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -139,6 +139,7 @@ module Windows
     end
 
     WIN_VERSIONS = {
+      'Windows 10' => { major: 10, minor: 0, callable: -> { @product_type != VER_NT_WORKSTATION } },
       'Windows Server 2012 R2' => { major: 6, minor: 3, callable: -> { @product_type != VER_NT_WORKSTATION } },
       'Windows 8' => { major: 6, minor: 2, callable: -> { @product_type == VER_NT_WORKSTATION } },
       'Windows Server 2012' => { major: 6, minor: 2, callable: -> { @product_type != VER_NT_WORKSTATION } },

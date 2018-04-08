@@ -1,8 +1,8 @@
 # [nodejs-cookbook](https://github.com/redguide/nodejs)
 
-[![CK Version](http://img.shields.io/cookbook/v/nodejs.svg?branch=master)](https://supermarket.getchef.com/cookbooks/nodejs) [![Build Status](https://img.shields.io/travis/redguide/nodejs.svg)](https://travis-ci.org/redguide/nodejs) [![Gitter chat](https://badges.gitter.im/redguide/nodejs.svg)](https://gitter.im/redguide/nodejs)
+[![CK Version](http://img.shields.io/cookbook/v/nodejs.svg?branch=master)](https://supermarket.chef.io/cookbooks/nodejs) [![Build Status](https://img.shields.io/travis/redguide/nodejs.svg)](https://travis-ci.org/redguide/nodejs) [![Gitter chat](https://badges.gitter.im/redguide/nodejs.svg)](https://gitter.im/redguide/nodejs)
 
-Installs node.js/io.js and manages npm
+Installs node.js/npm and includes a resource for managing npm packages
 
 ## Requirements
 
@@ -16,13 +16,12 @@ Note: Source installs require GCC 4.8+, which is not included on older distro re
 
 ### Chef
 
-- Chef 12.1+
+- Chef 12.14+
 
 ### Cookbooks
 
 - build-essential
 - ark
-- compat_resource
 
 ## Usage
 
@@ -90,22 +89,24 @@ include_recipe "nodejs::npm"
 
 _Warning:_ This recipe will include the `nodejs` recipe, which by default includes `nodejs::nodejs_from_package` if you did not set `node['nodejs']['install_method']`.
 
-## Custom Resources (Providers)
+## Resources
 
-### nodejs_npm
+### npm_package
 
-`nodejs_npm` let you install npm packages from various sources:
+note: This resource was previously named nodejs_npm. Calls to that resource name will still function, but cookbooks should be updated for the new npm_package resource name.
+
+`npm_package` let you install npm packages from various sources:
 
 - npm registry:
 
-  - name: `attribute :package`
-  - version: `attribute :version` (optional)
+  - name: `property :package`
+  - version: `property :version` (optional)
 
-- url: `attribute :url`
+- url: `property :url`
 
   - for git use `git://{your_repo}`
 
-- from a json (package.json by default): `attribute :json`
+- from a json (package.json by default): `property :json`
 
   - use `true` for default
   - use a `String` to specify json file
@@ -124,27 +125,27 @@ This LWRP attempts to use vanilla npm as much as possible (no custom wrapper).
 ### Packages
 
 ```ruby
-nodejs_npm "express"
+npm_package 'express'
 
-nodejs_npm "async" do
-  version "0.6.2"
+npm_package 'async' do
+  version '0.6.2'
 end
 
-nodejs_npm "request" do
-  url "github mikeal/request"
+npm_package 'request' do
+  url 'github mikeal/request'
 end
 
-nodejs_npm "grunt" do
-  path "/home/random/grunt"
+npm_package 'grunt' do
+  path '/home/random/grunt'
   json true
-  user "random"
+  user 'random'
 end
 
-nodejs_npm "my_private_module" do
-  path "/home/random/myproject" # The root path to your project, containing a package.json file
+npm_package 'my_private_module' do
+  path '/home/random/myproject' # The root path to your project, containing a package.json file
   json true
-  npm_token "12345-abcde-e5d4c3b2a1"
-  user "random"
+  npm_token '12345-abcde-e5d4c3b2a1'
+  user 'random'
   options ['--production'] # Only install dependencies. Skip devDependencies
 end
 ```

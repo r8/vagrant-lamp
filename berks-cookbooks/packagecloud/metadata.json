@@ -4,45 +4,42 @@
   "long_description": "Installs/Configures packagecloud.io repositories.",
   "maintainer": "Joe Damato",
   "maintainer_email": "joe@packagecloud.io",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "platforms": {
-
+    "ubuntu": ">= 0.0.0",
+    "debian": ">= 0.0.0",
+    "redhat": ">= 0.0.0",
+    "centos": ">= 0.0.0",
+    "amazon": ">= 0.0.0",
+    "oracle": ">= 0.0.0",
+    "fedora": ">= 0.0.0",
+    "scientific": ">= 0.0.0"
   },
   "dependencies": {
-
-  },
-  "recommendations": {
-
-  },
-  "suggestions": {
-
-  },
-  "conflicting": {
 
   },
   "providing": {
 
   },
-  "replacing": {
-
-  },
   "attributes": {
-
-  },
-  "groupings": {
 
   },
   "recipes": {
 
   },
-  "version": "0.3.0",
+  "version": "1.0.0",
   "source_url": "https://github.com/computology/packagecloud-cookbook",
   "issues_url": "https://github.com/computology/packagecloud-cookbook/issues",
   "privacy": false,
   "chef_versions": [
-
+    [
+      ">= 12.5"
+    ]
   ],
   "ohai_versions": [
+
+  ],
+  "gems": [
 
   ]
 }

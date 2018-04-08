@@ -6,7 +6,7 @@
 # Resource:: zipfile
 #
 # Copyright:: 2010-2017, VMware, Inc.
-# Copyright:: 2011-2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -117,7 +117,6 @@ action_class do
   rescue LoadError
     Chef::Log.info("Missing gem 'rubyzip'...installing now.")
     chef_gem 'rubyzip' do
-      version node['windows']['rubyzipversion']
       action :install
       compile_time true
     end

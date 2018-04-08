@@ -1,0 +1,26 @@
+E, [2014-10-12T11:26:17.669406 #58582] ERROR -- Kitchen: ------Exception-------
+E, [2014-10-12T11:26:17.669523 #58582] ERROR -- Kitchen: Class: Kitchen::UserError
+E, [2014-10-12T11:26:17.669572 #58582] ERROR -- Kitchen: Message: Kitchen YAML file /Users/joe/code/packagecloud/test/fixtures/cookbooks/packagecloud_test/recipes/.kitchen.yml does not exist.
+E, [2014-10-12T11:26:17.669604 #58582] ERROR -- Kitchen: ------Backtrace-------
+E, [2014-10-12T11:26:17.669625 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/loader/yaml.rb:74:in `read'
+E, [2014-10-12T11:26:17.669641 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:78:in `data'
+E, [2014-10-12T11:26:17.669660 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:66:in `suites'
+E, [2014-10-12T11:26:17.669676 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:90:in `filter_instances'
+E, [2014-10-12T11:26:17.669698 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:72:in `build_instances'
+E, [2014-10-12T11:26:17.669713 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/config.rb:52:in `instances'
+E, [2014-10-12T11:26:17.669728 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/command.rb:64:in `get_filtered_instances'
+E, [2014-10-12T11:26:17.669754 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/command.rb:85:in `parse_subcommand'
+E, [2014-10-12T11:26:17.669769 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/command/list.rb:31:in `call'
+E, [2014-10-12T11:26:17.669783 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/cli.rb:47:in `perform'
+E, [2014-10-12T11:26:17.669798 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/cli.rb:81:in `list'
+E, [2014-10-12T11:26:17.669814 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/thor-0.19.1/lib/thor/command.rb:27:in `run'
+E, [2014-10-12T11:26:17.669830 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/thor-0.19.1/lib/thor/invocation.rb:126:in `invoke_command'
+E, [2014-10-12T11:26:17.669844 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/cli.rb:233:in `invoke_task'
+E, [2014-10-12T11:26:17.669858 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/thor-0.19.1/lib/thor.rb:359:in `dispatch'
+E, [2014-10-12T11:26:17.669872 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/thor-0.19.1/lib/thor/base.rb:440:in `start'
+E, [2014-10-12T11:26:17.669886 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/bin/kitchen:13:in `block in <top (required)>'
+E, [2014-10-12T11:26:17.669900 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/lib/kitchen/errors.rb:81:in `with_friendly_errors'
+E, [2014-10-12T11:26:17.669926 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/lib/ruby/gems/2.1.0/gems/test-kitchen-1.2.1/bin/kitchen:13:in `<top (required)>'
+E, [2014-10-12T11:26:17.669941 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/bin/kitchen:23:in `load'
+E, [2014-10-12T11:26:17.669955 #58582] ERROR -- Kitchen: /Users/joe/.rbenv/versions/2.1.0/bin/kitchen:23:in `<main>'
+E, [2014-10-12T11:26:17.669972 #58582] ERROR -- Kitchen: ----------------------

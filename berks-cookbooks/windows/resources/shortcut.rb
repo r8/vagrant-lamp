@@ -3,7 +3,8 @@
 # Cookbook:: windows
 # Resource:: shortcut
 #
-# Copyright:: 2010-2017, VMware, Inc.
+# Copyright:: 2010-2018, VMware, Inc.
+# Copyright:: 2017-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +19,7 @@
 # limitations under the License.
 #
 
-property :name, String
+property :shortcut_name, String, name_property: true
 property :target, String
 property :arguments, String
 property :description, String
@@ -28,8 +29,8 @@ property :iconlocation, String
 load_current_value do |desired|
   require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
 
-  link = WIN32OLE.new('WScript.Shell').CreateShortcut(desired.name)
-  name desired.name
+  link = WIN32OLE.new('WScript.Shell').CreateShortcut(desired.shortcut_name)
+  name desired.shortcut_name
   target(link.TargetPath)
   arguments(link.Arguments)
   description(link.Description)
@@ -39,8 +40,8 @@ end
 
 action :create do
   converge_if_changed do
-    converge_by "creating shortcut #{new_resource.name}" do
-      link = WIN32OLE.new('WScript.Shell').CreateShortcut(new_resource.name)
+    converge_by "creating shortcut #{new_resource.shortcut_name}" do
+      link = WIN32OLE.new('WScript.Shell').CreateShortcut(new_resource.shortcut_name)
       link.TargetPath = new_resource.target unless new_resource.target.nil?
       link.Arguments = new_resource.arguments unless new_resource.arguments.nil?
       link.Description = new_resource.description unless new_resource.description.nil?

@@ -19,11 +19,22 @@
 # limitations under the License.
 #
 
+# Specifies a name for the SMB share. The name may be composed of any valid file name characters, but must be less than 80 characters long. The names pipe and mailslot are reserved for use by the computer.
 property :share_name, String, name_property: true
+
+# Specifies the path of the location of the folder to share. The path must be fully qualified. Relative paths or paths that contain wildcard characters are not permitted.
 property :path, String
+
+# Specifies an optional description of the SMB share. A description of the share is displayed by running the Get-SmbShare cmdlet. The description may not contain more than 256 characters.
 property :description, String, default: ''
+
+# Specifies which accounts are granted full permission to access the share. Use a comma-separated list to specify multiple accounts. An account may not be specified more than once in the FullAccess, ChangeAccess, or ReadAccess parameter lists, but may be specified once in the FullAccess, ChangeAccess, or ReadAccess parameter list and once in the NoAccess parameter list.
 property :full_users, Array, default: []
+
+# Specifies which users are granted modify permission to access the share
 property :change_users, Array, default: []
+
+# Specifies which users are granted read permission to access the share. Multiple users can be specified by supplying a comma-separated list.
 property :read_users, Array, default: []
 
 include Windows::Helper
@@ -40,11 +51,11 @@ action :create do
 
   if different_path?
     unless current_resource.path.nil? || current_resource.path.empty?
-      converge_by('Removing previous share') do
+      converge_by("Removing previous share #{new_resource.share_name}") do
         delete_share
       end
     end
-    converge_by("Creating share #{current_resource.share_name}") do
+    converge_by("Creating share #{new_resource.share_name}") do
       create_share
     end
   end
@@ -147,58 +158,18 @@ action_class do
   end
 
   def different_members?(permission_type)
-    !(current_resource.send(permission_type.to_sym) - new_resource.send(permission_type.to_sym).map(&:downcase)).empty? &&
+    !(current_resource.send(permission_type.to_sym) - new_resource.send(permission_type.to_sym).map(&:downcase)).empty? ||
       !(new_resource.send(permission_type.to_sym).map(&:downcase) - current_resource.send(permission_type.to_sym)).empty?
   end
 
-  def find_share_by_name(name)
-    wmi = WIN32OLE.connect('winmgmts://')
-    shares = wmi.ExecQuery("SELECT * FROM Win32_Share WHERE name = '#{name}'")
-    shares.Count == 0 ? nil : shares.ItemIndex(0)
-  end
-
   def delete_share
-    find_share_by_name(new_resource.share_name).delete
+    powershell_out("Remove-SmbShare -Name \"#{new_resource.share_name}\" -Description \"#{new_resource.description}\" -Confirm")
   end
 
   def create_share
     raise "#{new_resource.path} is missing or not a directory" unless ::File.directory? new_resource.path
-    new_share_script = <<-EOH
-      $share = [wmiclass]"\\\\#{ENV['COMPUTERNAME']}\\root\\CimV2:Win32_Share"
-      $result=$share.Create('#{new_resource.path}',
-                            '#{new_resource.share_name}',
-                            0,
-                            16777216,
-                            '#{new_resource.description}',
-                            $null,
-                            $null)
-      exit $result.returnValue
-    EOH
-    r = powershell_out new_share_script
-    message = case r.exitstatus
-              when 2
-                '2 : Access Denied'
-              when 8
-                '8 : Unknown Failure'
-              when 9
-                '9 : Invalid Name'
-              when 10
-                '10 : Invalid Level'
-              when 21
-                '21 : Invalid Parameter'
-              when 22
-                '22 : Duplicate Share'
-              when 23
-                '23 : Redirected Path'
-              when 24
-                '24 : Unknown Device or Directory'
-              when 25
-                '25 : Net Name Not Found'
-              else
-                r.exitstatus.to_s
-              end
 
-    raise "Could not create share.  Win32_Share.create returned #{message}" if r.error?
+    powershell_out("New-SmbShare -Name \"#{new_resource.share_name}\" -Path \"#{new_resource.path}\" -Confirm")
   end
 
   # set_share_permissions - Enforce the share permissions as dictated by the resource attributes
@@ -230,7 +201,7 @@ action_class do
         )
         #Create the Trusteee Object
         $Trustee = ([WMIClass] "\\\\$env:computername\\root\\cimv2:Win32_Trustee").CreateInstance()
-        $account = get-wmiobject Win32_Account -filter "Name like '$Name' and Domain like '$Domain'"
+        $account = get-wmiobject Win32_Account -filter "Name = '$Name' and Domain = '$Domain'"
         $accountSID = [WMI] "\\\\$env:ComputerName\\root\\cimv2:Win32_SID.SID='$($account.sid)'"
 
         $Trustee.Domain = $Domain

@@ -2,6 +2,19 @@
 
 This file is used to list changes made in each version of the git cookbook.
 
+## 9.0.0 (2018-03-08)
+
+- Remove the dependency on the homebrew cookbook by not automatically installing homebrew in the git resource on macOS systems. Homebrew needs to be setup before this resource runs and that should probably be the very first thing you do on a macOS system
+- Use the build_essential resource instead of including the default recipe. This requires version 5.0 or later of the build-essential cookbook and allows us to use the build_essential resource that will be built into Chef 14 when that ships
+- Remove extra includes in the resources that weren't necessary
+- Updated testing to include Fedora 27, Ubuntu 18.04, Debian 9, macOS 10.12, and Windows 2016
+
+## 8.0.1 (2018-02-10)
+
+- Resolve the new FC118 foodcritic warning
+- Remove the ChefSpec matchers which are auto generated now
+- Resolve FC104 warning
+
 ## 8.0.0 (2017-09-01)
 
 ### Breaking Changes

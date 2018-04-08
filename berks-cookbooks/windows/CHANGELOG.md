@@ -2,6 +2,139 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 4.1.4 (2018-03-29)
+
+- Raise in windows_feature_powershell if we're on PS < 3.0
+
+## 4.1.3 (2018-03-28)
+
+- Restore support for Windows 2008 R2 in windows_feature_dism
+
+## 4.1.2 (2018-03-27)
+
+- Improve creation messaging for shares
+- Allow feature names to be case insensitive in windows_feature
+
+## 4.1.1 (2018-03-23)
+
+- Simplify delete action slightly in windows_pagefile
+- Don't use win_friendly_path helper in windows_pagefile since we already coerce the path value
+
+## 4.1.0 (2018-03-21)
+
+- Adds Caching for WIndows Feature Powershell resource using the same sort of logic we use on windows_feature_dism. This gives us a 3.5X speedup when no features need to be changed (subsequent runs after the change)
+- Warn if we're on w2k12 and trying to use source/management properties in windows_feature_powershell since that doesn't work.
+- Properly parse features into arrays so installing an array of features works in dism/powershell. This is the preferred way to install a number of features and will be faster than a large number of feature resources
+- Fix description of properties for pagefile in the readme
+
+## 4.0.2 (2018-03-20)
+
+- Enable FC016 testing
+- Enable FC059 testing
+- Properly calculate available packages if source is passed in windows_feature_dism resource
+
+## 4.0.1 (2018-03-07)
+
+Fix the previous update to windows_feature_dism to use 'override' level of attributes not the normal level which persists to the node. Thanks to @Annih for pointing out the mistake here.
+
+## 4.0.0 (2018-03-05)
+
+### WARNING
+
+This release contains a complete rewrite to windows_feature_dism resource and includes several behavior changes to windows_feature resource. Make sure to read the complete list of changes below before deploying this to production systems.
+
+#### DISM feature caching Ohai plugin replacement
+
+In the 3.X cookbook we installed an Ohai plugin that cached the state of features on the node, and we reloaded that plugin anytime we installed/removed a feature from the system. This greatly sped up Chef runs where no features were actually installed/removed (2nd run and later). Without the caching each resource would take about 1 second longer while it queried current feature state. Using Ohai to cache this data was problematic though due to incompatibilities with Chef Solo, the reliance on the ohai cookbook, and the addition of extra node data which had to be stored on the Chef Server.
+
+In the 4.0 release instead of caching data via an Ohai plugin we just write directly to the node within the resource. This avoids the need to load in the ohai plugin and the various issues that come with that. In the end it's basically the exact same thing, but less impacting on end users and faster when the data needs to be updated.
+
+#### Fail when feature is missing in windows_feature_dism
+
+The windows_feature_dism resource had a rather un-Chef behavior in which it just warned you if a feature wasn't available on your platform and then continued on silently. This isn't how we handle missing packages in any of our package resource and because of that it's not going to be what anyone expects out of the box. If someone really wants SNMP installed and we can't install it we should fail instead of continuing on as if we did install it. So we'll now do the following things:
+
+- When installing a feature that doesn't exist: fail
+- When removing a feature that doesn't exist: continue since it is technically removed
+- When deleting a feature that doesn't exist: continue since it is technically deleted
+
+For some users, particularly those writing community cookbooks, this is going to be a breaking change. I'd highly recommend putting logic within your cookbooks to only install features on supported releases of Windows. If you'd just like it to continue even with a failure you can also use `ignore_failure true` on your resource although this produces a lot of failure messaging in logs.
+
+#### Properly support features as an array in windows_feature_dism
+
+We claimed to support installing features as an array in the windows_feature_dism resource previously, but it didn't actually work. The actual result was a warning that the array of features wasn't available on your platform since we compared the array to available features as if it was a string. We now properly support installation as a array and we do validation on each feature in the array to make sure the features are available on your Windows release.
+
+#### Install as the default action in windows_feature_powershell
+
+Due to some previous refactoring the :install action was not the default action for windows_feature_powershell. For all other package resources in Chef install is the default so this would likely lead to some unexpected behavior in cookbooks. This is technically a breaking change, but I suspect everyone assumed :install was always the default.
+
+#### servermanagercmd.exe Support Removal
+
+This cookbook previously supported servermanagercmd.exe, which was necessary for feature installation on Windows 2003 / 2008 (not R2) systems. Windows 2003 went full EOL in 2015 and 2008 went into extended support in 2015\. Neither releases are supported platforms for Chef or this cookbook so we've chosen to simplify the code and remove support entirely.
+
+#### Remove the undocumented node['windows']['rubyzipversion'] attribute
+
+This attribute was a workaround for a bug in the rubyzip gem YEARS ago that's just not necessary anymore. We also never documented this attribute and a resource shouldn't change behavior based on attributes.
+
+## 3.5.2 (2018-03-01)
+
+- Remove value_for_feature_provider helper which wasn't being used and was using deprecated methods
+- Add all the Windows Core editions to the version helper
+- Simplify / speedup how we find the font directory in windows_font
+- Don't bother enabling why-run mode in the resources since it's enabled by default
+- Don't include mixlib-shellout in the resources since it's included by default
+- Fix installation messaging for windows_feature_powershell to properly show all features being installed
+- Use powershell for the share creation / deletion in windows_share. This speeds up the runs and fixes some of the failures.
+
+## 3.5.1 (2018-02-23)
+
+- Add a new `shortcut_name` property to `windows_shortcut`
+- Use Chef's built in registry_key_exists helper in `windows_printer_port`
+- Fix the `source` coerce in `windows_font`
+
+## 3.5.0 (2018-02-23)
+
+- Add Windows 2016 to the supported releases in the readme
+- Add Windows 10 detection to the version helper
+- Remove the Chefspec matchers. These are auto generated by ChefSpec now. If this causes your specs to fail upgrade ChefDK
+- In `certificate_binding` support `hostnameport` option if address is a hostname
+- Convert several tests to InSpec tests and add additional test scenarios
+- Remove `required: true` on the name_properties, which serves no purpose and will be a Foodcritic rule in the next Foodcritic release
+- Fix `windows_feature` logging to work when the user provides an array of features
+- Don't both coercing a symbol into a symbol in the `windows_auto_run` resource.
+- Switch `windows_font` over to the built in path helper in Chef, which a much more robust
+- Don't coerce forward slashes to backslashes in the `windows_font` `source` property if the source is a URI
+- Add a new `path` property to `windows_pagefile` for properly overriding the resource name
+- Coerce backslashes to forward slashes in `windows_pagefile`'s `path` property so we do the right thing even if a user gives bad input
+- Add a new `program_name` property in windows_auto_run for overriding the resource name
+- Rename `program` property to `path` in windows_auto_run. The legacy name will continue to work, but cookbooks should be updated
+- Coerce the `path` property to use backslashes in `windows_auto_run` so it works no matter what format of path the user provides
+- Avoid writing out an extra space in `windows_auto_run`'s registry entry when the user doesn't specify an arg
+- Added yard comments to many of the helper methods
+
+## 3.4.4 (2018-01-19)
+
+- Fix undefined method for 'ipv4_address' in windows_printer_port
+
+## 3.4.3 (2018-01-04)
+
+- Added missing parentheses around PersistKeySet flag that was preventing PowerShell from creating X509Certificate2 object
+
+## 3.4.2 (2018-01-02)
+
+- Add deprecation warnings for windows_path and windows_task which are now included in Chef 13\. These will be removed from this cookbook in Sept 2018.
+
+## 3.4.1 (2017-12-06)
+
+- Fix long-running filtering by replace LIKE with equality sign in the share resource
+- Use logical OR instead of AND when trying to detect share permissions changing in the share resource
+- Remove extra new_resource.updated_by_last_action in the windows_task resource that resulted in a Foodcritic warning
+
+## 3.4.0 (2017-11-14)
+
+- Add a root key property for the auto_run resource
+- Fix a resource typo where a name_property was still written name_attribute
+- Resolve FC108 warnings
+
 ## 3.3.0 (2017-11-06)
 
 - Add new dns resource. See readme for examples
@@ -14,14 +147,19 @@ This file is used to list changes made in each version of the windows cookbook.
 - Add additional certificate store names
 - Add the ability to define a timeout on windows_feature
 - Multiple improvements to the font resource
+
   - Improved logging, particularly debug logging
   - Allow pulling the font from a remote location using remote_file
   - Fix some failures in fetching local fonts
   - Added a font_name property that allows you specify the local name of the font, which can be different from the name of the chef resource. This allows you to create more friendly resource names for your converge.
   - Handle font resources with backslashes in their source
+
 - Remove source property from servermanagercmd provider as it does not support it.
+
 - Remove converge_by around inner powershell_script resource to stop it always reporting as changed
+
 - Change install feature guards to work on Windows 2008r2
+
 - Allow dism feature installs to work on non-English systems
 
 ## 3.1.3 (2017-09-18)
@@ -29,7 +167,6 @@ This file is used to list changes made in each version of the windows cookbook.
 ### windows_task and windows_path deprecation
 
 s of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
-
 
 ## 3.1.2 (2017-08-14)
 
@@ -67,7 +204,7 @@ s of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included 
 
 ## 3.0.1 (2017-03-17)
 
-- Fix `windows_share` to be fully idempotent.  Fixes #447
+- Fix `windows_share` to be fully idempotent. Fixes #447
 
 ## 3.0.0 (2017-03-15)
 

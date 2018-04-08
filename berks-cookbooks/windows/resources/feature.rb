@@ -3,7 +3,7 @@
 # Cookbook:: windows
 # Resource:: feature
 #
-# Copyright:: 2011-2017, Chef Software, Inc.
+# Copyright:: 2011-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,63 +25,32 @@ property :management_tools, [true, false], default: false
 property :install_method, Symbol, equal_to: [:windows_feature_dism, :windows_feature_powershell, :windows_feature_servermanagercmd]
 property :timeout, Integer, default: 600
 
-include Windows::Helper
-
-def whyrun_supported?
-  true
-end
-
 action :install do
-  run_default_provider :install
+  run_default_subresource :install
 end
 
 action :remove do
-  run_default_provider :remove
+  run_default_subresource :remove
 end
 
 action :delete do
-  run_default_provider :delete
+  run_default_subresource :delete
 end
 
 action_class do
-  def locate_default_provider
-    if new_resource.install_method
-      new_resource.install_method
-    elsif ::File.exist?(locate_sysnative_cmd('dism.exe'))
-      :windows_feature_dism
-    elsif ::File.exist?(locate_sysnative_cmd('servermanagercmd.exe'))
-      :windows_feature_servermanagercmd
-    else
-      :windows_feature_powershell
-    end
-  end
+  # call the appropriate windows_feature resource based on the specified subresource
+  # @return [void]
+  def run_default_subresource(desired_action)
+    raise 'Support for Windows feature installation via servermanagercmd.exe has been removed as this support is no longer needed in Windows 2008 R2 and above. You will need to update your cookbook to install either via dism or powershell (preferred).' if new_resource.install_method == :windows_feature_servermanagercmd
 
-  def run_default_provider(desired_action)
-    case locate_default_provider
-    when :windows_feature_dism
-      windows_feature_dism new_resource.name do
-        action desired_action
-        feature_name new_resource.feature_name
-        source new_resource.source if new_resource.source
-        all new_resource.all
-        timeout new_resource.timeout
-      end
-    when :windows_feature_servermanagercmd
-      windows_feature_servermanagercmd new_resource.name do
-        action desired_action
-        feature_name new_resource.feature_name
-        all new_resource.all
-        timeout new_resource.timeout
-      end
-    when :windows_feature_powershell
-      windows_feature_powershell new_resource.name do
-        action desired_action
-        feature_name new_resource.feature_name
-        source new_resource.source if new_resource.source
-        all new_resource.all
-        timeout new_resource.timeout
-        management_tools new_resource.management_tools
-      end
+    subresource = new_resource.install_method || :windows_feature_dism
+    declare_resource(subresource, new_resource.name) do
+      action desired_action
+      feature_name new_resource.feature_name
+      source new_resource.source if new_resource.source
+      all new_resource.all
+      timeout new_resource.timeout
+      management_tools new_resource.management_tools if subresource == :windows_feature_powershell
     end
   end
 end

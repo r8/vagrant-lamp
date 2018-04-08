@@ -2,12 +2,10 @@ class Chef
   class Provider
     class GitClient
       class Source < Chef::Provider::GitClient
-        include Chef::DSL::IncludeRecipe
-
         action :install do
           raise "#{node['platform']} is not supported by the git_client source resource" unless platform_family?('rhel', 'suse', 'fedora', 'debian', 'amazon')
 
-          include_recipe 'build-essential'
+          build_essential 'install compilation tools for git'
 
           # move this to attributes.
           case node['platform_family']

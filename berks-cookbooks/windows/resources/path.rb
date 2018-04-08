@@ -24,6 +24,8 @@ property :path, String, name_property: true
 include Windows::Helper
 
 action :add do
+  Chef::Log.warn('The windows_path resource has been moved into the chef-client itself as of chef-client 13.4. This resource will be removed from the windows cookbook Sept 2018 (1 year after the 13.4 release).')
+
   env 'path' do
     action :modify
     delim ::File::PATH_SEPARATOR

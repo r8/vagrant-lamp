@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the mingw cookbook.
 
+## 2.0.2 (2018-02-15)
+
+- Remove kind_of usage in the custom resources (FC117)
+
 ## 2.0.1 (2017-04-26)
 
 - Test with Local Delivery instead of Rake

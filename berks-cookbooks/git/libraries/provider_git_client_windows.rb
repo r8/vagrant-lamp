@@ -3,8 +3,6 @@ class Chef
   class Provider
     class GitClient
       class Windows < Chef::Provider::GitClient
-        include Chef::DSL::IncludeRecipe
-
         provides :git_client, os: 'windows'
 
         action :install do
@@ -36,7 +34,7 @@ class Chef
           end
 
           windows_path GIT_PATH do
-            notifies :create, 'ruby_block[Add Git Path]', :immediately
+            notifies :run, 'ruby_block[Add Git Path]', :immediately
             action :add
           end
         end
