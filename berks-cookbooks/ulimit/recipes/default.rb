@@ -1,4 +1,4 @@
-# Cookbook Name:: ulimit
+# Cookbook:: ulimit
 # Recipe:: default
 #
 # Copyright 2012, Brightcove, Inc
@@ -17,20 +17,20 @@
 #
 ulimit = node['ulimit']
 
-case node['platform']
-  when "debian", "ubuntu"
-    template "/etc/pam.d/su" do
-      cookbook ulimit['pam_su_template_cookbook']
-    end
-    
-    cookbook_file "/etc/pam.d/sudo" do
-      cookbook node['ulimit']['ulimit_overriding_sudo_file_cookbook']
-      source node['ulimit']['ulimit_overriding_sudo_file_name']
-      mode "0644"
-    end
+case node['platform_family']
+when 'debian'
+  template '/etc/pam.d/su' do
+    cookbook ulimit['pam_su_template_cookbook']
+  end
+
+  cookbook_file '/etc/pam.d/sudo' do
+    cookbook node['ulimit']['ulimit_overriding_sudo_file_cookbook']
+    source node['ulimit']['ulimit_overriding_sudo_file_name']
+    mode '0644'
+  end
 end
 
-if ulimit.has_key?('users')
+if ulimit.key?('users')
   ulimit['users'].each do |user, attributes|
     user_ulimit user do
       attributes.each do |a, v|

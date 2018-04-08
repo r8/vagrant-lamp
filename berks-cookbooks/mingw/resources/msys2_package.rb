@@ -25,8 +25,8 @@
 # well that's your problem isn't it?  And they don't believe in preserving
 # older versions.  Good luck!
 
-property :package, kind_of: String, name_property: true
-property :root, kind_of: String, required: true
+property :package, String, name_property: true
+property :root, String, required: true
 
 resource_name :msys2_package
 

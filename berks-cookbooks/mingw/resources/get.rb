@@ -20,8 +20,8 @@
 # Installs the core msys utilities needed for mingw/git/any other posix
 # based toolchain at a desired location using mingw-get.exe.
 
-property :package, kind_of: String, name_property: true
-property :root, kind_of: String, required: true
+property :package, String, name_property: true
+property :root, String, required: true
 
 resource_name :mingw_get
 

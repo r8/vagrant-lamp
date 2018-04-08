@@ -41,7 +41,7 @@ port <%=@sentinel_port%>
 #
 # sentinel announce-ip 1.2.3.4
 <%= "sentinel announce-ip #{@announce_ip}" unless @announce_ip.nil? %>
-<%= "sentinel announce-ip #{@announce_port}" unless @announce_port.nil? %>
+<%= "sentinel announce-port #{@announce_port}" unless @announce_port.nil? %>
 
 # sentinel monitor <master-name> <ip> <redis-port> <quorum>
 #

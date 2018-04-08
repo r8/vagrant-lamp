@@ -24,6 +24,7 @@ when 'rhel', 'fedora', 'amazon'
   package 'zlib-devel'
 
   php_pear 'memcache' do
+    binary node['php']['pear']
     action :install
   end
 when 'debian'

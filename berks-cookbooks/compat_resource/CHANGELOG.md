@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the compat_resource cookbook.
 
+## 12.19.1 (2018-01-29)
+
+- Add deprecation notice to the readme
+
 ## 12.19.0 (2017-04-17)
 
 - Suppress warning already initialized constant

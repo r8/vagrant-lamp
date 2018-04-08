@@ -18,10 +18,9 @@
 # limitations under the License.
 #
 
-include Chef::Mixin::ShellOut
 include Windows::Helper
 
-property :url, String, name_property: true, required: true
+property :url, String, name_property: true
 property :user, String
 property :sddl, String
 property :exists, [true, false], desired_state: true

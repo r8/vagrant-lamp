@@ -1,5 +1,15 @@
 # NodeJS Cookbook Changelog
 
+## 5.0.0 (2017-11-15)
+
+- nodejs_npm resource has been converted to a custom resource and renamed to npm_package. The existing resource name will continue to function, but over time code should be updated for the new name. This name change has been made so we can eventually merge this resource into the chef-client.
+- compat_resource cookbook dependency has been removed and this cookbook instead requires Chef 12.14 or later
+- Chef 13 compatibility has been resolved
+- The npm_package resource now properly installs packages when the 'package' property is setA
+- Speed up npm operations by only returning a list of the desired package instead of every npm package
+- Speed up source installation by using multipackage install for the dependencies
+- Remove the broken url_valid? helper which didn't work
+
 ## 4.0.0 (2017-07-11)
 
 - Updated the cookbook to require Chef 12.1+ and the compat_resource cookbook

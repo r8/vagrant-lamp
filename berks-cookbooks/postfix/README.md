@@ -14,6 +14,7 @@ On RHEL-family systems, sendmail will be replaced with postfix.
 - Debian
 - RHEL/CentOS/Scientific
 - Amazon Linux (as of AMIs created after 4/9/2012)
+- FreeBSD
 
 May work on other platforms with or without modification.
 

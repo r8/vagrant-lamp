@@ -19,13 +19,11 @@ It installs and configures PHP and the PEAR package management system. Also incl
 ### Cookbooks
 
 - build-essential
-- mysql
 
 ## Attributes
 
 - `node['php']['install_method']` = method to install php with, default `package`.
 - `node['php']['directives']` = Hash of directives and values to append to `php.ini`, default `{}`.
-- `node['php']['pear']` = Name of the pear executable to use, default `pear`.
 
 The file also contains the following attribute types:
 
@@ -54,7 +52,7 @@ This cookbook includes resources for managing:
 
 - `channel_name`: name attribute. The name of the channel to discover
 - `channel_xml`: the channel.xml file of the channel you are adding
-- `pear`: pear binary, default: pear
+- `binary`: pear binary, default: pear
 
 #### Examples
 
@@ -100,11 +98,13 @@ end
 #### Properties
 
 - `package_name`: name attribute. The name of the pear package to install
-- version: the version of the pear package to install/upgrade. If no version is given latest is assumed.
-- `preferred_state`: PEAR by default installs stable packages only, this allows you to install pear packages in a devel, alpha or beta state
+- `version`: the version of the pear package to install/upgrade. If no version is given latest is assumed.
+- `channel`:
+- `options`: Add additional options to the underlying pear package command
 - `directives`: extra extension directives (settings) for a pecl. on most platforms these usually get rendered into the extension's .ini file
 - `zend_extensions`: extension filenames which should be loaded with zend_extension.
-- o`ptions`: Add additional options to the underlying pear package command
+- `preferred_state`: PEAR by default installs stable packages only, this allows you to install pear packages in a devel, alpha or beta state
+- `binary`: The pear binary to use, by default pear, can be overridden if the binary is not called pear, e.g. pear7
 
 #### Examples
 
@@ -137,6 +137,12 @@ end
 php_pear 'apc' do
   action :install
   directives(shm_size: 128, enable_cli: 1)
+end
+
+# install using the pear-7 binary
+php_pear 'apc' do
+  action :install
+  binary 'pear7'
 end
 
 # install the beta version of Horde_Url

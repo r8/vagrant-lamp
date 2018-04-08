@@ -2,6 +2,16 @@
 
 This file is used to list changes made in each version of the postfix cookbook.
 
+## 5.2.1 (2017-11-22)
+
+- Properly support FreeBSD
+- Do not run service restart for solaris which fails
+
+## 5.2.0 (2017-08-07)
+
+- Lazily evaluate the config template variables to allow overrides to properly apply
+- Avoid Chefspec deprecation warnings
+
 ## 5.1.1 (2017-07-28)
 
 - Fix support for Amazon Linux on Chef 13

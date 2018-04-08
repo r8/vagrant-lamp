@@ -22,7 +22,7 @@
 
 require 'resolv'
 
-property :device_id, String, name_property: true, required: true
+property :device_id, String, name_property: true
 property :comment, String
 property :default, [true, false], default: false
 property :driver_name, String, required: true

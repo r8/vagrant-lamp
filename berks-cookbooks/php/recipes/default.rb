@@ -23,10 +23,12 @@ include_recipe "php::#{node['php']['install_method']}"
 
 # update the main channels
 php_pear_channel 'pear.php.net' do
+  binary node['php']['pear']
   action :update
 end
 
 php_pear_channel 'pecl.php.net' do
+  binary node['php']['pear']
   action :update
 end
 

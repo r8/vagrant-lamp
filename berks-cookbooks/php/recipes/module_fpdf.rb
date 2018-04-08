@@ -22,10 +22,12 @@
 case node['platform_family']
 when 'rhel', 'fedora', 'amazon'
   pearhub_chan = php_pear_channel 'pearhub.org' do
+    binary node['php']['pear']
     action :discover
   end
   php_pear 'FPDF' do
     channel pearhub_chan.channel_name
+    binary node['php']['pear']
     action :install
   end
 when 'debian'

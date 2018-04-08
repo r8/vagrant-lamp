@@ -1,13 +1,12 @@
 # packagecloud cookbook
 
-This cookbook provides an LWRP for installing https://packagecloud.io repositories.
+This cookbook provides a resource for installing <https://packagecloud.io> repositories.
 
 NOTE: Please see the Changelog below for important changes if upgrading from 0.0.19 to 0.1.0.
 
 ## Usage
 
-Be sure to depend on `packagecloud` in `metadata.rb` so that the packagecloud
-resource will be loaded.
+Be sure to depend on `packagecloud` in `metadata.rb` so that the packagecloud resource will be loaded.
 
 For public repos:
 
@@ -48,10 +47,7 @@ end
 
 Valid options for `type` include `deb`, `rpm`, and `gem`.
 
-This cookbook performs checks to determine if a package exists before attempting
-to install it. To enable proxy support *for these checks* (not to be confused
-with proxy support for your package manager of choice), add the following
-attributes to your cookbook:
+This cookbook performs checks to determine if a package exists before attempting to install it. To enable proxy support _for these checks_ (not to be confused with proxy support for your package manager of choice), add the following attributes to your cookbook:
 
 ```
 default['packagecloud']['proxy_host'] = 'myproxy.organization.com'
@@ -60,32 +56,36 @@ default['packagecloud']['proxy_port'] = '80'
 
 ## Interactions with other cookbooks
 
-On CentOS 5, the official chef yum cookbook overwrites the file
-`/etc/yum.conf` setting some default values. When it does this, the `cachedir`
-value is changed from the CentOS5 default to the default value in the
-cookbook. The result of this change is that any packagecloud repository
-installed *before* a repository installed with the yum cookbook will appear as
-though it's gpg keys were not imported.
+On CentOS 5, the official chef yum cookbook overwrites the file `/etc/yum.conf` setting some default values. When it does this, the `cachedir` value is changed from the CentOS5 default to the default value in the cookbook. The result of this change is that any packagecloud repository installed _before_ a repository installed with the yum cookbook will appear as though it's gpg keys were not imported.
 
 There are a few potential workarounds for this:
 
-- Pass the "-y" flag to package resource using the `options` attribute. This
-  should cause yum to import the GPG key automatically if it was not imported
-  already.
-- Move your packagecloud repos so that they are installed last, after any/all
-  repos installed via the yum cookbook.
-- Set the cachedir option in the chef yum cookbook to the system default value
-  of `/var/cache/yum` using the `yum_globalconfig` resource.
+- Pass the "-y" flag to package resource using the `options` attribute. This should cause yum to import the GPG key automatically if it was not imported already.
+- Move your packagecloud repos so that they are installed last, after any/all repos installed via the yum cookbook.
+- Set the cachedir option in the chef yum cookbook to the system default value of `/var/cache/yum` using the `yum_globalconfig` resource.
 
-CentOS 6 and 7 are not affected as the default `cachedir` value provided by
-the yum chef cookbook is set to the system default, unless you use the
-`yum_globalconfig` resource to set a custom cachedir. If you do set a custom
-`cachedir`, you should make sure to setup packagecloud repos after that
-resource is set so that the GPG keys end up in the right place.
+CentOS 6 and 7 are not affected as the default `cachedir` value provided by the yum chef cookbook is set to the system default, unless you use the `yum_globalconfig` resource to set a custom cachedir. If you do set a custom `cachedir`, you should make sure to setup packagecloud repos after that resource is set so that the GPG keys end up in the right place.
 
 ## Changelog
 
 See CHANGELOG.md for more recent changes.
 
 ## Credits
+
 Computology, LLC.
+
+## License
+
+```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```

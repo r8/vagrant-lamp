@@ -2,6 +2,42 @@
 
 This file is used to list changes made in each version of the openssl cookbook.
 
+## 8.1.2 (2018-02-09)
+
+- Fix typo in resources that caused failures on Windows.
+- Properly reference key_cipher in the readme
+
+## 8.1.1 (2018-01-05)
+
+- Add YARD comments to all the helpers
+- Move valid ciphers directly into the equal_to check
+- Remove the Chefspec matchers since modern ChefSpec does this automatically
+- Fix failures on Windows nodes
+
+## 8.1.0 (2017-12-28)
+
+- Adding x509 support for /ST and /L
+- Allow passing private key content to rsa_public_key resource via property
+- Fix openssl_rsa_public_key converging on every run
+- Fix undefied method "cipher" error in openssl_rsa_private_key resource
+
+## 8.0.0 (2017-12-11)
+
+- Added a new openssl_rsa_public_key resource which generates a public key from a private key
+- Rename openssl_rsa_key to openssl_rsa_private_key, while still allowing the old name to function. This resource actually generates private keys, but the previous name didn't make that clear
+- Added owner, group, and mode properties to all of the resources so you could control who owned the files you generated
+- Set the default modes of generated files to 640 instead of 644
+- Set the files to generate using node['root_group'] not 'root' for compatibility on other *nix systems such as FreeBSD and macOS
+- Added a new property to openssl_rsa_private_key for specifying the cipher to use
+- Converted integration tests to InSpec and moved all resources to a single Kitchen suite for quicker testing
+- Added a force property to allow overwriting any existing key that may exist
+- Fixed upgrade recipe failures on Debian 9
+- Added a new path property which allows you to set the path there instead of in the resource's name
+- Improved input validation in some of the helpers
+- Added a deprecation message in Opscode::OpenSSL::Password helper "secure_password" and removed readme documentation
+- Added a warning in the upgrade recipe if we're on an unsupported platform
+- Switched the upgrade recipe to a multipackage upgrade to speed up Chef runs
+
 ## 7.1.0 (2017-05-30)
 
 - Add supported platforms to the metdata

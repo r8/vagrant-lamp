@@ -24,6 +24,7 @@ when 'rhel', 'fedora', 'amazon'
   package %w(httpd-devel pcre pcre-devel)
 
   php_pear 'APCu' do
+    binary node['php']['pear']
     action :install
     directives(shm_size: '128M', enable_cli: 0)
   end

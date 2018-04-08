@@ -18,7 +18,7 @@ Installs packages required for compiling C software from source. Use this cookbo
 
 ### Chef
 
-- Chef 12.5+
+- Chef 12.7+
 
 ### Cookbooks
 
@@ -110,9 +110,11 @@ build_essential 'some name you choose' do
 end
 ```
 
-## License & Authors
+## Maintainers
 
-**Author:** Cookbook Engineering Team ([cookbooks@chef.io](mailto:cookbooks@chef.io))
+This cookbook is maintained by Chef's Community Cookbook Engineering team. Our goal is to improve cookbook quality and to aid the community in contributing to cookbooks. To learn more about our team, process, and design goals see our [team documentation](https://github.com/chef-cookbooks/community_cookbook_documentation/blob/master/COOKBOOK_TEAM.MD). To learn more about contributing to cookbooks like this see our [contributing documentation](https://github.com/chef-cookbooks/community_cookbook_documentation/blob/master/CONTRIBUTING.MD), or if you have general questions about this cookbook come chat with us in #cookbok-engineering on the [Chef Community Slack](http://community-slack.chef.io/)
+
+## License
 
 **Copyright:** 2009-2016, Chef Software, Inc.
 
