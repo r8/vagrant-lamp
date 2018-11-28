@@ -19,7 +19,7 @@
 
 include_recipe 'postfix::_attributes'
 
-package 'postfix'
+package node['postfix']['packages']
 
 package 'procmail' if node['postfix']['use_procmail']
 

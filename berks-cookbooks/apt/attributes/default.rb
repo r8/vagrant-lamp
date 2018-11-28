@@ -41,12 +41,15 @@ default['apt']['unattended_upgrades']['auto_fix_interrupted_dpkg'] = false
 default['apt']['unattended_upgrades']['minimal_steps'] = false
 default['apt']['unattended_upgrades']['install_on_shutdown'] = false
 default['apt']['unattended_upgrades']['mail'] = nil
+default['apt']['unattended_upgrades']['sender'] = nil
 default['apt']['unattended_upgrades']['mail_only_on_error'] = true
 default['apt']['unattended_upgrades']['remove_unused_dependencies'] = false
 default['apt']['unattended_upgrades']['automatic_reboot'] = false
 default['apt']['unattended_upgrades']['automatic_reboot_time'] = 'now'
 default['apt']['unattended_upgrades']['dl_limit'] = nil
 default['apt']['unattended_upgrades']['random_sleep'] = nil
+default['apt']['unattended_upgrades']['syslog_enable'] = false
+default['apt']['unattended_upgrades']['syslog_facility'] = 'daemon'
 
 default['apt']['confd']['force_confask'] = false
 default['apt']['confd']['force_confdef'] = false

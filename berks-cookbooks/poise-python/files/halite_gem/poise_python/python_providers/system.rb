@@ -28,11 +28,14 @@ module PoisePython
       provides(:system)
       packages('python', {
         debian: {
+          '~> 10.0' => %w{python3.6 python2.7},
+          '~> 9.0' => %w{python3.5 python2.7},
           '~> 8.0' => %w{python3.4 python2.7},
           '~> 7.0' => %w{python3.2 python2.7 python2.6},
           '~> 6.0' => %w{python3.1 python2.6 python2.5},
         },
         ubuntu: {
+          '18.04' => %w{python3.6 python2.7},
           '16.04' => %w{python3.5 python2.7},
           '14.04' => %w{python3.4 python2.7},
           '12.04' => %w{python3.2 python2.7},

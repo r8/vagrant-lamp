@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.1.2
+
+* Drop support for Chef that uses Ruby 2.1 (<= 12.13).
+* Fix handling of RPM epoch prefixes in the system package resource.
+
 ## v2.1.1
 
 * Fix the SCL repository enable command for RHEL.

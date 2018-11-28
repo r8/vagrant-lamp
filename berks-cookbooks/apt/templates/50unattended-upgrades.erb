@@ -25,7 +25,7 @@ Unattended-Upgrade::Package-Blacklist {
 };
 
 // This option allows you to control if on a unclean dpkg exit
-// unattended-upgrades will automatically run 
+// unattended-upgrades will automatically run
 //   dpkg --force-confold --configure -a
 // The default is true, to ensure updates keep getting installed
 Unattended-Upgrade::AutoFixInterruptedDpkg "<%= node['apt']['unattended_upgrades']['auto_fix_interrupted_dpkg'] ? 'true' : 'false' %>";
@@ -41,12 +41,18 @@ Unattended-Upgrade::MinimalSteps "<%= node['apt']['unattended_upgrades']['minima
 // This will (obviously) make shutdown slower
 Unattended-Upgrade::InstallOnShutdown "<%= node['apt']['unattended_upgrades']['install_on_shutdown'] ? 'true' : 'false' %>";
 
+<% if node['apt']['unattended_upgrades']['mail'] -%>
 // Send email to this address for problems or packages upgrades
 // If empty or unset then no email is sent, make sure that you
 // have a working mail setup on your system. A package that provides
 // 'mailx' must be installed.
-<% if node['apt']['unattended_upgrades']['mail'] -%>
 Unattended-Upgrade::Mail "<%= node['apt']['unattended_upgrades']['mail'] %>";
+<% end -%>
+
+<% if node['apt']['unattended_upgrades']['sender'] -%>
+// This option allows to customize the email address used in the
+// 'From' header. unattended-upgrades will use "root" if unset.
+Unattended-Upgrade::Sender "<%= node['apt']['unattended_upgrades']['sender'] %>";
 <% end -%>
 
 // Set this value to "true" to get emails only on errors. Default
@@ -57,19 +63,25 @@ Unattended-Upgrade::MailOnlyOnError "<%= node['apt']['unattended_upgrades']['mai
 // (equivalent to apt-get autoremove)
 Unattended-Upgrade::Remove-Unused-Dependencies "<%= node['apt']['unattended_upgrades']['remove_unused_dependencies'] ? 'true' : 'false' %>";
 
-// Automatically reboot *WITHOUT CONFIRMATION* if a 
-// the file /var/run/reboot-required is found after the upgrade 
+// Automatically reboot *WITHOUT CONFIRMATION* if a
+// the file /var/run/reboot-required is found after the upgrade
 Unattended-Upgrade::Automatic-Reboot "<%= node['apt']['unattended_upgrades']['automatic_reboot'] ? 'true' : 'false' %>";
 
-// If automatic reboot is enabled and needed, reboot at the specific
-// time instead of immediately
-//  Default: "now"
 <% if node['apt']['unattended_upgrades']['automatic_reboot'] -%>
+// If automatic reboot is enabled and needed, reboot at the specific
+// time instead of immediately. Default is "now"
 Unattended-Upgrade::Automatic-Reboot-Time "<%= node['apt']['unattended_upgrades']['automatic_reboot_time'] %>";
 <% end %>
 
+<% if node['apt']['unattended_upgrades']['dl_limit'] -%>
 // Use apt bandwidth limit feature, this example limits the download
 // speed to 70kb/sec
-<% if node['apt']['unattended_upgrades']['dl_limit'] -%>
+// Acquire::http::Dl-Limit "70";
 Acquire::http::Dl-Limit "<%= node['apt']['unattended_upgrades']['dl_limit'] %>";
 <% end -%>
+
+// Enable logging to syslog. Default is False
+Unattended-Upgrade::SyslogEnable "<%= node['apt']['unattended_upgrades']['syslog_enable'] ? 'true' : 'false' %>";
+
+// Specify syslog facility. Default is daemon
+Unattended-Upgrade::SyslogFacility "<%= node['apt']['unattended_upgrades']['syslog_facility'] %>";

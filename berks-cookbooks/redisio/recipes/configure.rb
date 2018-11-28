@@ -26,8 +26,8 @@ redis_instances = redis['servers']
 if redis_instances.nil?
   redis_instances = [
     {
-      'port' => '6379'
-    }
+      'port' => '6379',
+    },
   ]
 end
 

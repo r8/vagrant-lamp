@@ -54,6 +54,15 @@ Instead of (or any combination of such expression):
 item = chef_vault_item('secrets', 'passwords')[node.chef_environment]
 ```
 
+In addition, you can list the items in a vault using the `chef_vault()` method.
+It is advised to use this method instead of `data_bag()`, because the latter
+returns the keys in addition to the items themselves. This method prevents you
+from having to parse out the keys.
+```ruby
+items = chef_vault('secrets')
+item = chef_vault_item('secrets',item[0])
+```
+
 ## Attributes
 
 * `node['chef-vault']['version']` - Specify a version of the

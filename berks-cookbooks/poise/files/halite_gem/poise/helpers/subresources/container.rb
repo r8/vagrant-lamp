@@ -217,8 +217,8 @@ module Poise
           def included(klass)
             super
             klass.extend(ClassMethods)
-            klass.const_get(:HIDDEN_IVARS) << :@subcontexts
-            klass.const_get(:FORBIDDEN_IVARS) << :@subcontexts
+            klass.const_set(:HIDDEN_VARS, klass.const_get(:HIDDEN_IVARS) + [:@subcontexts])
+            klass.const_set(:FORBIDDEN_IVARS, klass.const_get(:FORBIDDEN_IVARS) + [:@subcontexts])
           end
         end
 

@@ -1,9 +1,9 @@
 #
 # Author:: Seth Chisamore (<schisamo@chef.io>)
-# Cookbook Name:: seven_zip
+# Cookbook:: seven_zip
 # Attribute:: default
 #
-# Copyright:: Copyright (c) 2011-2016 Chef Software, Inc.
+# Copyright:: 2011-2017, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@
 #
 
 if node['kernel']['machine'] == 'x86_64'
-  default['seven_zip']['url']          = 'http://www.7-zip.org/a/7z1514-x64.msi'
-  default['seven_zip']['checksum']     = 'cefe1a9092d8a6be68468c33910d6206b40e934fb63cab686c5cccf369fbf712'
-  default['seven_zip']['package_name'] = '7-Zip 15.14 (x64 edition)'
+  default['seven_zip']['url']          = 'https://www.7-zip.org/a/7z1805-x64.msi'
+  default['seven_zip']['checksum']     = '898c1ca0015183fe2ba7d55cacf0a1dea35e873bf3f8090f362a6288c6ef08d7'
+  default['seven_zip']['package_name'] = '7-Zip 18.05 (x64 edition)'
 else
-  default['seven_zip']['url']          = 'http://www.7-zip.org/a/7z1514.msi'
-  default['seven_zip']['checksum']     = 'eaf58e29941d8ca95045946949d75d9b5455fac167df979a7f8e4a6bf2d39680'
-  default['seven_zip']['package_name'] = '7-Zip 15.14'
+  default['seven_zip']['url']          = 'https://www.7-zip.org/a/7z1805.msi'
+  default['seven_zip']['checksum']     = 'c554238bee18a03d736525e06d9258c9ecf7f64ead7c6b0d1eb04db2c0de30d0'
+  default['seven_zip']['package_name'] = '7-Zip 18.05'
 end
 
 default['seven_zip']['default_extract_timeout'] = 600

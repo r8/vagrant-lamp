@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+require 'poise'
 require 'poise/error'
 require 'poise/utils'
 

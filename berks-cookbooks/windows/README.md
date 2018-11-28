@@ -16,15 +16,19 @@ Provides a set of Windows-specific resources to aid in the creation of cookbooks
 
 ### Chef
 
-- Chef 12.7+
+- Chef 13.4+
 
 ## Resources
 
 ### Deprecated Resources Note
 
-As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included in the Chef client. windows_task underwent a full rewrite that greatly improved the functionality and idempotency of the resource. We highly recommend using these new resources by upgrading to Chef 13.4 or later. If you are running these more recent Chef releases the windows_task and windows_path resources within chef-client will take precedence over those in this cookbook. In September 2018 we will release a new major version of this cookbook that removes windows_task and windows_path.
+As of Chef Client 14.0+ the auto_run, feature, feature_dism, feature_powershell, font, pagefile, printer_port, printer, and shortcut resources are now included in the Chef Client. If you are running Chef 14+ the resources in Chef client will take precedence over the resources in this cookbook. In April 2019 we will release a new major version of this cookbook that removes these resources.
+
+As of Chef 14.7+ the windows_share and windows_certificate resources are now included in the Chef Client. If you are running Chef 14.7+ the resources in Chef client will take precedence over the resources in this cookbook. In November 2019 we will release a new major version of this cookbook that removes these resources.
 
 ### windows_auto_run
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 #### Actions
 
@@ -33,7 +37,7 @@ As of chef-client 13.0+ and 13.4+ windows_task and windows_path are now included
 
 #### Properties
 
-- `program_name` - Name attribute. The name of the value to be stored in the registry
+- `program_name` - Name property. The name of the value to be stored in the registry
 - `path` - The program to be run at login. This property was previous named `program`. Cookbooks using the `program` property will continue to function, but should be updated.
 - `args` - The arguments for the program
 - `root` - The registry root key to put the entry under--`:machine` (default) or `:user`
@@ -52,6 +56,8 @@ end
 
 ### windows_certificate
 
+`Note`: This resource is now included in Chef 14.7 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Installs a certificate into the Windows certificate store from a file, and grants read-only access to the private key for designated accounts. Due to current limitations in WinRM, installing certificated remotely may not work if the operation requires a user profile. Operations on the local machine store should still work.
 
 #### Actions
@@ -59,6 +65,7 @@ Installs a certificate into the Windows certificate store from a file, and grant
 - `:create` - creates or updates a certificate.
 - `:delete` - deletes a certificate.
 - `:acl_add` - adds read-only entries to a certificate's private key ACL.
+- `:verify` - logs whether or not a certificate is valid
 
 #### Properties
 
@@ -202,6 +209,8 @@ end
 
 ### windows_feature
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 **BREAKING CHANGE - Version 3.0.0**
 
 This resource has been moved from using LWRPs and multiple providers to using Custom Resources. To maintain functionality, you'll need to change `provider` to `install_method`.
@@ -301,6 +310,8 @@ end
 
 ### windows_font
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Installs font files. Sources the font by default from the cookbook, but a URI source can be specified as well.
 
 #### Actions
@@ -360,6 +371,8 @@ end
 
 ### windows_pagefile
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Configures the file that provides virtual memory for applications requiring more memory than available RAM or that are paged out to free up memory in use.
 
 #### Actions
@@ -376,6 +389,8 @@ Configures the file that provides virtual memory for applications requiring more
 - `maximum_size` - maximum size of the pagefile in megbytes. Integer
 
 ### windows_printer_port
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Create and delete TCP/IPv4 printer ports.
 
@@ -432,6 +447,8 @@ end
 
 ### windows_printer
 
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Create Windows printer. Note that this doesn't currently install a printer driver. You must already have the driver installed on the system.
 
 The Windows Printer resource will automatically create a TCP/IP printer port for you using the `ipv4_address` property. If you want more granular control over the printer port, just create it using the `windows_printer_port` resource before creating the printer.
@@ -475,21 +492,33 @@ end
 
 ### windows_share
 
+`Note`: This resource is now included in Chef 14.7 and later. There is no need to depend on the Windows cookbook for this resource.
+
 Creates, modifies and removes Windows shares. All properties are idempotent.
+
+`Note`: This resource uses PowerShell cmdlets introduced in Windows 2012/8.
 
 #### Actions
 
-- :create: creates/modifies a share
-- :delete: deletes a share
+- `:create`: creates/modifies a share
+- `:delete`: deletes a share
 
 #### Properties
 
-- share_name: name attribute, the share name.
-- path: path to the directory to be shared. Required when creating. If the share already exists on a different path then it is deleted and re-created.
-- description: description to be applied to the share
-- full_users: array of users which should have "Full control" permissions
-- change_users: array of users which should have "Change" permissions
-- read_users: array of users which should have "Read" permissions
+property                 | type       | default       | description
+------------------------ | ---------- | ------------- | -----------------------------------------------------------------------------------------------------------------------------------------------------------
+`share_name`             | String     | resource name | the share to assign to the share
+`path`                   | String     |               | The path of the location of the folder to share. Required when creating. If the share already exists on a different path then it is deleted and re-created.
+`description`            | String     |               | description to be applied to the share
+`full_users`             | Array      | []            | users which should have "Full control" permissions
+`change_users`           | Array      | []            | Users are granted modify permission to access the share.
+`read_users`             | Array      | []            | users which should have "Read" permissions
+`temporary`              | True/False | false         | The lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer
+`scope_name`             | String     | '*'           | The scope name of the share.
+`ca_timeout`             | Integer    | 0             | The continuous availability time-out for the share.
+`continuously_available` | True/False | false         | Indicates that the share is continuously available.
+`concurrent_user_limit`  | Integer    | 0 (unlimited) | The maximum number of concurrently connected users the share can accommodate
+`encrypt_data`           | True/False | false         | Indicates that the share is encrypted.
 
 #### Examples
 
@@ -509,6 +538,8 @@ end
 ```
 
 ### windows_shortcut
+
+`Note`: This resource is now included in Chef 14 and later. There is no need to depend on the Windows cookbook for this resource.
 
 Creates and modifies Windows shortcuts.
 
@@ -569,88 +600,87 @@ windows_path 'C:\7-Zip' do
 end
 ```
 
-### windows_task
+### windows_user_privilege
 
-Creates, deletes or runs a Windows scheduled task. Requires Windows Server 2008 due to API usage.
+Adds the `principal` (User/Group) to the specified privileges (such as `Logon as a batch job` or `Logon as a Service`).
 
 #### Actions
 
-- `:create` - creates a task (or updates existing if user or command has changed)
-- `:delete` - deletes a task
-- `:run` - runs a task
-- `:end` - ends a task
-- `:change` - changes the un/pw or command of a task
-- `:enable` - enable a task
-- `:disable` - disable a task
+- `:add` - add the specified privileges to the `principal`
+- `:remove` - remove the specified privilege of the `principal`
 
 #### Properties
 
-- `task_name` - name attribute, The task name. ("Task Name" or "/Task Name")
-- `force` - When used with create, will update the task.
-- `command` - The command the task will run.
-- `cwd` - The directory the task will be run from.
-- `user` - The user to run the task as. (defaults to 'SYSTEM')
-- `password` - The user's password. (requires user)
-- `run_level` - Run with `:limited` or `:highest` privileges.
-- `frequency` - Frequency with which to run the task. (default is :hourly. Other valid values include :minute, :hourly, :daily, :weekly, :monthly, :once, :on_logon, :onstart, :on_idle) :once requires start_time
-- `frequency_modifier` - Multiple for frequency. (15 minutes, 2 days). Monthly tasks may also use these values": ('FIRST', 'SECOND', 'THIRD', 'FOURTH', 'LAST', 'LASTDAY')
-- `start_day` - Specifies the first date on which the task runs. Optional string (MM/DD/YYYY)
-- `start_time` - Specifies the start time to run the task. Optional string (HH:mm)
-- `interactive_enabled` - (Allow task to run interactively or non-interactively. Requires user and password.)
-- `day` - For monthly or weekly tasks, the day(s) on which the task runs. (MON - SUN, *, 1 - 31)
-- `months` - The Months of the year on which the task runs. (JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, *). Multiple months should be comma delimited.
-- `idle_time` - For :on_idle frequency, the time (in minutes) without user activity that must pass to trigger the task. (1 - 999)
+- `principal` - Name attribute, Required, String. The user or group to be granted privileges.
+- `privilege` - Required, String/Array. The privilege(s) to be granted.
 
 #### Examples
 
-Create a `chef-client` task with TaskPath `\` running every 15 minutes
+Grant the Administrator user the `Logon as a batch job` and `Logon as a service` privilege.
 
 ```ruby
-windows_task 'chef-client' do
-  user 'Administrator'
-  password '$ecR3t'
-  cwd 'C:\\chef\\bin'
-  command 'chef-client -L C:\\tmp\\'
-  run_level :highest
-  frequency :minute
-  frequency_modifier 15
+windows_user_privilege 'Administrator' do
+  privilege %w(SeBatchLogonRight SeServiceLogonRight)
 end
 ```
 
-Update `chef-client` task with new password and log location
+Remove `Logon as a batch job` privilege of Administrator.
 
 ```ruby
-windows_task 'chef-client' do
-  user 'Administrator'
-  password 'N3wPassW0Rd'
-  cwd 'C:\\chef\\bin'
-  command 'chef-client -L C:\\chef\\logs\\'
-  action :change
+windows_user_privilege 'Administrator' do
+  privilege %w(SeBatchLogonRight)
+  action :remove
 end
 ```
 
-Delete a task named `old task`
+#### Available Privileges
 
-```ruby
-windows_task 'old task' do
-  action :delete
-end
 ```
-
-Enable a task named `chef-client`
-
-```ruby
-windows_task 'chef-client' do
-  action :enable
-end
-```
-
-Disable a task named `ProgramDataUpdater` with TaskPath `\Microsoft\Windows\Application Experience\`
-
-```ruby
-windows_task '\Microsoft\Windows\Application Experience\ProgramDataUpdater' do
-  action :disable
-end
+SeTrustedCredManAccessPrivilege      Access Credential Manager as a trusted caller
+SeNetworkLogonRight                  Access this computer from the network
+SeTcbPrivilege                       Act as part of the operating system
+SeMachineAccountPrivilege            Add workstations to domain
+SeIncreaseQuotaPrivilege             Adjust memory quotas for a process
+SeInteractiveLogonRight              Allow log on locally
+SeRemoteInteractiveLogonRight        Allow log on through Remote Desktop Services
+SeBackupPrivilege                    Back up files and directories
+SeChangeNotifyPrivilege              Bypass traverse checking
+SeSystemtimePrivilege                Change the system time
+SeTimeZonePrivilege                  Change the time zone
+SeCreatePagefilePrivilege            Create a pagefile
+SeCreateTokenPrivilege               Create a token object
+SeCreateGlobalPrivilege              Create global objects
+SeCreatePermanentPrivilege           Create permanent shared objects
+SeCreateSymbolicLinkPrivilege        Create symbolic links
+SeDebugPrivilege                     Debug programs
+SeDenyNetworkLogonRight              Deny access this computer from the network
+SeDenyBatchLogonRight                Deny log on as a batch job
+SeDenyServiceLogonRight              Deny log on as a service
+SeDenyInteractiveLogonRight          Deny log on locally
+SeDenyRemoteInteractiveLogonRight    Deny log on through Remote Desktop Services
+SeEnableDelegationPrivilege          Enable computer and user accounts to be trusted for delegation
+SeRemoteShutdownPrivilege            Force shutdown from a remote system
+SeAuditPrivilege                     Generate security audits
+SeImpersonatePrivilege               Impersonate a client after authentication
+SeIncreaseWorkingSetPrivilege        Increase a process working set
+SeIncreaseBasePriorityPrivilege      Increase scheduling priority
+SeLoadDriverPrivilege                Load and unload device drivers
+SeLockMemoryPrivilege                Lock pages in memory
+SeBatchLogonRight                    Log on as a batch job
+SeServiceLogonRight                  Log on as a service
+SeSecurityPrivilege                  Manage auditing and security log
+SeRelabelPrivilege                   Modify an object label
+SeSystemEnvironmentPrivilege         Modify firmware environment values
+SeManageVolumePrivilege              Perform volume maintenance tasks
+SeProfileSingleProcessPrivilege      Profile single process
+SeSystemProfilePrivilege             Profile system performance
+SeUnsolicitedInputPrivilege          "Read unsolicited input from a terminal device"
+SeUndockPrivilege                    Remove computer from docking station
+SeAssignPrimaryTokenPrivilege        Replace a process level token
+SeRestorePrivilege                   Restore files and directories
+SeShutdownPrivilege                  Shut down the system
+SeSyncAgentPrivilege                 Synchronize directory service data
+SeTakeOwnershipPrivilege             Take ownership of files or other objects
 ```
 
 ### windows_zipfile

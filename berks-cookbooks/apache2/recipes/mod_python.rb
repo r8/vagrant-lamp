@@ -32,9 +32,9 @@ when 'freebsd'
   package 'ap24-mod_python35'
 end
 
-file "#{node['apache']['dir']}/conf.d/python.conf" do
+file "#{apache_dir}/conf.d/python.conf" do
   content '# conf is under mods-available/python.conf - apache2 cookbook\n'
-  only_if { ::Dir.exist?("#{node['apache']['dir']}/conf.d") }
+  only_if { ::Dir.exist?("#{apache_dir}/conf.d") }
 end
 
 apache_module 'python'

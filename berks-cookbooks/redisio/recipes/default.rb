@@ -31,7 +31,7 @@ end
 
 unless node['redisio']['package_install']
   include_recipe 'redisio::_install_prereqs'
-  include_recipe 'build-essential::default'
+  build_essential 'install build deps'
 end
 
 unless node['redisio']['bypass_setup']

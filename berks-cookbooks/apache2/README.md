@@ -176,7 +176,7 @@ On RHEL Family distributions, certain modules ship with a config file with the p
 
 The default recipe does a number of things to set up Apache HTTPd. It also includes a number of modules based on the attribute `node['apache']['default_modules']` as recipes.
 
-## mod_auth_cas
+## mod\_auth_cas
 
 This recipe installs the proper package and enables the `auth_cas` module. It can install from source or package. Package is the default, set the attribute `node['apache']['mod_auth_cas']['from_source']` to true to enable source installation. Modify the version to install by changing the attribute `node['apache']['mod_auth_cas']['source_revision']`. It is a version tag by default, but could be master, or another tag, or branch.
 
@@ -186,7 +186,7 @@ The module configuration is written out with the `CASCookiePath` set, otherwise 
 
 <https://bugzilla.redhat.com/show_bug.cgi?format=multiple&id=708550>
 
-## mod_auth_openid
+## mod\_auth_openid
 
 This recipe compiles the module from source. In addition to `build-essential`, some other packages are included for installation like the GNU C++ compiler and development headers.
 

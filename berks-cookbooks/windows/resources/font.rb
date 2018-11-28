@@ -4,7 +4,7 @@
 # Resource:: font
 #
 # Copyright:: 2014-2018, Schuberg Philis BV.
-# Copyright:: 2017-2018, Chef Software, Inc.
+# Copyright:: 2017-2018, Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@
 #
 
 require 'chef/util/path_helper'
+
+chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
+resource_name :windows_font
 
 property :font_name, String, name_property: true
 property :source, String, required: false, coerce: proc { |x| x =~ /^.:.*/ ? x.tr('\\', '/').gsub('//', '/') : x }

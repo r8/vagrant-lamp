@@ -2,6 +2,16 @@
 
 This file is used to list changes made in each version of the apt cookbook.
 
+## 7.1.1 (2018-10-11)
+
+- Allow to customize sender email for unattended-upgrades
+
+## 7.1.0 (2018-09-05)
+
+- Add the installation of dirmngr and gnupg to the apt default cookbook to support secure repositories
+- Added support for the unattended-upgrade SyslogEnable configuration feature
+- Added support for the unattended-upgrade SyslogFacility configuration feature
+
 ## 7.0.0 (2018-04-06)
 
 ### Breaking Change

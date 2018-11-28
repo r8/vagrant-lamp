@@ -38,14 +38,19 @@ import sys
 
 import pip
 # Don't use pkg_resources because I don't want to require it before this anyway.
-if re.match(r'0|1|6\\.0', pip.__version__):
+if re.match(r'0\\.|1\\.|6\\.0', pip.__version__):
   sys.stderr.write('The python_package resource requires pip >= 6.1.0, currently '+pip.__version__+'\\n')
   sys.exit(1)
 
-from pip.commands import InstallCommand
-from pip.index import PackageFinder
-from pip.req import InstallRequirement
-
+try:
+  from pip.commands import InstallCommand
+  from pip.index import PackageFinder
+  from pip.req import InstallRequirement
+except ImportError:
+  # Pip 10 moved all internals to their own package.
+  from pip._internal.commands import InstallCommand
+  from pip._internal.index import PackageFinder
+  from pip._internal.req import InstallRequirement
 
 packages = {}
 cmd = InstallCommand()
@@ -112,6 +117,12 @@ EOH
         #   System user to install the package.
         #   @return [String, Integer, nil]
         attribute(:user, kind_of: [String, Integer, NilClass], default: lazy { default_user })
+
+        # This should probably be in the base class but ¯\_(ツ)_/¯.
+        # @!attribute allow_downgrade
+        #   Allow downgrading the package.
+        #   @return [Boolean]
+        attribute(:allow_downgrade, kind_of: [TrueClass, FalseClass], default: false)
 
         def initialize(*args)
           super
@@ -187,6 +198,7 @@ EOH
           @current_resource = new_resource.class.new(new_resource.name, run_context)
           current_resource.package_name(new_resource.package_name)
           check_package_versions(current_resource)
+          Chef::Log.debug("[#{new_resource}] Current version: #{current_resource.version}, candidate version: #{@candidate_version}")
           current_resource
         end
 
@@ -200,7 +212,7 @@ EOH
         def check_package_versions(resource, version=new_resource.version)
           version_data = Hash.new {|hash, key| hash[key] = {current: nil, candidate: nil} }
           # Get the version for everything currently installed.
-          list = pip_command('list', :list).stdout
+          list = pip_command('list', :list, [], environment: {'PIP_FORMAT' => 'json'}).stdout
           parse_pip_list(list).each do |name, current|
             # Merge current versions in to the data.
             version_data[name][:current] = current
@@ -347,15 +359,22 @@ EOH
         # @param text [String] Output to parse.
         # @return [Hash<String, String>]
         def parse_pip_list(text)
-          text.split(/\r?\n/).inject({}) do |memo, line|
-            # Example of a line:
-            # boto (2.25.0)
-            if md = line.match(/^(\S+)\s+\(([^\s,]+).*\)$/i)
-              memo[parse_package_name(md[1])] = md[2]
-            else
-              Chef::Log.debug("[#{new_resource}] Unparsable line in pip list: #{line}")
+          if text[0] == '['
+            # Pip 9 or newer, so it understood $PIP_FORMAT=json.
+            Chef::JSONCompat.parse(text).each_with_object({}) do |data, memo|
+              memo[parse_package_name(data['name'])] = data['version']
             end
-            memo
+          else
+            # Pip 8 or earlier, which doesn't support JSON output.
+            text.split(/\r?\n/).each_with_object({}) do |line, memo|
+              # Example of a line:
+              # boto (2.25.0)
+              if md = line.match(/^(\S+)\s+\(([^\s,]+).*\)$/i)
+                memo[parse_package_name(md[1])] = md[2]
+              else
+                Chef::Log.debug("[#{new_resource}] Unparsable line in pip list: #{line}")
+              end
+            end
           end
         end
 

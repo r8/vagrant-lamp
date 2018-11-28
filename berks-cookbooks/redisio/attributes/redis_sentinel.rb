@@ -43,7 +43,7 @@ default['redisio']['sentinel_defaults'] = {
   'announce-ip'             => nil,
   'announce-port'           => nil,
   'notification-script'     => nil,
-  'client-reconfig-script'  => nil
+  'client-reconfig-script'  => nil,
 }
 
 # Manage Sentinel Config File

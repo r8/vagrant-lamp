@@ -70,6 +70,10 @@ module PoisePython
             test_version
 
             # Test python_package.
+            python_package 'argparse' do
+              # Needed for sqlparse but not in the stdlib until 2.7.
+              python new_resource.name
+            end
             python_package 'sqlparse remove before' do
               action :remove
               package_name 'sqlparse'
@@ -176,6 +180,7 @@ EOH
               end
               test_import('docopt', python: nil, virtualenv: test_venv, user: test_user)
             end
+
           end
         end
 

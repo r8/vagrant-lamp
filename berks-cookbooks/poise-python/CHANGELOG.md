@@ -1,5 +1,11 @@
 # Poise-Python Changelog
 
+## v1.7.0
+
+* Support for Pip 10.
+* Support for Chef 14.
+* System package info for Ubuntu 18.04 and Debian 9, 10.
+
 ## v1.6.0
 
 * Improved handling for Python 3.3.

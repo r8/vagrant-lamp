@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the git cookbook.
 
+## 9.0.1 (2018-06-02)
+
+- Update the platforms we test on
+- Remove extra attr_accessor in config and requires
+- Bump git version to 2.17.1 to resolve CVE
+
 ## 9.0.0 (2018-03-08)
 
 - Remove the dependency on the homebrew cookbook by not automatically installing homebrew in the git resource on macOS systems. Homebrew needs to be setup before this resource runs and that should probably be the very first thing you do on a macOS system

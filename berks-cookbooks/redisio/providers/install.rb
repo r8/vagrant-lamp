@@ -58,7 +58,7 @@ def unpack
   install_dir = "#{new_resource.base_name}#{new_resource.version}"
   case new_resource.artifact_type
   when 'tar.gz', '.tgz'
-    execute %(cd #{new_resource.download_dir} ; mkdir -p '#{install_dir}' ; tar zxf '#{@tarball}' --strip-components=1 -C '#{install_dir}' --no-same-owner) # rubocop:disable Metrics/LineLength
+    execute %(cd #{new_resource.download_dir} ; mkdir -p '#{install_dir}' ; tar zxf '#{@tarball}' --strip-components=1 -C '#{install_dir}' --no-same-owner)
   else
     raise Chef::Exceptions::UnsupportedAction, "Current package type #{new_resource.artifact_type} is unsupported"
   end
@@ -74,7 +74,7 @@ def install
                    else
                      ''
                    end
-  execute "cd #{new_resource.download_dir}/#{new_resource.base_name}#{new_resource.version} && make #{install_prefix} install" # rubocop:disable Metrics/LineLength
+  execute "cd #{new_resource.download_dir}/#{new_resource.base_name}#{new_resource.version} && make #{install_prefix} install"
   new_resource.updated_by_last_action(true)
 end
 

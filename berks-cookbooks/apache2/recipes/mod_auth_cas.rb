@@ -34,7 +34,7 @@ if node['apache']['mod_auth_cas']['from_source']
     not_if "test -f #{node['apache']['libexec_dir']}/mod_auth_cas.so"
   end
 
-  template "#{node['apache']['dir']}/mods-available/auth_cas.load" do
+  template "#{apache_dir}/mods-available/auth_cas.load" do
     source 'mods/auth_cas.load.erb'
     owner 'root'
     group node['apache']['root_group']
@@ -50,9 +50,9 @@ else
       notifies :run, 'execute[generate-module-list]', :immediately
     end
 
-    file "#{node['apache']['dir']}/conf.d/auth_cas.conf" do
+    file "#{apache_dir}/conf.d/auth_cas.conf" do
       content '# conf is under mods-available/auth_cas.conf - apache2 cookbook\n'
-      only_if { ::Dir.exist?("#{node['apache']['dir']}/conf.d") }
+      only_if { ::Dir.exist?("#{apache_dir}/conf.d") }
     end
   end
 end

@@ -93,6 +93,6 @@ template '/etc/apt/apt.conf.d/10recommends' do
   only_if { apt_installed? }
 end
 
-package 'apt-transport-https' do
+package %w(apt-transport-https gnupg dirmngr) do
   only_if { apt_installed? }
 end

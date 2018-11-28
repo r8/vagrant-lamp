@@ -6,10 +6,6 @@ property :user, String, desired_state: false
 property :group, String, desired_state: false
 property :options, String, desired_state: false
 
-attr_accessor :exists
-
-require 'mixlib/shellout'
-
 def initialize(*args)
   super
 

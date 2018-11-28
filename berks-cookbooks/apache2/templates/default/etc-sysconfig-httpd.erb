@@ -6,7 +6,7 @@
 # available, but does not work with some modules (such as PHP).
 # The service must be stopped before changing this variable.
 #
-HTTPD=<%= node['apache']['binary'] %>
+HTTPD=<%= @apache_binary %>
 
 #
 # To pass additional options (for instance, -D definitions) to the

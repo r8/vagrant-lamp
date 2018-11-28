@@ -18,11 +18,15 @@
 #
 
 define :apache_mod do
+  require_relative '../libraries/helpers.rb'
   include_recipe 'apache2::default'
 
   template "#{node['apache']['dir']}/mods-available/#{params[:name]}.conf" do
     source "mods/#{params[:name]}.conf.erb"
     mode '0644'
+    variables(
+      apache_dir: apache_dir
+    )
     notifies :reload, 'service[apache2]', :delayed
   end
 end

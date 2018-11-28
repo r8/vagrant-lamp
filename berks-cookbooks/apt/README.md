@@ -129,11 +129,14 @@ To pull just security updates, set `origins_patterns` to something like `["origi
 - `['apt']['unattended_upgrades']['minimal_steps']` - Split the upgrade into the smallest possible chunks. This makes the upgrade a bit slower but it has the benefit that shutdown while a upgrade is running is possible (with a small delay). Defaults to false.
 - `['apt']['unattended_upgrades']['install_on_shutdown']` - Install upgrades when the machine is shuting down instead of doing it in the background while the machine is running. This will (obviously) make shutdown slower. Defaults to false.
 - `['apt']['unattended_upgrades']['mail']` - Send email to this address for problems or packages upgrades. Defaults to no email.
+- `['apt']['unattended_upgrades']['sender']` - Send email from this address for problems or packages upgrades. Defaults to 'root'.
 - `['apt']['unattended_upgrades']['mail_only_on_error']` - If set, email will only be set on upgrade errors. Otherwise, an email will be sent after each upgrade. Defaults to true.
 - `['apt']['unattended_upgrades']['remove_unused_dependencies']` Do automatic removal of new unused dependencies after the upgrade. Defaults to false.
 - `['apt']['unattended_upgrades']['automatic_reboot']` - Automatically reboots _without confirmation_ if a restart is required after the upgrade. Defaults to false.
 - `['apt']['unattended_upgrades']['dl_limit']` - Limits the bandwidth used by apt to download packages. Value given as an integer in kb/sec. Defaults to nil (no limit).
 - `['apt']['unattended_upgrades']['random_sleep']` - Wait a random number of seconds up to this value before running daily periodic apt actions. System default is 1800 seconds (30 minutes).
+- `['apt']['unattended_upgrades']['syslog_enable']` - Enable logging to syslog. Defaults to false.
+- `['apt']['unattended_upgrades']['syslog_facility']` - Specify syslog facility. Defaults to 'daemon'.
 
 ### Configuration for APT
 

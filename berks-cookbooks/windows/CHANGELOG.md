@@ -2,6 +2,113 @@
 
 This file is used to list changes made in each version of the windows cookbook.
 
+## 5.2.2 (2018-11-20)
+
+- windows_share: Accounts to be revoked should be provided as an individually quoted string array
+
+## 5.2.1 (2018-11-19)
+
+- windows_share: Fix idempotency by not adding everyone by default
+
+## 5.2.0 (2018-11-14)
+
+- Support installing deleted features in windows_feature_dism
+
+## 5.1.6 (2018-11-13)
+
+- Add a warning to the readme regarding windows_share and windows_certificate now being included in Chef 14.7
+- Deprecated win_friendly_path helper in favor of built-in helpers
+
+## 5.1.5 (2018-11-07)
+
+- Avoid deprecation warnings in windows_share and windows_certificate on Chef 14.7+ as these are now included in the chef-client itself.
+
+## 5.1.4 (2018-10-30)
+
+- Note the :verify action for windows_certificate in the readme
+- certificate resource: auto set sensitive is passing password
+
+## 5.1.3 (2018-10-11)
+
+- Remove docs and test suite for windows tasks
+- Changed variable name in log message for retrieving SMB share access
+- Don't load the windows helper in windows_certificate
+
+## 5.1.2 (2018-10-08)
+
+- Fix typo in windows_feature_dism resource name
+
+## 5.1.1 (2018-09-06)
+
+- Require the win32-certstore gem and upgrade the gem as the resource runs so we get the most up to date version
+- Remove redundant helper methods from the windows_certificate resource
+
+## 5.1.0 (2018-08-29)
+
+- Add an action to windows_user_privilege to remove a privilege
+- Fix failing appveyor tests
+- Require win32-certstore 0.1.8 which resolves several issues with the windows_certificate resource
+- Avoid deprecation warnings with Chef 14.3+ by not loading resources that are now built into Chef
+
+## 5.0.0 (2018-07-24)
+
+### Breaking Changes
+
+This release removes the windows_task and windows_path resources from this cookbook. This resources shipped in Chef 13.0 and 13.4 This raises the required version of chef-client for this cookbook to 13.4 or later.
+
+## 4.3.4 (2018-07-18)
+
+- Fix error message typo in windows_feature_powershell
+- Use win32-certstore 0.1.7 for bugfixes
+
+## 4.3.3 (2018-07-05)
+
+- Fix failures on PS 3.0 in windows_feature_powershell
+
+## 4.3.2 (2018-06-13)
+
+- Don't error in windows_feature_dism when providing a source
+
+## 4.3.1 (2018-06-11)
+
+- Make sure to quote each individual user to grant share access to
+
+## 4.3.0 (2018-06-11)
+
+- Add the windows_user_privilege resource which can grant privileges like Logon As a Service
+- Add windows_feature_powershell support for Windows 2008 R2 by not downcasing the feature names there and modifying the shell_out commands to make older output look like the 2012+ output
+- windows_certificate resource has been reworked to use the new win32-certstore gem. This gem abstracts away much of the logic and will allow us to better support certificates on Windows, especially on non-english systems.
+- Convert pester tests to InSpec for easier testing with ChefDK out of the box
+- Added additional tests for better testing in AppVeyor
+- Stop importing the servermanager module in windows_feature_powershell since we require PowerShell 3.0 and we don't need to do this there
+- Improve the error messages in Windows feature to get the Windows versions right
+- Increase readability in version logic with helpers in windows_feature resources
+
+## 4.2.5 (2018-05-28)
+
+- Add quoting to Path when creating new Share
+
+## 4.2.4 (2018-05-14)
+
+- Fix the platform version check in windows_share
+
+## 4.2.3 (2018-05-07)
+
+- Include the helper in the action class to prevent failures with the zipfile resource
+
+## 4.2.2 (2018-04-24)
+
+- Properly fail in windows_share on Windows 2008 R2 since we lack the cmdlets to manipulates shares on those systems.
+
+## 4.2.1 (2018-04-17)
+
+- Make sure shares can have spaces in the share name
+
+## 4.2.0 (2018-04-16)
+
+- Initial rewrite of windows_share to use PowerShell for share creation. This introduces multiple new properties and resolves a good number of longstanding issues. Please be sure to report any issues you see with this so we can stabilize this resource and include it in Chef 15!
+- Resolve failures in windows_certificate
+
 ## 4.1.4 (2018-03-29)
 
 - Raise in windows_feature_powershell if we're on PS < 3.0

@@ -105,7 +105,7 @@ bash 'install-mod_auth_openid' do
   not_if "test -f #{node['apache']['libexec_dir']}/mod_auth_openid.so"
 end
 
-template "#{node['apache']['dir']}/mods-available/authopenid.load" do
+template "#{apache_dir}/mods-available/authopenid.load" do
   source 'mods/authopenid.load.erb'
   owner 'root'
   group node['apache']['root_group']

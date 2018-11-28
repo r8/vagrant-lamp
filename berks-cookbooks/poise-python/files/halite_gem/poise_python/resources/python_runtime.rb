@@ -51,6 +51,7 @@ module PoisePython
         #   of https://bootstrap.pypa.io/get-pip.py is used. If you want to skip
         #   the pip installer entirely, set {#pip_version} to `false`.
         #   @return [String]
+        # If this default value changes, fix ths 2.6-compat logic in python_runtime_pip.
         attribute(:get_pip_url, kind_of: String, default: 'https://bootstrap.pypa.io/get-pip.py')
         # @!attribute pip_version
         #   Version of pip to install. If set to `true`, the latest available

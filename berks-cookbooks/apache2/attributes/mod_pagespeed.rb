@@ -18,6 +18,7 @@
 #
 
 default['apache2']['mod_pagespeed']['package_link'] =
+  # NOTE: no precompiled packages for other architectures
   if node['kernel']['machine'] =~ /^i[36']86$/
     'https://dl-ssl.google.com/dl/linux/direct/mod-pagespeed-stable_current_i386.deb'
   else

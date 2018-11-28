@@ -38,7 +38,6 @@ action :install do
           # Remove the placeholder to prevent perpetual appearance in the update utility
           rm -f /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress
         EOH
-        # rubocop:enable Metrics/LineLength
       end
     end
   end
@@ -53,9 +52,6 @@ action_class do
   def installed?
     cmd = Mixlib::ShellOut.new('pkgutil --pkgs=com.apple.pkg.CLTools_Executables')
     cmd.run_command
-    cmd.error!
-    true
-  rescue Mixlib::ShellOut::ShellCommandFailed
-    false
+    cmd.error? ? false : true
   end
 end

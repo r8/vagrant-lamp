@@ -18,6 +18,19 @@
 # limitations under the License.
 #
 
+# Gets the libdir for a given CPU architecture
+def lib_dir_for_machine(arch)
+  if arch =~ /64/ || %w(armv8l s390x).include?(arch)
+    # 64-bit architectures
+    # (x86_64 / amd64 / aarch64 / armv8l / etc.)
+    '/usr/lib64'
+  else
+    # 32-bit architectures
+    # (i686 / armv7l / s390 / etc.)
+    '/usr/lib'
+  end
+end
+
 default['apache']['mpm'] =
   case node['platform']
   when 'ubuntu', 'linuxmint'
@@ -34,7 +47,7 @@ default['apache']['default_site_name'] = 'default'
 # Where the various parts of apache are
 case node['platform_family']
 when 'rhel', 'fedora', 'amazon'
-  if node['platform'] == 'amazon'
+  if node['platform'] == 'amazon' && node['platform_version'] == 1
     default['apache']['package'] = 'httpd24'
     default['apache']['devel_package'] = 'httpd24-devel'
   else
@@ -43,14 +56,12 @@ when 'rhel', 'fedora', 'amazon'
   end
   default['apache']['service_name'] = 'httpd'
   default['apache']['perl_pkg']    = 'perl'
-  default['apache']['apachectl']   = '/usr/sbin/apachectl'
   default['apache']['dir']         = '/etc/httpd'
   default['apache']['log_dir']     = '/var/log/httpd'
   default['apache']['error_log']   = 'error.log'
   default['apache']['access_log']  = 'access.log'
   default['apache']['user']        = 'apache'
   default['apache']['group']       = 'apache'
-  default['apache']['binary']      = '/usr/sbin/httpd'
   default['apache']['conf_dir']    = '/etc/httpd/conf'
   default['apache']['docroot_dir'] = '/var/www/html'
   default['apache']['cgibin_dir']  = '/var/www/cgi-bin'
@@ -59,20 +70,18 @@ when 'rhel', 'fedora', 'amazon'
   default['apache']['run_dir']     = '/var/run/httpd'
   default['apache']['lock_dir']    = '/var/run/httpd'
   default['apache']['pid_file']    = '/var/run/httpd/httpd.pid'
-  default['apache']['lib_dir'] = node['kernel']['machine'] =~ /^i[36]86$/ ? '/usr/lib/httpd' : '/usr/lib64/httpd'
+  default['apache']['lib_dir'] = "#{lib_dir_for_machine(node['kernel']['machine'])}/httpd"
   default['apache']['libexec_dir'] = "#{node['apache']['lib_dir']}/modules"
 when 'suse'
   default['apache']['package']     = 'apache2'
   default['apache']['perl_pkg']    = 'perl'
   default['apache']['devel_package'] = 'httpd-devel'
-  default['apache']['apachectl']   = '/usr/sbin/apache2ctl'
   default['apache']['dir']         = '/etc/apache2'
   default['apache']['log_dir']     = '/var/log/apache2'
   default['apache']['error_log']   = 'error.log'
   default['apache']['access_log']  = 'access.log'
   default['apache']['user']        = 'wwwrun'
   default['apache']['group']       = 'www'
-  default['apache']['binary']      = '/usr/sbin/httpd'
   default['apache']['conf_dir']    = '/etc/apache2'
   default['apache']['docroot_dir'] = '/srv/www/htdocs'
   default['apache']['cgibin_dir']  = '/srv/www/cgi-bin'
@@ -81,7 +90,7 @@ when 'suse'
   default['apache']['run_dir']     = '/var/run/httpd'
   default['apache']['lock_dir']    = '/var/run/httpd'
   default['apache']['pid_file']    = '/var/run/httpd2.pid'
-  default['apache']['lib_dir']     = node['kernel']['machine'] =~ /^i[36]86$/ ? '/usr/lib/apache2' : '/usr/lib64/apache2'
+  default['apache']['lib_dir'] = "#{lib_dir_for_machine(node['kernel']['machine'])}/apache2"
   default['apache']['libexec_dir'] = node['apache']['lib_dir']
 when 'debian'
   default['apache']['package']     = 'apache2'
@@ -92,14 +101,12 @@ when 'debian'
     else
       'apache2-dev'
     end
-  default['apache']['apachectl']   = '/usr/sbin/apache2ctl'
   default['apache']['dir']         = '/etc/apache2'
   default['apache']['log_dir']     = '/var/log/apache2'
   default['apache']['error_log']   = 'error.log'
   default['apache']['access_log']  = 'access.log'
   default['apache']['user']        = 'www-data'
   default['apache']['group']       = 'www-data'
-  default['apache']['binary']      = '/usr/sbin/apache2'
   default['apache']['conf_dir']    = '/etc/apache2'
   default['apache']['cgibin_dir']  = '/usr/lib/cgi-bin'
   default['apache']['icondir']     = '/usr/share/apache2/icons'
@@ -116,14 +123,12 @@ when 'arch'
   default['apache']['package'] = 'apache'
   default['apache']['service_name'] = 'httpd'
   default['apache']['perl_pkg']    = 'perl'
-  # default['apache']['apachectl']   = '/usr/sbin/apachectl'
   default['apache']['dir']         = '/etc/httpd'
   default['apache']['log_dir']     = '/var/log/httpd'
   default['apache']['error_log']   = 'error.log'
   default['apache']['access_log']  = 'access.log'
   default['apache']['user']        = 'http'
   default['apache']['group']       = 'http'
-  default['apache']['binary']      = '/usr/sbin/httpd'
   default['apache']['conf_dir']    = '/etc/httpd'
   default['apache']['docroot_dir'] = '/srv/http'
   default['apache']['cgibin_dir']  = '/usr/share/httpd/cgi-bin'
@@ -147,7 +152,6 @@ when 'freebsd'
   default['apache']['lib_dir']     = '/usr/local/libexec/apache24'
   default['apache']['devel_package'] = 'httpd-devel'
   default['apache']['perl_pkg']    = 'perl5'
-  default['apache']['apachectl']   = '/usr/local/sbin/apachectl'
   default['apache']['pid_file']    = '/var/run/httpd.pid'
   default['apache']['log_dir']     = '/var/log'
   default['apache']['error_log']   = 'httpd-error.log'
@@ -155,7 +159,6 @@ when 'freebsd'
   default['apache']['root_group']  = 'wheel'
   default['apache']['user']        = 'www'
   default['apache']['group']       = 'www'
-  default['apache']['binary']      = '/usr/local/sbin/httpd'
   default['apache']['libexec_dir'] = node['apache']['lib_dir']
 else
   default['apache']['package'] = 'apache2'
@@ -167,7 +170,6 @@ else
   default['apache']['access_log']  = 'access.log'
   default['apache']['user']        = 'www-data'
   default['apache']['group']       = 'www-data'
-  default['apache']['binary']      = '/usr/sbin/apache2'
   default['apache']['conf_dir']    = '/etc/apache2'
   default['apache']['docroot_dir'] = '/var/www'
   default['apache']['cgibin_dir']  = '/usr/lib/cgi-bin'
@@ -177,7 +179,7 @@ else
   default['apache']['lock_dir']    = 'logs'
   default['apache']['pid_file']    = 'logs/httpd.pid'
   default['apache']['lib_dir']     = '/usr/lib/apache2'
-  default['apache']['libexec_dir']  = "#{node['apache']['lib_dir']}/modules"
+  default['apache']['libexec_dir'] = "#{node['apache']['lib_dir']}/modules"
 end
 
 ###
@@ -186,9 +188,6 @@ end
 ###
 
 # General settings
-if node['apache']['service_name'].nil?
-  default['apache']['service_name'] = node['apache']['package']
-end
 default['apache']['listen']            = ['*:80']
 default['apache']['contact']           = 'ops@example.com'
 default['apache']['timeout']           = 300
@@ -268,6 +267,9 @@ default['apache']['default_modules'] = %w(
 end
 default['apache']['default_modules'].delete('unixd') if node['platform_family'] == 'suse'
 
-unless node['platform'] == 'amazon' # This is for chef 12 compatibility
-  default['apache']['default_modules'] << 'systemd' if %w(rhel fedora).include?(node['platform_family'])
+if node['init_package'] == 'systemd'
+  default['apache']['default_modules'] << 'systemd' if %w(rhel amazon fedora).include?(node['platform_family'])
 end
+
+# Length in second for httpd -t to run
+default['apache']['httpd_t_timeout'] = 10

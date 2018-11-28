@@ -1,0 +1,79 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    ast (2.4.0)
+    backports (3.11.3)
+    chef-api (0.8.0)
+      logify (~> 0.1)
+      mime-types
+    cookstyle (3.0.0)
+      rubocop (= 0.55.0)
+    cucumber-core (3.1.0)
+      backports (>= 3.8.0)
+      cucumber-tag_expressions (~> 1.1.0)
+      gherkin (>= 5.0.0)
+    cucumber-tag_expressions (1.1.1)
+    diff-lcs (1.3)
+    erubis (2.7.0)
+    ffi-yajl (2.3.1)
+      libyajl2 (~> 1.2)
+    foodcritic (13.1.1)
+      cucumber-core (>= 1.3)
+      erubis
+      ffi-yajl (~> 2.0)
+      nokogiri (>= 1.5, < 2.0)
+      rake
+      rufus-lru (~> 1.0)
+      treetop (~> 1.4)
+    gherkin (5.0.0)
+    libyajl2 (1.2.0)
+    logify (0.2.0)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    mini_portile2 (2.3.0)
+    nokogiri (1.8.2)
+      mini_portile2 (~> 2.3.0)
+    parallel (1.12.1)
+    parser (2.5.1.0)
+      ast (~> 2.4.0)
+    polyglot (0.3.5)
+    powerpack (0.1.1)
+    rainbow (3.0.0)
+    rake (12.3.1)
+    rspec-expectations (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-mocks (3.7.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.7.0)
+    rspec-support (3.7.1)
+    rubocop (0.55.0)
+      parallel (~> 1.10)
+      parser (>= 2.5)
+      powerpack (~> 0.1)
+      rainbow (>= 2.2.2, < 4.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (~> 1.0, >= 1.0.1)
+    ruby-progressbar (1.9.0)
+    rufus-lru (1.1.0)
+    stove (6.0.0)
+      chef-api (~> 0.5)
+      logify (~> 0.2)
+    treetop (1.6.10)
+      polyglot (~> 0.3)
+    unicode-display_width (1.3.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  cookstyle
+  foodcritic
+  rspec-expectations
+  rspec-mocks
+  rubocop
+  stove
+
+BUNDLED WITH
+   1.16.1

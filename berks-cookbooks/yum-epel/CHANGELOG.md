@@ -2,6 +2,15 @@
 
 This file is used to list changes made in each version of the yum-epel cookbook.
 
+## 3.3.0 (2018-10-09)
+
+- Fix cookbook to work on all releases of Amazon Linux 2
+- Test on Amazon Linux 2 in specs and in Travis
+
+## 3.2.0 (2018-07-24)
+
+- Support EPEL on ARM32.
+
 ## 3.1.0 (2018-02-26)
 
 - Add support for Amazon Linux 2.0

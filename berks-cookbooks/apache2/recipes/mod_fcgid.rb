@@ -24,9 +24,9 @@ elsif platform_family?('rhel', 'fedora', 'amazon')
     notifies :run, 'execute[generate-module-list]', :immediately
   end
 
-  file "#{node['apache']['dir']}/conf.d/fcgid.conf" do
+  file "#{apache_dir}/conf.d/fcgid.conf" do
     content '# conf is under mods-available/fcgid.conf - apache2 cookbook\n'
-    only_if { ::Dir.exist?("#{node['apache']['dir']}/conf.d") }
+    only_if { ::Dir.exist?("#{apache_dir}/conf.d") }
   end
 elsif platform_family?('suse')
   apache_lib_path = node['apache']['lib_dir']

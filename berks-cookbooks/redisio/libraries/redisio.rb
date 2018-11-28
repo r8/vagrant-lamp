@@ -32,9 +32,7 @@ module RedisioHelper
     begin
       Chef::Runner.new(sub_run_context).converge
     ensure
-      if sub_run_context.resource_collection.any?(&:updated?)
-        new_resource.updated_by_last_action(true)
-      end
+      new_resource.updated_by_last_action(true) if sub_run_context.resource_collection.any?(&:updated?)
     end
   end
 
@@ -47,7 +45,7 @@ module RedisioHelper
       major: version_array[0].include?(':') ? version_array[0].split(':')[1] : version_array[0],
       minor: version_array[1],
       tiny: version_array[2],
-      rc: version_array[3]
+      rc: version_array[3],
     }
   end
 end
