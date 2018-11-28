@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the mingw cookbook.
 
+## 2.1.0 (2018-07-24)
+
+- refactor msys2 package source and checksum to attributes
+
 ## 2.0.2 (2018-02-15)
 
 - Remove kind_of usage in the custom resources (FC117)

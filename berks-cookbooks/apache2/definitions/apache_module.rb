@@ -18,6 +18,7 @@
 #
 
 define :apache_module, enable: true, conf: false, restart: false do
+  require_relative '../libraries/helpers.rb'
   include_recipe 'apache2::default'
 
   params[:filename]    = params[:filename] || "mod_#{params[:name]}.so"
@@ -26,7 +27,7 @@ define :apache_module, enable: true, conf: false, restart: false do
 
   apache_mod params[:name] if params[:conf]
 
-  file "#{node['apache']['dir']}/mods-available/#{params[:name]}.load" do
+  file "#{apache_dir}/mods-available/#{params[:name]}.load" do
     content "LoadModule #{params[:identifier]} #{params[:module_path]}\n"
     mode '0644'
   end
@@ -40,8 +41,8 @@ define :apache_module, enable: true, conf: false, restart: false do
         notifies :reload, 'service[apache2]', :delayed
       end
       not_if do
-        ::File.symlink?("#{node['apache']['dir']}/mods-enabled/#{params[:name]}.load") &&
-          (::File.exist?("#{node['apache']['dir']}/mods-available/#{params[:name]}.conf") ? ::File.symlink?("#{node['apache']['dir']}/mods-enabled/#{params[:name]}.conf") : true)
+        ::File.symlink?("#{apache_dir}/mods-enabled/#{params[:name]}.load") &&
+          (::File.exist?("#{apache_dir}/mods-available/#{params[:name]}.conf") ? ::File.symlink?("#{apache_dir}/mods-enabled/#{params[:name]}.conf") : true)
       end
     end
   else
@@ -52,7 +53,7 @@ define :apache_module, enable: true, conf: false, restart: false do
       else
         notifies :reload, 'service[apache2]', :delayed
       end
-      only_if { ::File.symlink?("#{node['apache']['dir']}/mods-enabled/#{params[:name]}.load") }
+      only_if { ::File.symlink?("#{apache_dir}/mods-enabled/#{params[:name]}.load") }
     end
   end
 end

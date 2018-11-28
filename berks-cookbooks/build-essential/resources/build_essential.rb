@@ -2,7 +2,7 @@
 # Cookbook:: build-essential
 # resource:: build_essential
 #
-# Copyright:: 2008-2018, Chef Software, Inc.
+# Copyright:: 2008-2018, Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 
+chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
 provides :build_essential
 resource_name :build_essential
 
@@ -36,8 +37,6 @@ action :install do
     package 'devel/autoconf'
     package 'devel/m4'
     package 'devel/gettext'
-    # Only install gcc on freebsd 9.x - 10 uses clang
-    package 'lang/gcc49' if node['platform_version'].to_i <= 9
   when 'mac_os_x'
     xcode_command_line_tools 'install'
   when 'omnios'

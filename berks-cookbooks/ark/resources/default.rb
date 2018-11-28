@@ -83,8 +83,16 @@ action :install do
     action :nothing
   end
 
-  # usually on windows there is no central directory with executables where the applications are linked
-  unless node['platform_family'] == 'windows'
+  if node['platform_family'] == 'windows'
+    # usually on windows there is no central directory with executables where the applications are linked
+    # so ignore has_binaries for now
+
+    # Add to PATH permanently on Windows if append_env_path
+    windows_path "#{new_resource.path}/bin" do
+      action :add
+      only_if { new_resource.append_env_path }
+    end
+  else
     # symlink binaries
     new_resource.has_binaries.each do |bin|
       link ::File.join(new_resource.prefix_bin, ::File.basename(bin)) do

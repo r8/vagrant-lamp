@@ -2,6 +2,16 @@
 
 This file is used to list changes made in each version of the postfix cookbook.
 
+## 5.3.1 (2018-07-24)
+
+- Fixed sbin issue with Chef13
+
+## 5.3.0 (2018-05-23)
+
+- support multiple sasl_passwd entries
+- Add `packages` attribute so different postfix packages can be installed
+- add ability to set network connection port for a remote relayhost
+
 ## 5.2.1 (2017-11-22)
 
 - Properly support FreeBSD

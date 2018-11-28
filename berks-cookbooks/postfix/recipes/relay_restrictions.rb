@@ -15,8 +15,10 @@
 
 include_recipe 'postfix::_common'
 
+postmap_command = platform_family?('rhel') ? '/usr/sbin/postmap' : 'postmap'
+
 execute 'update-postfix-relay-restrictions' do
-  command "postmap #{node['postfix']['relay_restrictions_db']}"
+  command "#{postmap_command} #{node['postfix']['relay_restrictions_db']}"
   environment PATH: "#{ENV['PATH']}:/opt/omni/bin:/opt/omni/sbin" if platform_family?('omnios')
   action :nothing
 end

@@ -26,9 +26,9 @@ when 'rhel', 'fedora', 'arch', 'amazon'
   end
 end
 
-file "#{node['apache']['dir']}/conf.d/wsgi.conf" do
+file "#{apache_dir}/conf.d/wsgi.conf" do
   content '# conf is under mods-available/wsgi.conf - apache2 cookbook\n'
-  only_if { ::Dir.exist?("#{node['apache']['dir']}/conf.d") }
+  only_if { ::Dir.exist?("#{apache_dir}/conf.d") }
 end
 
 apache_module 'wsgi'

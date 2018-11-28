@@ -4,7 +4,7 @@
 # Resource:: shortcut
 #
 # Copyright:: 2010-2018, VMware, Inc.
-# Copyright:: 2017-2018, Chef Software, Inc.
+# Copyright:: 2017-2018, Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+chef_version_for_provides '< 14.0' if respond_to?(:chef_version_for_provides)
+resource_name :windows_shortcut
 
 property :shortcut_name, String, name_property: true
 property :target, String

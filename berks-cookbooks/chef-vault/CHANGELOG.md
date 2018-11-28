@@ -2,6 +2,17 @@
 
 This file is used to list changes made in each version of the chef-vault cookbook.
 
+## 3.1.1 (2018-08-16)
+
+- Documenting the chef_vault() method
+- Fix Chef14 compatibility for chef_vault_secret resource
+
+## 3.1.0 (2018-04-29)
+
+- Remove compat_resource dependency that isn't used anymore
+- Add "any" supports in metadata since this cookbook works on any platform
+- Remove ChefSpec matchers since ChefSpec auto generates these now
+
 ## 3.0.0 (2017-06-02)
 
 - Convert the LWRP to a custom resource and require Chef 12.9 or later

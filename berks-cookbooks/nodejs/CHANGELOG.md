@@ -1,5 +1,10 @@
 # NodeJS Cookbook Changelog
 
+## 6.0.0 (2018-10-11)
+
+- Use the build_essential resource in the source install recipe instead of the build-essential::default recipe. This way we can use the new built-in build_essential resource in Chef 14+
+- Set default version to Node.js v8.12.0
+
 ## 5.0.0 (2017-11-15)
 
 - nodejs_npm resource has been converted to a custom resource and renamed to npm_package. The existing resource name will continue to function, but over time code should be updated for the new name. This name change has been made so we can eventually merge this resource into the chef-client.

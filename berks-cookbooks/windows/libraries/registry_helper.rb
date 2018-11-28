@@ -257,9 +257,9 @@ module Windows
       end
 
       Chef::Log.debug("Resolved user SID to #{sid}")
-      return sid
+      sid
     rescue
-      return nil
+      nil
     end
 
     def hive_loaded?(path)
@@ -350,7 +350,7 @@ module Windows
 end
 
 module Registry
-  module_function
+  module_function # rubocop: disable Lint/UselessAccessModifier
 
   extend Windows::RegistryHelper
 end

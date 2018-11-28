@@ -24,6 +24,9 @@ end
 
 query = "role:#{node['postfix']['relayhost_role']}"
 relayhost = ''
+# if the relayhost_port attribute is not port 25, append to the relayhost
+relayhost_port = node['postfix']['relayhost_port'].to_s != '25' ? ":#{node['postfix']['relayhost_port']}" : ''
+
 # results = []
 
 if node.run_list.roles.include?(node['postfix']['relayhost_role'])
@@ -36,6 +39,6 @@ else
   relayhost = results.map { |n| n['ipaddress'] }.first
 end
 
-node.normal['postfix']['main']['relayhost'] = "[#{relayhost}]"
+node.normal['postfix']['main']['relayhost'] = "[#{relayhost}]#{relayhost_port}"
 
 include_recipe 'postfix'

@@ -20,7 +20,7 @@ class Chef
                           else
                             ENV['ProgramW6432'] || ENV['ProgramFiles']
                           end
-          GIT_PATH = "#{PROGRAM_FILES}\\Git\\Cmd".freeze
+          GIT_PATH = "#{PROGRAM_FILES}\\Git\\Cmd"
 
           # COOK-3482 - windows_path resource doesn't change the current process
           # environment variables. Therefore, git won't actually be on the PATH

@@ -4,6 +4,8 @@
 
 Installs packages required for compiling C software from source. Use this cookbook if you wish to compile C programs, or install RubyGems with native extensions. Contains a resource, 'build_essential', as as well as a default recipe that simply calls that same resource.
 
+Note: The functionality of this cookbook is now built into Chef 14+ in the [build_essential resource](https://docs.chef.io/resource_build_essential.html). This cookbook is no longer being maintained and all future changes will be done directly in the chef-client. We highly recommend you update your chef-client to the latest release and if possible migrate to using the build_essential resources instead of the recipe in this cookbook.
+
 ## Requirements
 
 ### Platforms

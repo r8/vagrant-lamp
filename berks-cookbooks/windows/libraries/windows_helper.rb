@@ -20,6 +20,9 @@
 require 'uri'
 require 'Win32API' if Chef::Platform.windows?
 require 'chef/exceptions'
+require 'openssl'
+require 'chef/mixin/powershell_out'
+require 'chef/util/path_helper'
 
 module Windows
   module Helper
@@ -30,6 +33,7 @@ module Windows
     # returns windows friendly version of the provided path,
     # ensures backslashes are used everywhere
     def win_friendly_path(path)
+      Chef::Log.warn('The win_friendly_path helper has been deprecated and will be removed from the next major release of the windows cookbook. Please update any cookbooks using this helper to instead require `chef/util/path_helper` and then use `Chef::Util::PathHelper.cleanpath`.')
       path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR || '\\') if path
     end
 
@@ -78,7 +82,7 @@ module Windows
           cache_file_path = source
         end
 
-        windows_path ? win_friendly_path(cache_file_path) : cache_file_path
+        windows_path ? Chef::Util::PathHelper.cleanpath(cache_file_path) : cache_file_path
       end
     end
 
@@ -93,7 +97,7 @@ module Windows
       buf.strip
     end
 
-    def is_package_installed?(package_name) # rubocop:disable Style/PredicateName
+    def is_package_installed?(package_name) # rubocop:disable Naming/PredicateName
       installed_packages.include?(package_name)
     end
 

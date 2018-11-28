@@ -1,8 +1,8 @@
 #
 # Author:: Shawn Neal (<sneal@sneal.net>)
-# Cookbook Name:: visualstudio
+# Cookbook:: visualstudio
 #
-# Copyright 2015, Shawn Neal
+# Copyright:: 2015-2017, Shawn Neal
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

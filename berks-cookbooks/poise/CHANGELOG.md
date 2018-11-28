@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.8.2
+
+* Remove support for Chef before 12.14.
+* Fixed compatibility with Chef 14.3.
+
 ## v2.8.1
 
 * Fix a missing `require` when using `subclass_providers!` on Chef 12.3.

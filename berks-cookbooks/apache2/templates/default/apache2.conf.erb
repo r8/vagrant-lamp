@@ -3,7 +3,7 @@
 #
 # Based on the Ubuntu apache2.conf
 
-ServerRoot "<%= node['apache']['dir'] %>"
+ServerRoot "<%= @apache_dir %>"
 
 #
 # The accept serialization lock file MUST BE STORED ON A LOCAL DISK.
@@ -40,10 +40,15 @@ MaxKeepAliveRequests <%= node['apache']['keepaliverequests'] %>
 #
 KeepAliveTimeout <%= node['apache']['keepalivetimeout'] %>
 
-#<IfModule unixd_module>
+<% if node['apache']['version'] == '2.4' -%>
+<IfModule unixd_module>
+  User <%= node['apache']['user'] %>
+  Group <%= node['apache']['group'] %>
+</IfModule>
+<% else -%>
 User <%= node['apache']['user'] %>
 Group <%= node['apache']['group'] %>
-#</IfModule>
+<% end -%>
 
 # Sets the default security model of the Apache2 HTTPD server. It does
 # not allow access to the root filesystem outside of /usr/share and <%= node['apache']['docroot_dir'] %>.
@@ -62,17 +67,10 @@ Group <%= node['apache']['group'] %>
         Require all denied
 </Directory>
 
-<Directory /usr/share>
-        AllowOverride None
-        Require all granted
-</Directory>
-
-<Directory <%= node['apache']['docroot_dir'] %>>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-
+#
+# No DocumentRoot or other <Directory /> blocks are declared in this
+# file. These statements should be covered in virtual site files created
+# in "#{node['apache']['dir']}/sites-available.
 #
 # AccessFileName: The name of the file to look for in each directory
 # for additional configuration directives.  See also the AllowOverride
@@ -129,8 +127,8 @@ LogLevel <%= node['apache']['log_level'] %>
 #LoadModule dummy_module modules/mod_dummy.so
 
 # Include module configuration:
-IncludeOptional <%= node['apache']['dir'] %>/mods-enabled/*.load
-IncludeOptional <%= node['apache']['dir'] %>/mods-enabled/*.conf
+IncludeOptional <%= @apache_dir %>/mods-enabled/*.load
+IncludeOptional <%= @apache_dir %>/mods-enabled/*.conf
 
 <% if %w[freebsd].include?(node['platform_family']) -%>
 <IfDefine NOHTTPACCEPT>
@@ -140,7 +138,8 @@ IncludeOptional <%= node['apache']['dir'] %>/mods-enabled/*.conf
 <% end %>
 
 # Include ports listing
-Include <%= node['apache']['dir'] %>/ports.conf
+Include <%= @apache_dir %>/ports.conf
+
 
 #
 # The following directives define some format nicknames for use with
@@ -154,7 +153,7 @@ LogFormat "%{User-agent}i" agent
 #
 
 # Include generic snippets of statements
-IncludeOptional <%= node['apache']['dir'] %>/conf-enabled/*.conf
+IncludeOptional <%= @apache_dir %>/conf-enabled/*.conf
 
 # Include the virtual host configurations:
-IncludeOptional <%= node['apache']['dir'] %>/sites-enabled/*.conf
+IncludeOptional <%= @apache_dir %>/sites-enabled/*.conf

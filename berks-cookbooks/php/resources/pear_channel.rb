@@ -4,7 +4,7 @@
 # Cookbook:: php
 # Resource:: pear_channel
 #
-# Copyright:: 2011-2017, Chef Software, Inc <legal@chef.io>
+# Copyright:: 2011-2018, Chef Software, Inc <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,21 +45,10 @@ action :add do
 end
 
 action :update do
-  if exists?
-    update_needed = false
-    begin
-      update_needed = true if shell_out("#{new_resource.binary} search -c #{new_resource.channel_name} NNNNNN").stdout =~ /channel-update/
-    rescue Chef::Exceptions::CommandTimeout
-      # CentOS can hang on 'pear search' if a channel needs updating
-      Chef::Log.info("Timed out checking if channel-update needed...forcing update of pear channel #{new_resource}")
-      update_needed = true
-    end
-    if update_needed
-      description = "update pear channel #{new_resource}"
-      converge_by(description) do
-        Chef::Log.info("Updating pear channel #{new_resource}")
-        shell_out!("#{new_resource.binary} channel-update #{new_resource.channel_name}")
-      end
+  if exists? && update_needed?
+    converge_by("update pear channel #{new_resource}") do
+      Chef::Log.info("Updating pear channel #{new_resource}")
+      shell_out!("#{new_resource.binary} channel-update #{new_resource.channel_name}")
     end
   end
 end
@@ -74,6 +63,23 @@ action :remove do
 end
 
 action_class do
+  # determine if the channel needs to be updated by searching for a bogus package
+  # in that channel and looking for the text prompting the user to update the channel
+  # in the CLI output
+  # @return [Boolean] does the channel need to be updated
+  def update_needed?
+    begin
+      return true if shell_out("#{new_resource.binary} search -c #{new_resource.channel_name} NNNNNN").stdout =~ /channel-update/
+    rescue Chef::Exceptions::CommandTimeout
+      # CentOS can hang on 'pear search' if a channel needs updating
+      Chef::Log.info("Timed out checking if channel-update needed...forcing update of pear channel #{new_resource.channel_name}")
+      return true
+    end
+    false
+  end
+
+  # run pear channel-info to see if the channel has been setup or not
+  # @return [Boolean] does the channel exist locally
   def exists?
     shell_out!("#{new_resource.binary} channel-info #{new_resource.channel_name}")
     true

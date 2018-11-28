@@ -36,7 +36,7 @@ my $env_file = $ENV{APACHE_ENVVARS}
     || (
     $ENV{APACHE_CONFDIR}
     ? "$ENV{APACHE_CONFDIR}/envvars"
-    : "<%= node['apache']['dir'] %>$dir_suffix/envvars"
+    : "<%= @apache_dir %>$dir_suffix/envvars"
     );
 $ENV{LANG} = 'C';
 read_env_file($env_file);
@@ -62,7 +62,7 @@ else {
 }
 $name = ucfirst($obj);
 
-my $confdir = $ENV{APACHE_CONFDIR} || "<%= node['apache']['dir'] %>$dir_suffix";
+my $confdir = $ENV{APACHE_CONFDIR} || "<%= @apache_dir %>$dir_suffix";
 my $availdir = $ENV{ uc("APACHE_${dir}_AVAILABLE") }
     || "$confdir/$dir-available";
 my $enabldir = $ENV{ uc("APACHE_${dir}_ENABLED") } || "$confdir/$dir-enabled";
@@ -424,8 +424,8 @@ sub remove_link {
 
 sub threaded {
     my $result = "";
-    $result = qx{<%= node['apache']['apachectl'] %> -V | grep 'threaded'}
-        if -x '<%= node['apache']['apachectl'] %>';
+    $result = qx{<%= @apachectl %> -V | grep 'threaded'}
+        if -x '<%= @apachectl %>';
     if ( $? != 0 ) {
 
         # config doesn't work

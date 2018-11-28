@@ -233,8 +233,8 @@ module PoiseLanguages
               each_package do |package_name, new_version, current_version, candidate_version|
                 # In Chef 12.14+, candidate_version is a Chef::Decorator::Lazy object
                 # so we need the nil? check to see if the object being proxied is
-                # nil (i.e. there is no version).
-                unless candidate_version && (!candidate_version.nil?) && (!candidate_version.empty?) && candidate_version.start_with?(version)
+                # nil (i.e. there is no version). The `\d+:` is for RPM epoch prefixes.
+                unless candidate_version && (!candidate_version.nil?) && (!candidate_version.empty?) && candidate_version =~ /^(\d+:)?#{Regexp.escape(version)}/
                   # Don't display a wonky error message if there is no candidate.
                   candidate_label = if candidate_version && (!candidate_version.nil?) && (!candidate_version.empty?)
                     candidate_version

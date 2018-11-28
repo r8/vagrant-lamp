@@ -30,9 +30,9 @@ when 'rhel', 'fedora', 'amazon'
   end
 end
 
-file "#{node['apache']['dir']}/conf.d/xsendfile.conf" do
+file "#{apache_dir}/conf.d/xsendfile.conf" do
   content '# conf is under mods-available/xsendfile.conf - apache2 cookbook\n'
-  only_if { ::Dir.exist?("#{node['apache']['dir']}/conf.d") }
+  only_if { ::Dir.exist?("#{apache_dir}/conf.d") }
 end
 
 apache_module 'xsendfile'

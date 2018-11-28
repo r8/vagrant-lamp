@@ -2,6 +2,20 @@
 
 This file is used to list changes made in each version of the apache2 cookbook.
 
+## v5.2.1 (04-09-2018)
+
+- Revert ports.conf fix (ports.conf that gets installed by package conflicts.
+
+## v5.2.0 (26-08-2018)
+
+- Drop Chef 12 support
+- Add Danger and CircleCI support
+- Move apache binary detection to the helpers file
+- Adds apache_service, apache_platform_service_name, apache_dir ,apache_conf_dir helpers
+- Update kitchen configuration
+- Fix ports.conf location and how its set up (#550, skadz)
+- Allow httpd -t timeout to be configurable (#547, skadz)
+
 ## v5.0.1 (2017-09-01)
 
 - Test using dokken-images in kitchen-dokken
@@ -186,8 +200,11 @@ Major version update because of SSL Improvements and new platform MPM and Versio
 - [GH-267] Use Supermarket as the Berkshelf 3 source
 
 - [GH-266] Rubocop based ruby style/syntax improvements
+
 - [GH-264] mod_ssl: Add new attribute for to be ready to any custom directive
+
 - [GH-249] Don't prepend Apache log path when requesting error logging to syslog
+
 - [GH-247] Explicitly include mod_ldap before mod_authnz_ldap
 - [GH-243] Expand mpm options for different distros/versions.
 - [GH-239] Added `apache.mod_php5.install_method` attribute defaults to `package`. Install packages unless PHP is compiled from source.

@@ -123,8 +123,8 @@ def configure
             auth_pass:                    current['auth-pass'] || current[:authpass],
             down_after_milliseconds:      current['down-after-milliseconds'] || current[:downaftermil],
             parallel_syncs:               current['parallel-syncs'] || current[:parallelsyncs],
-            failover_timeout:             current['failover-timeout'] || current[:failovertimeout]
-          }
+            failover_timeout:             current['failover-timeout'] || current[:failovertimeout],
+          },
         ]
       else
         masters = [current['masters']].flatten
@@ -132,7 +132,7 @@ def configure
 
       # Load password for use with requirepass from data bag if needed
       if current['data_bag_name'] && current['data_bag_item'] && current['data_bag_key']
-        bag = Chef::EncryptedDataBagItem.load(current['data_bag_name'], current['data_bag_item'])
+        bag = data_bag_item(current['data_bag_name'], current['data_bag_item'])
         masters.each do |master|
           master['auth_pass'] = bag[current['data_bag_key']]
         end
@@ -243,7 +243,8 @@ def configure
         only_if { node['redisio']['job_control'] == 'rcinit' }
       end
     end
-  end # servers each loop
+  end
+  # servers each loop
 end
 
 def redis_exists?

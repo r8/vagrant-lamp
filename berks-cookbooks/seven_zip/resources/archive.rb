@@ -1,9 +1,9 @@
 #
 # Author:: Shawn Neal (<sneal@sneal.net>)
-# Cookbook Name:: seven_zip
+# Cookbook:: seven_zip
 # Resource:: archive
 #
-# Copyright:: 2013, Daptiv Solutions LLC
+# Copyright:: 2013-2017, Daptiv Solutions LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

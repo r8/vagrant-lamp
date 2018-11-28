@@ -14,3 +14,5 @@ override['percona']['apt']['keyserver'] = 'hkp://keyserver.ubuntu.com:80'
 override['nodejs']['repo'] = 'https://deb.nodesource.com/node_8.x'
 
 override['postfix']['main']['relayhost'] = 'localhost:1025'
+
+override['poise-python']['options']['pip_version'] = '9.0.3'

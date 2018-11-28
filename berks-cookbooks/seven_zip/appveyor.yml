@@ -1,0 +1,42 @@
+version: "3.0.0.{build}-{branch}"
+
+image: Visual Studio 2013
+platform: x64
+
+environment:
+  machine_user: vagrant
+  machine_pass: vagrant
+  KITCHEN_YAML: .kitchen.appveyor.yml
+
+branches:
+  only:
+    - master
+
+# Do not build on tags (GitHub only)
+skip_tags: true
+
+#faster cloning
+clone_depth: 1
+
+install:
+  - ps: (& cmd /c); iex (irm https://omnitruck.chef.io/install.ps1); Install-Project -Project chefdk -channel current
+  - ps: 'Get-CimInstance win32_operatingsystem -Property Caption, OSArchitecture, Version | fl Caption, OSArchitecture, Version'
+  - ps: $PSVersionTable
+  - c:\opscode\chefdk\bin\chef.bat exec ruby --version
+  - ps: secedit /export /cfg $env:temp/export.cfg
+  - ps: ((get-content $env:temp/export.cfg) -replace ('PasswordComplexity = 1', 'PasswordComplexity = 0')) | Out-File $env:temp/export.cfg
+  - ps: ((get-content $env:temp/export.cfg) -replace ('MinimumPasswordLength = 8', 'MinimumPasswordLength = 0')) | Out-File $env:temp/export.cfg
+  - ps: secedit /configure /db $env:windir/security/new.sdb /cfg $env:temp/export.cfg /areas SECURITYPOLICY
+  - ps: net user /add $env:machine_user $env:machine_pass
+  - ps: net localgroup administrators $env:machine_user /add
+
+build_script:
+  - ps: c:\opscode\chefdk\bin\chef.bat shell-init powershell | iex; cmd /c c:\opscode\chefdk\bin\chef.bat --version
+
+test_script:
+  - c:\opscode\chefdk\bin\cookstyle --version
+  - c:\opscode\chefdk\bin\chef.bat exec foodcritic --version
+  - c:\opscode\chefdk\bin\chef.bat exec rake
+  - c:\opscode\chefdk\bin\chef.bat exec kitchen verify
+
+deploy: off

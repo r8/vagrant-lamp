@@ -24,17 +24,17 @@ else
   default['nodejs']['install_method'] = 'source'
 end
 
-default['nodejs']['version'] = '6.10.2'
+default['nodejs']['version'] = '8.12.0'
 
 default['nodejs']['prefix_url']['node'] = 'https://nodejs.org/dist/'
 
 default['nodejs']['source']['url']      = nil # Auto generated
-default['nodejs']['source']['checksum'] = '9b897dd6604d50ae5fff25fd14b1c4035462d0598735799e0cfb4f17cb6e0d19'
+default['nodejs']['source']['checksum'] = 'b4797843136edd9195c28221a1680ae52c29d867fc5fc1c99f7d6e2f2126a67b'
 
 default['nodejs']['binary']['url'] = nil # Auto generated
-default['nodejs']['binary']['checksum']['linux_x64'] = '35accd2d9ccac747eff0f236e2843bc2198ba7765e2340441d6230861bae4e1b'
-default['nodejs']['binary']['checksum']['linux_x86'] = '6721221fab4e3b3a1be6573900b9e368c7a74ac1c1c3ae982e49c5583e8962e3'
-default['nodejs']['binary']['checksum']['linux_arm64'] = '97de0340b6dbf38e3d995df880a94c58d403c3054676d8fc9192b83a3735f0b8'
+default['nodejs']['binary']['checksum']['linux_x64'] = '3df19b748ee2b6dfe3a03448ebc6186a3a86aeab557018d77a0f7f3314594ef6'
+default['nodejs']['binary']['checksum']['linux_x86'] = '56ecffbd8a656991f71e4b53ab00af333c97453062cadc20a2103b933088d24d'
+default['nodejs']['binary']['checksum']['linux_arm64'] = '781ecf1ecb14b4c671ef0732988636282d6fb7071c4bd52567f663b008796bc9'
 
 default['nodejs']['make_threads'] = node['cpu'] ? node['cpu']['total'].to_i : 2
 

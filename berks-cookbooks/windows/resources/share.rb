@@ -1,10 +1,12 @@
-# -*- coding: utf-8 -*-
 #
-# Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>), Richard Lavey (richard.lavey@calastone.com)
+# Author:: Sölvi Páll Ásgeirsson (<solvip@gmail.com>)
+# Author:: Richard Lavey (richard.lavey@calastone.com)
+# Author:: Tim Smith (tsmith@chef.io)
 # Cookbook:: windows
 # Resource:: share
 #
 # Copyright:: 2014-2017, Sölvi Páll Ásgeirsson.
+# Copyright:: 2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +21,11 @@
 # limitations under the License.
 #
 
+chef_version_for_provides '< 14.7' if respond_to?(:chef_version_for_provides)
+resource_name :windows_share
+
+require 'chef/json_compat'
+
 # Specifies a name for the SMB share. The name may be composed of any valid file name characters, but must be less than 80 characters long. The names pipe and mailslot are reserved for use by the computer.
 property :share_name, String, name_property: true
 
@@ -29,234 +36,250 @@ property :path, String
 property :description, String, default: ''
 
 # Specifies which accounts are granted full permission to access the share. Use a comma-separated list to specify multiple accounts. An account may not be specified more than once in the FullAccess, ChangeAccess, or ReadAccess parameter lists, but may be specified once in the FullAccess, ChangeAccess, or ReadAccess parameter list and once in the NoAccess parameter list.
-property :full_users, Array, default: []
+property :full_users, Array, default: [], coerce: proc { |u| u.sort }
 
 # Specifies which users are granted modify permission to access the share
-property :change_users, Array, default: []
+property :change_users, Array, default: [], coerce: proc { |u| u.sort }
 
 # Specifies which users are granted read permission to access the share. Multiple users can be specified by supplying a comma-separated list.
-property :read_users, Array, default: []
+property :read_users, Array, default: [], coerce: proc { |u| u.sort }
 
-include Windows::Helper
+# Specifies the lifetime of the new SMB share. A temporary share does not persist beyond the next restart of the computer. By default, new SMB shares are persistent, and non-temporary.
+property :temporary, [true, false], default: false
+
+# Specifies the scope name of the share.
+property :scope_name, String, default: '*'
+
+# Specifies the continuous availability time-out for the share.
+property :ca_timeout, Integer, default: 0
+
+# Indicates that the share is continuously available.
+property :continuously_available, [true, false], default: false
+
+# Specifies the caching mode of the offline files for the SMB share.
+# property :caching_mode, String, equal_to: %w(None Manual Documents Programs BranchCache)
+
+# Specifies the maximum number of concurrently connected users that the new SMB share may accommodate. If this parameter is set to zero (0), then the number of users is unlimited.
+property :concurrent_user_limit, Integer, default: 0
+
+# Indicates that the share is encrypted.
+property :encrypt_data, [true, false], default: false
+
+# Specifies which files and folders in the SMB share are visible to users. AccessBased: SMB does not the display the files and folders for a share to a user unless that user has rights to access the files and folders. By default, access-based enumeration is disabled for new SMB shares. Unrestricted: SMB displays files and folders to a user even when the user does not have permission to access the items.
+# property :folder_enumeration_mode, String, equal_to: %(AccessBased Unrestricted)
+
 include Chef::Mixin::PowershellOut
 
-require 'win32ole' if RUBY_PLATFORM =~ /mswin|mingw32|windows/
+load_current_value do |desired|
+  # this command selects individual objects because EncryptData & CachingMode have underlying
+  # types that get converted to their Integer values by ConvertTo-Json & we need to make sure
+  # those get written out as strings
+  share_state_cmd = "Get-SmbShare -Name '#{desired.share_name}' | Select-Object Name,Path, Description, Temporary, CATimeout, ContinuouslyAvailable, ConcurrentUserLimit, EncryptData | ConvertTo-Json"
 
-ACCESS_FULL = 2_032_127
-ACCESS_CHANGE = 1_245_631
-ACCESS_READ = 1_179_817
+  Chef::Log.debug("Running '#{share_state_cmd}' to determine share state'")
+  ps_results = powershell_out(share_state_cmd)
 
-action :create do
-  raise 'No path property set' unless new_resource.path
-
-  if different_path?
-    unless current_resource.path.nil? || current_resource.path.empty?
-      converge_by("Removing previous share #{new_resource.share_name}") do
-        delete_share
-      end
-    end
-    converge_by("Creating share #{new_resource.share_name}") do
-      create_share
-    end
+  # detect a failure without raising and then set current_resource to nil
+  if ps_results.error?
+    Chef::Log.debug("Error fetching share state: #{ps_results.stderr}")
+    current_value_does_not_exist!
   end
 
-  if different_members?(:full_users) ||
-     different_members?(:change_users) ||
-     different_members?(:read_users) ||
-     different_description?
-    converge_by("Setting permissions and description for #{new_resource.share_name}") do
-      set_share_permissions
+  Chef::Log.debug("The Get-SmbShare results were #{ps_results.stdout}")
+  results = Chef::JSONCompat.from_json(ps_results.stdout)
+
+  path results['Path']
+  description results['Description']
+  temporary results['Temporary']
+  ca_timeout results['CATimeout']
+  continuously_available results['ContinuouslyAvailable']
+  # caching_mode results['CachingMode']
+  concurrent_user_limit results['ConcurrentUserLimit']
+  encrypt_data results['EncryptData']
+  # folder_enumeration_mode results['FolderEnumerationMode']
+
+  perm_state_cmd = %(Get-SmbShareAccess -Name "#{desired.share_name}" | Select-Object AccountName,AccessControlType,AccessRight | ConvertTo-Json)
+
+  Chef::Log.debug("Running '#{perm_state_cmd}' to determine share permissions state'")
+  ps_perm_results = powershell_out(perm_state_cmd)
+
+  # we raise here instead of warning like above because we'd only get here if the above Get-SmbShare
+  # command was successful and that continuing would leave us with 1/2 known state
+  raise "Could not determine #{desired.share_name} share permissions by running '#{perm_state_cmd}'" if ps_perm_results.error?
+
+  Chef::Log.debug("The Get-SmbShareAccess results were #{ps_perm_results.stdout}")
+
+  f_users, c_users, r_users = parse_permissions(ps_perm_results.stdout)
+
+  full_users f_users
+  change_users c_users
+  read_users r_users
+end
+
+def after_created
+  raise 'The windows_share resource relies on PowerShell cmdlets not present in Windows releases prior to 8/2012. Cannot continue!' if node['platform_version'].to_f < 6.3
+end
+
+# given the string output of Get-SmbShareAccess parse out
+# arrays of full access users, change users, and read only users
+def parse_permissions(results_string)
+  json_results = Chef::JSONCompat.from_json(results_string)
+  json_results = [json_results] unless json_results.is_a?(Array) # single result is not an array
+
+  f_users = []
+  c_users = []
+  r_users = []
+
+  json_results.each do |perm|
+    next unless perm['AccessControlType'] == 0 # allow
+    case perm['AccessRight']
+    when 0 then f_users << stripped_account(perm['AccountName']) # 0 full control
+    when 1 then c_users << stripped_account(perm['AccountName']) # 1 == change
+    when 2 then r_users << stripped_account(perm['AccountName']) # 2 == read
     end
+  end
+  [f_users, c_users, r_users]
+end
+
+# local names are returned from Get-SmbShareAccess in the full format MACHINE\\NAME
+# but users of this resource would simply say NAME so we need to strip the values for comparison
+def stripped_account(name)
+  name.slice!("#{node['hostname']}\\")
+  name
+end
+
+action :create do
+  # we do this here instead of requiring the property because :delete doesn't need path set
+  raise 'No path property set' unless new_resource.path
+
+  converge_if_changed do
+    # you can't actually change the path so you have to delete the old share first
+    delete_share if different_path?
+
+    # powershell cmdlet for create is different than updates
+    if current_resource.nil?
+      Chef::Log.debug('The current resource is nil so we will create a new share')
+      create_share
+    else
+      Chef::Log.debug('The current resource was not nil so we will update an existing share')
+      update_share
+    end
+
+    # creating the share does not set permissions so we need to update
+    update_permissions
   end
 end
 
 action :delete do
-  if !current_resource.path.nil? && !current_resource.path.empty?
-    converge_by("Deleting #{current_resource.share_name}") do
+  if current_resource.nil?
+    Chef::Log.debug("#{new_resource.share_name} does not exist - nothing to do")
+  else
+    converge_by("delete #{new_resource.share_name}") do
       delete_share
     end
-  else
-    Chef::Log.debug("#{current_resource.share_name} does not exist - nothing to do")
   end
 end
 
-load_current_value do |desired|
-  wmi = WIN32OLE.connect('winmgmts://')
-  shares = wmi.ExecQuery("SELECT * FROM Win32_Share WHERE name = '#{desired.share_name}'")
-  existing_share = shares.Count == 0 ? nil : shares.ItemIndex(0)
-
-  description ''
-  unless existing_share.nil?
-    path existing_share.Path
-    description existing_share.Description
+action_class do
+  def different_path?
+    return false if current_resource.nil? # going from nil to something isn't different for our concerns
+    return false if current_resource.path == new_resource.path
+    true
   end
 
-  perms = share_permissions name
-  unless perms.nil?
-    full_users perms[:full_users]
-    change_users perms[:change_users]
-    read_users perms[:read_users]
-  end
-end
+  def delete_share
+    delete_command = "Remove-SmbShare -Name '#{new_resource.share_name}' -Force"
 
-def share_permissions(name)
-  wmi = WIN32OLE.connect('winmgmts://')
-  shares = wmi.ExecQuery("SELECT * FROM Win32_LogicalShareSecuritySetting WHERE name = '#{name}'")
-
-  # The security descriptor is an output parameter
-  sd = nil
-  begin
-    shares.ItemIndex(0).GetSecurityDescriptor(sd)
-    sd = WIN32OLE::ARGV[0]
-  rescue WIN32OLERuntimeError
-    Chef::Log.warn('Failed to retrieve any security information about the share.')
+    Chef::Log.debug("Running '#{delete_command}' to remove the share")
+    powershell_out!(delete_command)
   end
 
-  read = []
-  change = []
-  full = []
+  def update_share
+    update_command = "Set-SmbShare -Name '#{new_resource.share_name}' -Description '#{new_resource.description}' -Force"
 
-  unless sd.nil?
-    sd.DACL.each do |dacl|
-      trustee = "#{dacl.Trustee.Domain}\\#{dacl.Trustee.Name}".downcase
-      case dacl.AccessMask
-      when ACCESS_FULL
-        full.push(trustee)
-      when ACCESS_CHANGE
-        change.push(trustee)
-      when ACCESS_READ
-        read.push(trustee)
-      else
-        Chef::Log.warn "Unknown access mask #{dacl.AccessMask} for user #{trustee}. This will be lost if permissions are updated"
+    Chef::Log.debug("Running '#{update_command}' to update the share")
+    powershell_out!(update_command)
+  end
+
+  def create_share
+    raise "#{new_resource.path} is missing or not a directory. Shares cannot be created if the path doesn't first exist." unless ::File.directory? new_resource.path
+
+    share_cmd = "New-SmbShare -Name '#{new_resource.share_name}' -Path '#{new_resource.path}' -Description '#{new_resource.description}' -ConcurrentUserLimit #{new_resource.concurrent_user_limit} -CATimeout #{new_resource.ca_timeout} -EncryptData:#{bool_string(new_resource.encrypt_data)} -ContinuouslyAvailable:#{bool_string(new_resource.continuously_available)}"
+    share_cmd << " -ScopeName #{new_resource.scope_name}" unless new_resource.scope_name == '*' # passing * causes the command to fail
+    share_cmd << " -Temporary:#{bool_string(new_resource.temporary)}" if new_resource.temporary # only set true
+
+    Chef::Log.debug("Running '#{share_cmd}' to create the share")
+    powershell_out!(share_cmd)
+
+    # New-SmbShare adds the "Everyone" user with read access no matter what so we need to remove it
+    # before we add our permissions
+    revoke_user_permissions(['Everyone'])
+  end
+
+  # determine what users in the current state don't exist in the desired state
+  # users/groups will have their permissions updated with the same command that
+  # sets it, but removes must be performed with Revoke-SmbShareAccess
+  def users_to_revoke
+    @users_to_revoke ||= begin
+      # if the resource doesn't exist then nothing needs to be revoked
+      if current_resource.nil?
+        []
+      else # if it exists then calculate the current to new resource diffs
+        (current_resource.full_users + current_resource.change_users + current_resource.read_users) - (new_resource.full_users + new_resource.change_users + new_resource.read_users)
       end
     end
   end
 
-  {
-    full_users: full,
-    change_users: change,
-    read_users: read,
-  }
-end
+  # update existing permissions on a share
+  def update_permissions
+    # revoke any users that had something, but now has nothing
+    revoke_user_permissions(users_to_revoke) unless users_to_revoke.empty?
 
-action_class do
-  def description_exists?(resource)
-    !resource.description.nil?
-  end
+    # set permissions for each of the permission types
+    %w(full read change).each do |perm_type|
+      # set permissions for a brand new share OR
+      # update permissions if the current state and desired state differ
+      next unless permissions_need_update?(perm_type)
+      grant_command = "Grant-SmbShareAccess -Name '#{new_resource.share_name}' -AccountName \"#{new_resource.send("#{perm_type}_users").join('","')}\" -Force -AccessRight #{perm_type}"
 
-  def different_description?
-    if description_exists?(new_resource) && description_exists?(current_resource)
-      new_resource.description.casecmp(current_resource.description) != 0
-    else
-      description_exists?(new_resource) || description_exists?(current_resource)
+      Chef::Log.debug("Running '#{grant_command}' to update the share permissions")
+      powershell_out!(grant_command)
     end
   end
 
-  def different_path?
-    return true if current_resource.path.nil?
-    win_friendly_path(new_resource.path).casecmp(win_friendly_path(current_resource.path)) != 0
+  # determine if permissions need to be updated.
+  # Brand new share with no permissions defined: no
+  # Brand new share with permissions defined: yes
+  # Existing share with differing permissions: yes
+  #
+  # @param [String] type the permissions type (Full, Read, or Change)
+  def permissions_need_update?(type)
+    property_name = "#{type}_users"
+
+    # brand new share, but nothing to set
+    return false if current_resource.nil? && new_resource.send(property_name).empty?
+
+    # brand new share with new permissions to set
+    return true if current_resource.nil? && !new_resource.send(property_name).empty?
+
+    # there's a difference between the current and desired state
+    return true unless (new_resource.send(property_name) - current_resource.send(property_name)).empty?
+
+    # anything else
+    false
   end
 
-  def different_members?(permission_type)
-    !(current_resource.send(permission_type.to_sym) - new_resource.send(permission_type.to_sym).map(&:downcase)).empty? ||
-      !(new_resource.send(permission_type.to_sym).map(&:downcase) - current_resource.send(permission_type.to_sym)).empty?
+  # revoke user permissions from a share
+  # @param [Array] users
+  def revoke_user_permissions(users)
+    revoke_command = "Revoke-SmbShareAccess -Name '#{new_resource.share_name}' -AccountName \"#{users.join('","')}\" -Force"
+    Chef::Log.debug("Running '#{revoke_command}' to revoke share permissions")
+    powershell_out!(revoke_command)
   end
 
-  def delete_share
-    powershell_out("Remove-SmbShare -Name \"#{new_resource.share_name}\" -Description \"#{new_resource.description}\" -Confirm")
-  end
-
-  def create_share
-    raise "#{new_resource.path} is missing or not a directory" unless ::File.directory? new_resource.path
-
-    powershell_out("New-SmbShare -Name \"#{new_resource.share_name}\" -Path \"#{new_resource.path}\" -Confirm")
-  end
-
-  # set_share_permissions - Enforce the share permissions as dictated by the resource attributes
-  def set_share_permissions
-    share_permissions_script = <<-EOH
-      Function New-SecurityDescriptor
-      {
-        param (
-          [array]$ACEs
-        )
-        #Create SeCDesc object
-        $SecDesc = ([WMIClass] "\\\\$env:ComputerName\\root\\cimv2:Win32_SecurityDescriptor").CreateInstance()
-
-        foreach ($ACE in $ACEs )
-        {
-          $SecDesc.DACL += $ACE.psobject.baseobject
-        }
-
-        #Return the security Descriptor
-        return $SecDesc
-      }
-
-      Function New-ACE
-      {
-        param  (
-          [string] $Name,
-          [string] $Domain,
-          [string] $Permission = "Read"
-        )
-        #Create the Trusteee Object
-        $Trustee = ([WMIClass] "\\\\$env:computername\\root\\cimv2:Win32_Trustee").CreateInstance()
-        $account = get-wmiobject Win32_Account -filter "Name = '$Name' and Domain = '$Domain'"
-        $accountSID = [WMI] "\\\\$env:ComputerName\\root\\cimv2:Win32_SID.SID='$($account.sid)'"
-
-        $Trustee.Domain = $Domain
-        $Trustee.Name = $Name
-        $Trustee.SID = $accountSID.BinaryRepresentation
-
-        #Create ACE (Access Control List) object.
-        $ACE = ([WMIClass] "\\\\$env:ComputerName\\root\\cimv2:Win32_ACE").CreateInstance()
-        switch ($Permission)
-        {
-          "Read" 		 { $ACE.AccessMask = 1179817 }
-          "Change"  {	$ACE.AccessMask = 1245631 }
-          "Full"		   { $ACE.AccessMask = 2032127 }
-          default { throw "$Permission is not a supported permission value. Possible values are 'Read','Change','Full'" }
-        }
-
-        $ACE.AceFlags = 3
-        $ACE.AceType = 0
-        $ACE.Trustee = $Trustee
-
-        $ACE
-      }
-
-      $dacl_array = @()
-
-    EOH
-    new_resource.full_users.each do |user|
-      share_permissions_script += user_to_ace(user, 'Full')
-    end
-
-    new_resource.change_users.each do |user|
-      share_permissions_script += user_to_ace(user, 'Change')
-    end
-
-    new_resource.read_users.each do |user|
-      share_permissions_script += user_to_ace(user, 'Read')
-    end
-
-    share_permissions_script += <<-EOH
-
-      $dacl = New-SecurityDescriptor -Aces $dacl_array
-
-      $share = get-wmiobject win32_share -filter 'Name like "#{new_resource.share_name}"'
-      $return = $share.SetShareInfo($null, '#{new_resource.description}', $dacl)
-      exit $return.returnValue
-    EOH
-    r = powershell_out(share_permissions_script)
-    raise "Could not set share permissions.  Win32_Share.SedtShareInfo returned #{r.exitstatus}" if r.error?
-  end
-
-  def user_to_ace(fully_qualified_user_name, access)
-    domain, user = fully_qualified_user_name.split('\\')
-    unless domain && user
-      raise "Invalid user entry #{fully_qualified_user_name}.  The user names must be specified as 'DOMAIN\\user'"
-    end
-    "\n$dacl_array += new-ace -Name '#{user}' -domain '#{domain}' -permission '#{access}'"
+  # convert True/False into "$True" & "$False"
+  def bool_string(bool)
+    # bool ? 1 : 0
+    bool ? '$true' : '$false'
   end
 end

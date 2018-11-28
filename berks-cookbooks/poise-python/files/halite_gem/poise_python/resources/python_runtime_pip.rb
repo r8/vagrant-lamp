@@ -30,6 +30,12 @@ module PoisePython
       # Earliest version of pip we will try upgrading in-place.
       PIP_INPLACE_VERSION = Gem::Version.create('7.0.0')
 
+      # Version to trigger the automatic get-pip.py URL fixup on for 2.6 compat.
+      PY26_FIXUP_VERSION = Gem::Version.create('2.7')
+
+      # Replacement URL for 2.6 compat.
+      PY26_FIXUP_GETPIP_URL = 'https://bootstrap.pypa.io/2.6/get-pip.py'
+
       # A `python_runtime_pip` resource to install/upgrade pip itself. This is
       # used internally by `python_runtime` and is not intended to be a public
       # API.
@@ -103,15 +109,30 @@ module PoisePython
         #
         # @return [void]
         def bootstrap_pip
+          # If we're on Python 2.6 and using the default get_pip_url, we need to
+          # switch to a 2.6-compatible version. This kind of sucks because it
+          # makes the default a magic value but it seems like the safest option.
+          get_pip_url = new_resource.get_pip_url
+          if get_pip_url == 'https://bootstrap.pypa.io/get-pip.py'
+            python_version_cmd = poise_shell_out!([new_resource.parent.python_binary, '--version'], environment: new_resource.parent.python_environment)
+            # Python 2 puts the output on stderr, 3 is on stdout. You can't make this shit up.
+            python_version = (python_version_cmd.stdout + python_version_cmd.stderr)[/Python (\S+)/, 1]
+            Chef::Log.debug("[#{new_resource}] Checking for Python 2.6 fixup of get-pip URL, found Python version #{python_version || '(unknown)'}")
+            if python_version && Gem::Version.create(python_version) < PY26_FIXUP_VERSION
+              Chef::Log.debug("[#{new_resource}] Detected old Python, enabling fixup")
+              get_pip_url = PY26_FIXUP_GETPIP_URL
+            end
+          end
+
           # Always updated if we have hit this point.
-          converge_by("Bootstrapping pip #{new_resource.version || 'latest'} from #{new_resource.get_pip_url}") do
+          converge_by("Bootstrapping pip #{new_resource.version || 'latest'} from #{get_pip_url}") do
             # Use a temp file to hold the installer.
             # Put `Tempfile.create` back when Chef on Windows has a newer Ruby.
             # Tempfile.create(['get-pip', '.py']) do |temp|
             temp = Tempfile.new(['get-pip', '.py'])
             begin
               # Download the get-pip.py.
-              get_pip = Chef::HTTP.new(new_resource.get_pip_url).get('')
+              get_pip = Chef::HTTP.new(get_pip_url).get('')
               # Write it to the temp file.
               temp.write(get_pip)
               # Close the file to flush it.
@@ -165,6 +186,7 @@ module PoisePython
               action :upgrade
               parent_python new_resource.parent
               version new_resource.version if new_resource.version
+              allow_downgrade true
             end
           end
         end

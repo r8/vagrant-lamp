@@ -31,9 +31,9 @@ when 'windows'
   default['git']['display_name'] = "Git version #{node['git']['version']}"
 else
   default['git']['prefix'] = '/usr/local'
-  default['git']['version'] = '2.9.5'
+  default['git']['version'] = '2.17.1'
   default['git']['url'] = 'https://nodeload.github.com/git/git/tar.gz/v%{version}'
-  default['git']['checksum'] = '88995ab18154fa302478d33efa4418d354a5e592645ebef02c69b3dd76b526c1'
+  default['git']['checksum'] = '690f12cc5691e5adaf2dd390eae6f5acce68ae0d9bd9403814f8a1433833f02a'
   default['git']['use_pcre'] = false
 end
 

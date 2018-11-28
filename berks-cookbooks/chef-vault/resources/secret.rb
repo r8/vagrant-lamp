@@ -48,7 +48,7 @@ action :create do
 end
 
 action :create_if_missing do
-  action_create if current_value.nil?
+  action_create if current_resource.nil?
 end
 
 action :delete do
